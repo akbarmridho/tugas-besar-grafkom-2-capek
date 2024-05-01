@@ -1,5 +1,5 @@
 import { Serializable } from './serializable.ts';
 
-export class Camera extends Serializable {
+export abstract class Camera extends Serializable {
   //
 }
