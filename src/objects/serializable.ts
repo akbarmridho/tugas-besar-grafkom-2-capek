@@ -1,4 +1,12 @@
-export abstract class Serializable {
-  public abstract toJSON(): Object;
-  public abstract fromJSON<T>(raw: Object): T;
+import { SerializationResult } from '../interfaces/serializable.ts';
+
+export abstract class Serializable<T> {
+  public abstract toJSON(): T;
+
+  public toJSONWithType(): SerializationResult<T> {
+    return {
+      type: this.constructor.name,
+      data: this.toJSON()
+    };
+  }
 }

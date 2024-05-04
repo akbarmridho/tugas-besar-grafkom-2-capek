@@ -466,4 +466,21 @@ export class Matrix4 {
       v0 * mi[2] + v1 * mi[6] + v2 * mi[10]
     );
   }
+
+  /**
+   * Convert to typed array
+   * In this case, we always assume that the matrix want to be converted to
+   * column major instead of row major
+   */
+  public toTypedArray(): Float32Array {
+    const el = this.elements;
+
+    // prettier-ignore
+    return new Float32Array([
+      el[0], el[4], el[8 ], el[12],
+      el[1], el[5], el[9 ], el[13],
+      el[2], el[6], el[10], el[14],
+      el[3], el[7], el[11], el[15]
+    ])
+  }
 }
