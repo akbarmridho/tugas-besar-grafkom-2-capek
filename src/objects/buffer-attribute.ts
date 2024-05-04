@@ -20,8 +20,9 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
   private _normalize = false;
   private _stride = 0;
   private _offset = 0;
-  private _buffer: Float32Array | null = null;
+  private _isDirty = true; // copy attributes at the start, at least once.
 
+  // Constructor, as a way to create an instance of BufferAttribute.
   constructor(
     data: TypedArray,
     size: number,
@@ -41,6 +42,7 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
     this._offset = opt.offset || 0;
   }
 
+  // Getter, retrieves private variables.
   get data() {
     return this._data;
   }
@@ -59,7 +61,11 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
   get offset() {
     return this._offset;
   }
+  get isDirty() {
+    return this._isDirty;
+  }
 
+  // Setter, sets private variables.
   set data(data: TypedArray) {
     this._data = data;
   }
@@ -79,6 +85,12 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
     this._offset = offset;
   }
 
+
+  // Mark buffer as clean (No need for copying back to GPU);
+  // Only called at setter attributes.
+  consume() {this._isDirty = false;}
+
+  // Retrive the length of a buffer & number of elements inside of said buffer.
   get length(): number {
     return this._data.length;
   }
@@ -86,30 +98,16 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
     return length / this._size;
   }
 
-  private updateBuffer(): void {
-    if (!this._buffer) {
-      this._buffer = new Float32Array(this._data);
-    }
+  set(id:number, data:number[]) {
+    // Sets elemen[index] with data, adjust it with offset and stride.
+    this._isDirty = true;
   }
 
-  set(id: number, data: number[]): void {
+  get(id:number, size?:number) {
+    // Takes elemen[index] into data, adjust it with offset and stride.
+    const data:number[] = [];
     id *= this._size;
-    for (let i = 0; i < data.length; i++) {
-      this._data[id + i] = data[i];
-    }
-    this._buffer = null;
-  }
-
-  get(id: number, size?: number): number[] {
-    id *= this._size;
-    if (!size) {
-      size = this._size;
-    }
-    const data: number[] = [];
-    this.updateBuffer();
-    for (let i = 0; i < size; i++) {
-      data.push(this._buffer![id + i]);
-    }
+    if (!size) {size = this._size;}
     return data;
   }
 
