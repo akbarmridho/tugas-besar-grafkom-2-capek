@@ -1,7 +1,7 @@
 import { Serializable } from './serializable.ts';
 import { TypedArray, TypedArrayMap } from '../interfaces/typed-array.ts';
 
-interface BufferAttributeSerialized {
+export interface BufferAttributeSerialized {
   data: {
     type: string;
     data: number[];
