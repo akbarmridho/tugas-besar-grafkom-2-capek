@@ -123,12 +123,10 @@ export class Vector3 {
   }
 
   // Add two different Vector3 together
-  addVectors(first: Vector3, second: Vector3): Vector3 {
-    this.x = first.x + second.x;
-    this.y = first.y + second.y;
-    this.z = first.z + second.z;
-
-    return this;
+  static addVectors(first: Vector3, second: Vector3): Vector3 {
+    return new Vector3(first.x + second.x,
+                       first.y + second.y,
+                       first.z + second.z);
   }
 
   // Add components from other Vector3 with a scale to this Vector3
@@ -160,12 +158,10 @@ export class Vector3 {
   }
 
   // Subtract two different Vector3 together
-  subVectors(first: Vector3, second: Vector3): Vector3 {
-    this.x = first.x - second.x;
-    this.y = first.y - second.y;
-    this.z = first.z - second.z;
-
-    return this;
+  static subVectors(first: Vector3, second: Vector3): Vector3 {
+    return new Vector3(first.x - second.x,
+                       first.y - second.y,
+                       first.z - second.z);
   }
 
   /* Multiplication Operator */
@@ -188,12 +184,10 @@ export class Vector3 {
   }
 
   // Multiply two different Vector3 together
-  multiplyVectors(first: Vector3, second: Vector3): Vector3 {
-    this.x = first.x * second.x;
-    this.y = first.y * second.y;
-    this.z = first.z * second.z;
-
-    return this;
+  static multiplyVectors(first: Vector3, second: Vector3): Vector3 {
+    return new Vector3(first.x * second.x,
+                       first.y * second.y,
+                       first.z * second.z);
   }
 
   /* Division Operation */
@@ -342,19 +336,17 @@ export class Vector3 {
 
   // Find the cross product of vectors
   cross(otherVector: Vector3): Vector3 {
-    return this.crossVectors(this, otherVector);
+    return Vector3.crossVectors(this, otherVector);
   }
 
   // Find the cross product of two vectors
-  crossVectors(first: Vector3, second: Vector3): Vector3 {
+  static crossVectors(first: Vector3, second: Vector3): Vector3 {
     const x1 = first.x, y1 = first.y, z1 = first.z;
     const x2 = second.x, y2 = second.y, z2 = second.z;
 
-    this.x = y1 * z2 - z1 * y2;
-    this.y = z1 * x2 - x1 * z2;
-    this.z = x1 * y2 - y1 * x2;
-
-    return this;
+    return new Vector3(y1 * z2 - z1 * y2,
+                       z1 * x2 - x1 * z2,
+                       x1 * y2 - y1 * x2);
   }
 
   // Find the projection of this Vector3 to another Vector3
@@ -403,12 +395,10 @@ export class Vector3 {
     return this;
   }
 
-  lerpVectors(first: Vector3, second: Vector3, alpha: number): Vector3 {
-    this.x = first.x + (second.x - first.x) * alpha;
-    this.y = first.y + (second.y - first.y) * alpha;
-    this.z = first.z + (second.z - first.z) * alpha;
-    
-    return this;
+  static lerpVectors(first: Vector3, second: Vector3, alpha: number): Vector3 {
+    return new Vector3(first.x + (second.x - first.x) * alpha,
+                       first.y + (second.y - first.y) * alpha,
+                       first.z + (second.z - first.z) * alpha);
   }
 
   /* Flatten and build from other data structure */
