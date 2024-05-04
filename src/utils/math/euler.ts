@@ -58,15 +58,75 @@ export class Euler {
     return this;
   }
   
-  // setRotMatrix
+  setRotMatrix(m: {elements:number[]}, order: string=this._order, update:boolean=true):this {
+    const t: number[] = m.elements,
+          m11: number = t[0], m12: number = t[3], m13: number = t[6],
+          m21: number = t[1], m22: number = t[4], m23: number = t[7],
+          m31: number = t[2], m32: number = t[5], m33: number = t[8];
 
-  // setQuaternion
+    switch (order) {
+      case "XYZ":
+        this._y = Math.asin(Euler.clamp(m13, -1, 1));
+        if (Math.abs(m13) < 1) {
+          this._x = Math.atan2(-m23, m33); this._z = Math.atan2(-m12, m11);
+        } else {
+          this._x = Math.atan2(m32, m22); this._z = 0;
+        } break;
+
+      case "XZY":
+        this._z = Math.asin(-1 * (Euler.clamp(m12, -1, 1)));
+        if (Math.abs(m12) < 1) {
+          this._x = Math.atan2(m32, m22); this._y = Math.atan2(m13, m11);
+        } else {
+          this._x = Math.atan2(-m23, m33); this._y = 0;
+        } break;
+
+      case "YXZ":
+        this._x = Math.asin(-1 * (Euler.clamp(m23, -1, 1)));
+        if (Math.abs(m23) < 1) {
+          this._y = Math.atan2(m13, m33); this._z = Math.atan2(m21, m22);
+        } else {
+          this._y = Math.atan2(-m31, m11); this._z = 0;
+        } break;
+
+      case "YZX":
+        this._z = Math.asin(Euler.clamp(m21, -1, 1));
+        if (Math.abs(m21) < 1) {
+          this._x = Math.atan2(-m23, m22); this._y = Math.atan2(-m31, m11);
+        } else {
+          this._x = 0; this._y = Math.atan2(m13, m33);
+        } break;
+
+      case "ZXY":
+        this._x = Math.asin(Euler.clamp(m32, -1, 1));
+        if (Math.abs(m32) < 1) {
+          this._y = Math.atan2(-m31, m33); this._z = Math.atan2(-m12, m22);
+        } else {
+          this._y = 0; this._z = Math.atan2(m21, m11);
+        } break;
+
+      case "ZYX":
+        this._y = Math.asin(-1 * (Euler.clamp(m31, -1, 1)));
+        if (Math.abs(m31) < 1) {
+          this._x = Math.atan2(m32, m33); this._z = Math.atan2(m21, m11);
+        } else {
+          this._x = 0; this._z = Math.atan2(-m12, m22);
+        } break;
+
+      default:
+        console.warn("Unknown order: "+ order);
+    }
+    this._order = order;
+    return this;
+  }
+
+  // setQuaternion (butuh matrix4.ts)
 
   setVec3(v: {x:number, y:number, z:number}, order:string = this._order):this {
     return this.set(v.x, v.y, v.z, order);
   }
 
-  // reorder
+  // reorder (butuh quaternion.ts)
 
   clone(): Euler {
     return new Euler(this._x, this._y, this._z, this._order);
