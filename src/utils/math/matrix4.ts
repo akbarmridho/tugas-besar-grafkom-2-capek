@@ -1,10 +1,15 @@
 import { Vector3 } from './vector3.ts';
+import { Serializable } from '../../objects/serializable.ts';
+
+export interface Matrix4Serialized {
+  elements: number[];
+}
 
 /**
  * This is a flatten 4x4 matrix
  * with row-major orientation
  */
-export class Matrix4 {
+export class Matrix4 extends Serializable<Matrix4Serialized> {
   private _elements: number[];
 
   public get elements(): number[] {
@@ -35,6 +40,7 @@ export class Matrix4 {
   }
 
   constructor(elements: number[]) {
+    super();
     if (elements.length !== 16) {
       throw new Error(
         `Invalid elements length expecting 16 got ${elements.length}`
@@ -465,5 +471,32 @@ export class Matrix4 {
       v0 * mi[1] + v1 * mi[5] + v2 * mi[9],
       v0 * mi[2] + v1 * mi[6] + v2 * mi[10]
     );
+  }
+
+  /**
+   * Convert to typed array
+   * In this case, we always assume that the matrix want to be converted to
+   * column major instead of row major
+   */
+  public toTypedArray(): Float32Array {
+    const el = this.elements;
+
+    // prettier-ignore
+    return new Float32Array([
+      el[0], el[4], el[8 ], el[12],
+      el[1], el[5], el[9 ], el[13],
+      el[2], el[6], el[10], el[14],
+      el[3], el[7], el[11], el[15]
+    ])
+  }
+
+  public toJSON(): Matrix4Serialized {
+    return {
+      elements: [...this._elements]
+    };
+  }
+
+  public static fromJSON(raw: Matrix4Serialized): Matrix4 {
+    return new Matrix4(raw.elements);
   }
 }
