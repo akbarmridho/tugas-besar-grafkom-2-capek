@@ -245,9 +245,6 @@ export class Transformation {
   // todo compose function
   // https://github.com/gfxfundamentals/webgl-fundamentals/blob/master/webgl/resources/m4.js#L1031
 
-  // todo quat from rotation matrix
-  // https://github.com/gfxfundamentals/webgl-fundamentals/blob/master/webgl/resources/m4.js#L1031
-
   // todo decompose
   // https://github.com/gfxfundamentals/webgl-fundamentals/blob/master/webgl/resources/m4.js#L1031
 }
