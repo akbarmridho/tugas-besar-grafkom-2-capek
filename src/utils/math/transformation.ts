@@ -1,5 +1,6 @@
 import { Vector3 } from './vector3.ts';
 import { Matrix4 } from './matrix4.ts';
+import { Quaternion } from './quaternion.ts';
 
 export class Transformation {
   /**
@@ -242,9 +243,102 @@ export class Transformation {
     ])
   }
 
-  // todo compose function
-  // https://github.com/gfxfundamentals/webgl-fundamentals/blob/master/webgl/resources/m4.js#L1031
+  /**
+   * Create a matrix from translation, quaternion, scale
+   * @param translation
+   * @param quaternion
+   * @param scale
+   */
+  public static compose(
+    translation: Vector3,
+    quaternion: Quaternion,
+    scale: Vector3
+  ): Matrix4 {
+    const x = quaternion.elements[0];
+    const y = quaternion.elements[1];
+    const z = quaternion.elements[2];
+    const w = quaternion.elements[3];
+
+    const x2 = x + x;
+    const y2 = y + y;
+    const z2 = z + z;
+
+    const xx = x * x2;
+    const xy = x * y2;
+    const xz = x * z2;
+
+    const yy = y * y2;
+    const yz = y * z2;
+    const zz = z * z2;
+
+    const wx = w * x2;
+    const wy = w * y2;
+    const wz = w * z2;
+
+    const sx = scale.getComponent(0);
+    const sy = scale.getComponent(1);
+    const sz = scale.getComponent(2);
+
+    // prettier-ignore
+    return new Matrix4([
+      (1 - (yy + zz)) * sx, (xy - wz) * sy      , (xz + wy) * sz      , translation.getComponent(0),
+      (xy + wz) * sx      , (1 - (xx + zz)) * sy, (yz - wx) * sz      , translation.getComponent(1),
+      (xz - wy) * sx      , (yz + wx) * sy      , (1 - (xx + yy)) * sz, translation.getComponent(2),
+      0                   , 0                   , 0                   , 1
+    ])
+  }
+
+  public static length(elements: number[] | Float32Array): number {
+    return Math.hypot(...elements);
+  }
 
   // todo decompose
   // https://github.com/gfxfundamentals/webgl-fundamentals/blob/master/webgl/resources/m4.js#L1031
+  public static decompose(matrix: Matrix4): {
+    translation: Vector3;
+    quaternion: Quaternion;
+    scale: Vector3;
+  } {
+    // this array is in column major
+    const el = matrix.toTypedArray();
+    let sx = Transformation.length(el.slice(0, 3));
+    const sy = Transformation.length(el.slice(4, 7));
+    const sz = Transformation.length(el.slice(8, 11));
+
+    // if determinate is negative, we need to invert one scale
+    const det = matrix.determinant();
+
+    if (det < 0) {
+      sx = -sx;
+    }
+
+    const translation = new Vector3(el[12], el[13], el[14]);
+
+    // scale the rotation part
+    const cpy = matrix.copy();
+
+    const invSX = 1 / sx;
+    const invSY = 1 / sy;
+    const invSZ = 1 / sz;
+
+    cpy.elements[0] *= invSX;
+    cpy.elements[4] *= invSX;
+    cpy.elements[8] *= invSX;
+
+    cpy.elements[1] *= invSY;
+    cpy.elements[5] *= invSY;
+    cpy.elements[9] *= invSY;
+
+    cpy.elements[2] *= invSZ;
+    cpy.elements[6] *= invSZ;
+    cpy.elements[10] *= invSZ;
+
+    const quaternion = Quaternion.fromRotationMatrix(cpy);
+
+    return {
+      translation,
+      quaternion,
+      scale: new Vector3(sx, sy, sz)
+    };
+  }
 }
