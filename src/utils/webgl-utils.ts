@@ -6,6 +6,13 @@ import {
 } from '../interfaces/attribute-properties.ts';
 import { BufferAttribute } from '../objects/buffer-attribute.ts';
 import { ProgramInfo } from '../interfaces/program.ts';
+import {
+  UniformMapSetters,
+  UniformObject,
+  UniformSetters,
+  UniformSetterWebGLType
+} from '../interfaces/uniform-properties.ts';
+import { Matrix4 } from './math/matrix4.ts';
 
 export class WebGLUtils {
   /**
@@ -98,12 +105,10 @@ export class WebGLUtils {
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
 
         if (value instanceof BufferAttribute) {
-          // todo add isDirty flag to BufferAttribute
-          // if (v.isDirty) {
-
-          // Data changed Time (note that buffer is already binded
-          gl.bufferData(gl.ARRAY_BUFFER, value.data, gl.STATIC_DRAW);
-          // v.consume();
+          if (value.isDirty) {
+            gl.bufferData(gl.ARRAY_BUFFER, value.data, gl.STATIC_DRAW);
+            value.consume();
+          }
 
           gl.enableVertexAttribArray(loc);
           gl.vertexAttribPointer(
@@ -195,17 +200,99 @@ export class WebGLUtils {
    * @param gl
    * @param program
    */
-  public static createUniformSetters(
+  public static createUniformSetters<T extends UniformObject>(
     gl: WebGLRenderingContext,
     program: WebGLProgram
-  ) {
-    // todo
-    // let textureUnit = 0;
-    //
-    // function createUniformSetter(uniformInfo: WebGLActiveInfo) {
-    //   const location = gl.getUniformLocation(program, uniformInfo.name);
-    //   const type = uniformInfo.type;
-    //
-    // }
+  ): UniformMapSetters<T> {
+    let textureUnit = 0;
+
+    function createUniformSetter(uniformInfo: WebGLActiveInfo): UniformSetters {
+      const location = gl.getUniformLocation(program, uniformInfo.name);
+      const type = uniformInfo.type;
+
+      const isArray =
+        uniformInfo.size > 1 && uniformInfo.name.substring(-3) === '[0]';
+
+      return (v) => {
+        if (isArray) {
+          if (v instanceof Matrix4) {
+            throw new Error('Value cannot be a type of matrix');
+          }
+
+          if (type === gl.FLOAT) {
+            gl.uniform1fv(location, v);
+          } else if (gl.INT) {
+            gl.uniform1iv(location, v);
+          } else if (type === gl.SAMPLER_2D || type === gl.SAMPLER_CUBE) {
+            const units: number[] = [];
+
+            for (let i = 0; i < uniformInfo.size; i++) {
+              units.push(textureUnit++);
+            }
+
+            const bindPoint =
+              type === gl.SAMPLER_2D ? gl.TEXTURE_2D : gl.TEXTURE_CUBE_MAP;
+
+            gl.uniform1iv(location, units);
+            v.forEach((val, i) => {
+              gl.activeTexture(gl.TEXTURE0 + units[i]);
+              gl.bindTexture(bindPoint, val);
+            });
+          }
+        } else {
+          let data;
+
+          if (v instanceof Matrix4) {
+            data = v.toTypedArray();
+          } else {
+            data = v;
+          }
+
+          if (Object.hasOwn(UniformSetterWebGLType, type)) {
+            // @ts-ignore
+            const funcName = UniformSetterWebGLType[type] as string;
+
+            if (funcName.startsWith('Matrix')) {
+              // @ts-ignore
+              gl[`uniform${funcName}`](location, false, data);
+            } else {
+              // @ts-ignore
+              gl[`uniform${funcName}`](location, data);
+            }
+          } else if (type === gl.SAMPLER_2D || type === gl.SAMPLER_CUBE) {
+            const bindPoint =
+              type === gl.SAMPLER_2D ? gl.TEXTURE_2D : gl.TEXTURE_CUBE_MAP;
+            textureUnit++;
+            gl.uniform1i(location, textureUnit);
+            gl.activeTexture(gl.TEXTURE0 + textureUnit);
+            gl.bindTexture(bindPoint, v);
+          } else {
+            throw new Error('Invalid type');
+          }
+        }
+      };
+    }
+
+    const uniformSetters: UniformMapSetters<T> = {} as UniformMapSetters<T>;
+
+    const numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+
+    for (let i = 0; i < numUniforms; i++) {
+      const info = gl.getActiveUniform(program, i);
+
+      if (!info) {
+        continue;
+      }
+
+      let name = info.name;
+
+      if (name.substring(-3) === '[0]') {
+        name = name.substring(0, name.length - 3);
+      }
+
+      uniformSetters[info.name as keyof T] = createUniformSetter(info);
+    }
+
+    return uniformSetters;
   }
 }
