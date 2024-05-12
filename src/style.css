@@ -4,26 +4,81 @@
 
 @layer base {
     :root {
-        --tp-base-background-color: hsla(230, 7%, 17%, 1.00);
-        --tp-base-shadow-color: hsla(230, 7%, 25%, 0.10);
-        --tp-button-background-color: hsla(230, 7%, 70%, 1.00);
-        --tp-button-background-color-active: hsla(230, 7%, 85%, 1);
-        --tp-button-background-color-focus: hsla(230, 7%, 80%, 1);
-        --tp-button-background-color-hover: hsla(230, 7%, 75%, 1);
-        --tp-button-foreground-color: hsla(230, 7%, 17%, 0.8);
-        --tp-container-background-color: hsla(230, 7%, 75%, 0.1);
-        --tp-container-background-color-active: hsla(230, 7%, 75%, 0.25);
-        --tp-container-background-color-focus: hsla(230, 7%, 75%, 0.2);
-        --tp-container-background-color-hover: hsla(230, 7%, 75%, 0.15);
-        --tp-container-foreground-color: hsla(230, 7%, 75%, 1);
-        --tp-groove-foreground-color: hsla(230, 7%, 75%, 0.1);
-        --tp-input-background-color: hsla(230, 7%, 75%, 0.1);
-        --tp-input-background-color-active: hsla(230, 7%, 75%, 0.25);
-        --tp-input-background-color-focus: hsla(230, 7%, 75%, 0.2);
-        --tp-input-background-color-hover: hsla(230, 7%, 75%, 0.15);
-        --tp-input-foreground-color: hsla(230, 7%, 75%, 1.00);
-        --tp-label-foreground-color: hsla(230, 7%, 75%, 0.7);
-        --tp-monitor-background-color: hsla(230, 7%, 0%, 0.2);
-        --tp-monitor-foreground-color: hsla(230, 7%, 75%, 0.7);
+        --background: 0 0% 100%;
+        --foreground: 224 71.4% 4.1%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 224 71.4% 4.1%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 224 71.4% 4.1%;
+
+        --primary: 220.9 39.3% 11%;
+        --primary-foreground: 210 20% 98%;
+
+        --secondary: 220 14.3% 95.9%;
+        --secondary-foreground: 220.9 39.3% 11%;
+
+        --muted: 220 14.3% 95.9%;
+        --muted-foreground: 220 8.9% 46.1%;
+
+        --accent: 220 14.3% 95.9%;
+        --accent-foreground: 220.9 39.3% 11%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 20% 98%;
+
+        --border: 220 13% 91%;
+        --input: 220 13% 91%;
+        --ring: 224 71.4% 4.1%;
+
+        --radius: 0.5rem;
+
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .dark {
+        --background: 224 71.4% 4.1%;
+        --foreground: 210 20% 98%;
+
+        --card: 224 71.4% 4.1%;
+        --card-foreground: 210 20% 98%;
+
+        --popover: 224 71.4% 4.1%;
+        --popover-foreground: 210 20% 98%;
+
+        --primary: 210 20% 98%;
+        --primary-foreground: 220.9 39.3% 11%;
+
+        --secondary: 215 27.9% 16.9%;
+        --secondary-foreground: 210 20% 98%;
+
+        --muted: 215 27.9% 16.9%;
+        --muted-foreground: 217.9 10.6% 64.9%;
+
+        --accent: 215 27.9% 16.9%;
+        --accent-foreground: 210 20% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 20% 98%;
+
+        --border: 215 27.9% 16.9%;
+        --input: 215 27.9% 16.9%;
+        --ring: 216 12.2% 83.9%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
     }
 }
