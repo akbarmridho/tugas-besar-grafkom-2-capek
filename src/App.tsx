@@ -5,6 +5,7 @@ import { SaveAndLoad } from '@/components/save-and-load.tsx';
 import { TooltipProvider } from '@/components/ui/tooltip.tsx';
 import { PerspectiveSelector } from '@/components/perspective-selector.tsx';
 import { AnimationControl } from '@/components/animation-control.tsx';
+import { SceneGraph } from '@/components/scene-graph.tsx';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,6 +40,7 @@ function App() {
           <SaveAndLoad />
           <PerspectiveSelector />
           <AnimationControl />
+          <SceneGraph />
         </div>
       </div>
     </TooltipProvider>
