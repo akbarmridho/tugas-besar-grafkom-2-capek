@@ -3,7 +3,7 @@
       "target": "es2022",
       "useDefineForClassFields": true,
       "module": "ESNext",
-      "lib": ["es2022", "dom", "DOM.Iterable"],
+      "lib": ["es2022", "dom", "dom.iterable"],
       "skipLibCheck": true,
   
       /* Bundler mode */
@@ -22,7 +22,7 @@
       "noUnusedParameters": false,
       "noFallthroughCasesInSwitch": true,
       "types": [
-
+        "@types/wicg-file-system-access"
       ],
       /* Paths */
       "baseUrl": ".",
@@ -30,7 +30,7 @@
         "@/*": [
           "./src/*"
         ]
-      }
+      },
     },
     "include": ["src"]
   }
