@@ -1,7 +1,7 @@
 import { createContext, RefObject, useContext } from 'react';
 
 export interface AppContextValue {
-  gl: WebGLRenderingContext;
+  gl: RefObject<WebGLRenderingContext | null>;
   canvas: RefObject<HTMLCanvasElement | null>;
 }
 

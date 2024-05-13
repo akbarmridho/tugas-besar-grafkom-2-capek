@@ -21,6 +21,18 @@ export const NodeGraph = ({
   activeNode,
   setActiveNode
 }: NodeGraphProps) => {
+  /** todo component
+   * Component Editor
+   * Menambahkan komponen baru sebagai anak dari existing component yang sedang dipilih. Objek default berupa kubus
+   * dengan transformasi default. Jangan lupa memperbarui Scene Graph.
+   * Menghapus komponen yang sedang dipilih.
+   * Melakukan ekspor komponen (tunggal/subtree) dari komponen yang sedang terpilih.
+   * Melakukan impor komponen (tunggal/subtree) untuk ditambahkan menjadi anak dari komponen yang sedang terpilih atau
+   * mengubah komponen yang sedang terpilih.
+   *
+   * Material
+   * Tampilkan antarmuka untuk mengubah material setiap mesh.
+   */
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
