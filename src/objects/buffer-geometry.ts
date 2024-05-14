@@ -6,7 +6,7 @@ export interface BufferGeometrySerialized {
   indices?: BufferAttribute;
 }
 
-export class BufferGeometry extends Serializable<BufferGeometrySerialized> {
+export abstract class BufferGeometry extends Serializable<BufferGeometrySerialized> {
   private _attributes: { [name: string]: BufferAttribute };
   private _indices?: BufferAttribute;
 
@@ -62,16 +62,16 @@ export class BufferGeometry extends Serializable<BufferGeometrySerialized> {
     this.setAttribute('normal', norm);
   }
 
-  toJSON(): BufferGeometrySerialized {
-    return {
-      attributes: this._attributes,
-      indices: this._indices
-    };
-  }
-
-  public static fromJSON(raw: BufferGeometrySerialized): BufferGeometry {
-    return new BufferGeometry(raw.attributes, raw.indices);
-  }
+  //toJSON(): BufferGeometrySerialized {
+  //  return {
+  //    attributes: this._attributes,
+  //    indices: this._indices
+  //  };
+  //}
+//
+  //public static fromJSON(raw: BufferGeometrySerialized): BufferGeometry {
+  //  return new BufferGeometry(raw.attributes, raw.indices);
+  //}
 }
   //public static fromJSON(raw: BufferAttributeSerialized): BufferAttribute {
   //  const data = new TypedArrayMap[raw.data.type as keyof typeof TypedArrayMap](
