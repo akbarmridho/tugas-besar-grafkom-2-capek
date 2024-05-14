@@ -1,4 +1,12 @@
-export class Euler {
+import { Serializable } from '@/objects/serializable.ts';
+import { Vector3Serialized } from '@/utils/math/vector3.ts';
+
+export interface EulerSerialized {
+  elements: number[];
+  order: string;
+}
+
+export class Euler extends Serializable<EulerSerialized> {
   isEuler: boolean;
   private _x: number;
   private _y: number;
@@ -16,6 +24,7 @@ export class Euler {
     z: number = 0,
     order: string = Euler.DEFAULT_ORDER
   ) {
+    super();
     this.isEuler = true;
     this._x = x;
     this._y = y;
@@ -210,5 +219,21 @@ export class Euler {
     yield this._y;
     yield this._z;
     yield this._order;
+  }
+
+  public toJSON(): EulerSerialized {
+    return {
+      elements: [this.x, this.y, this.z],
+      order: this.order
+    };
+  }
+
+  public static fromJSON(raw: EulerSerialized): Euler {
+    return new Euler(
+      raw.elements[0],
+      raw.elements[1],
+      raw.elements[2],
+      raw.order
+    );
   }
 }
