@@ -14,6 +14,7 @@ export class Color extends Serializable<ColorSerialized> {
 
     /* Constructor */
     constructor(r: number, g: number, b: number) {
+        super();
         this.r = r;
         this.g = g;
         this.b = b;
