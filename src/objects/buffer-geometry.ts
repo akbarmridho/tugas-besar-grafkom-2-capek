@@ -3,7 +3,7 @@ import { Serializable } from './serializable.ts';
 
 export interface BufferGeometrySerialized {
   attributes: { [name: string]: BufferAttribute };
-  indices: BufferAttribute;
+  indices?: BufferAttribute;
 }
 
 export class BufferGeometry extends Serializable<BufferGeometrySerialized> {
@@ -12,7 +12,7 @@ export class BufferGeometry extends Serializable<BufferGeometrySerialized> {
 
   constructor(
     attributes: { [name: string]: BufferAttribute } = {},
-    indices: BufferAttribute
+    indices?: BufferAttribute
   ) {
     super();
     this._attributes = attributes;
@@ -61,4 +61,26 @@ export class BufferGeometry extends Serializable<BufferGeometrySerialized> {
     }
     this.setAttribute('normal', norm);
   }
+
+  toJSON(): BufferGeometrySerialized {
+    return {
+      attributes: this._attributes,
+      indices: this._indices
+    };
+  }
+
+  public static fromJSON(raw: BufferGeometrySerialized): BufferGeometry {
+    return new BufferGeometry(raw.attributes, raw.indices);
+  }
 }
+  //public static fromJSON(raw: BufferAttributeSerialized): BufferAttribute {
+  //  const data = new TypedArrayMap[raw.data.type as keyof typeof TypedArrayMap](
+  //    raw.data.data
+  //  );
+//
+  //  return new BufferAttribute(data, raw.size, {
+  //    dtype: raw.dtype,
+  //    normalize: raw.normalize,
+  //    stride: raw.stride,
+  //    offset: raw.offset
+  //  });
