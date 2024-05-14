@@ -1,5 +1,5 @@
 import { Vector3 } from './vector3.ts';
-import { Serializable } from '../../objects/serializable.ts';
+import { Serializable } from '@/objects/serializable.ts';
 
 export interface Matrix4Serialized {
   elements: number[];
@@ -56,153 +56,206 @@ export class Matrix4 extends Serializable<Matrix4Serialized> {
 
   /**
    * Matrix multiplication of this matrix with other matrix
-   * return a new instance of matrix
+   * result = a (this) * b (other)
    *
    * @param other
    */
   public multiplyMatrix(other: Matrix4): Matrix4 {
-    const dst = [];
     const a = this.elements;
     const b = other.elements;
 
-    var b00 = b[0 * 4 + 0];
-    var b01 = b[0 * 4 + 1];
-    var b02 = b[0 * 4 + 2];
-    var b03 = b[0 * 4 + 3];
-    var b10 = b[1 * 4 + 0];
-    var b11 = b[1 * 4 + 1];
-    var b12 = b[1 * 4 + 2];
-    var b13 = b[1 * 4 + 3];
-    var b20 = b[2 * 4 + 0];
-    var b21 = b[2 * 4 + 1];
-    var b22 = b[2 * 4 + 2];
-    var b23 = b[2 * 4 + 3];
-    var b30 = b[3 * 4 + 0];
-    var b31 = b[3 * 4 + 1];
-    var b32 = b[3 * 4 + 2];
-    var b33 = b[3 * 4 + 3];
-    var a00 = a[0 * 4 + 0];
-    var a01 = a[0 * 4 + 1];
-    var a02 = a[0 * 4 + 2];
-    var a03 = a[0 * 4 + 3];
-    var a10 = a[1 * 4 + 0];
-    var a11 = a[1 * 4 + 1];
-    var a12 = a[1 * 4 + 2];
-    var a13 = a[1 * 4 + 3];
-    var a20 = a[2 * 4 + 0];
-    var a21 = a[2 * 4 + 1];
-    var a22 = a[2 * 4 + 2];
-    var a23 = a[2 * 4 + 3];
-    var a30 = a[3 * 4 + 0];
-    var a31 = a[3 * 4 + 1];
-    var a32 = a[3 * 4 + 2];
-    var a33 = a[3 * 4 + 3];
+    const b00 = b[0 * 4 + 0];
+    const b01 = b[0 * 4 + 1];
+    const b02 = b[0 * 4 + 2];
+    const b03 = b[0 * 4 + 3];
+    const b10 = b[1 * 4 + 0];
+    const b11 = b[1 * 4 + 1];
+    const b12 = b[1 * 4 + 2];
+    const b13 = b[1 * 4 + 3];
+    const b20 = b[2 * 4 + 0];
+    const b21 = b[2 * 4 + 1];
+    const b22 = b[2 * 4 + 2];
+    const b23 = b[2 * 4 + 3];
+    const b30 = b[3 * 4 + 0];
+    const b31 = b[3 * 4 + 1];
+    const b32 = b[3 * 4 + 2];
+    const b33 = b[3 * 4 + 3];
+    const a00 = a[0 * 4 + 0];
+    const a01 = a[0 * 4 + 1];
+    const a02 = a[0 * 4 + 2];
+    const a03 = a[0 * 4 + 3];
+    const a10 = a[1 * 4 + 0];
+    const a11 = a[1 * 4 + 1];
+    const a12 = a[1 * 4 + 2];
+    const a13 = a[1 * 4 + 3];
+    const a20 = a[2 * 4 + 0];
+    const a21 = a[2 * 4 + 1];
+    const a22 = a[2 * 4 + 2];
+    const a23 = a[2 * 4 + 3];
+    const a30 = a[3 * 4 + 0];
+    const a31 = a[3 * 4 + 1];
+    const a32 = a[3 * 4 + 2];
+    const a33 = a[3 * 4 + 3];
 
-    dst[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
-    dst[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
-    dst[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
-    dst[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
-    dst[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
-    dst[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
-    dst[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
-    dst[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
-    dst[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
-    dst[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
-    dst[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
-    dst[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
-    dst[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
-    dst[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
-    dst[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
-    dst[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
+    this.elements[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
+    this.elements[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
+    this.elements[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
+    this.elements[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
+    this.elements[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
+    this.elements[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
+    this.elements[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
+    this.elements[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
+    this.elements[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
+    this.elements[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
+    this.elements[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
+    this.elements[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
+    this.elements[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
+    this.elements[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
+    this.elements[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
+    this.elements[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
 
-    return new Matrix4(dst);
+    return this;
+  }
+
+  /**
+   * Matrix pre multiplication of this matrix with other matrix
+   * result = a (other) * b (this)
+   *
+   * @param other
+   */
+  public preMultiplyMatrix(other: Matrix4): Matrix4 {
+    const b = this.elements;
+    const a = other.elements;
+
+    const b00 = b[0 * 4 + 0];
+    const b01 = b[0 * 4 + 1];
+    const b02 = b[0 * 4 + 2];
+    const b03 = b[0 * 4 + 3];
+    const b10 = b[1 * 4 + 0];
+    const b11 = b[1 * 4 + 1];
+    const b12 = b[1 * 4 + 2];
+    const b13 = b[1 * 4 + 3];
+    const b20 = b[2 * 4 + 0];
+    const b21 = b[2 * 4 + 1];
+    const b22 = b[2 * 4 + 2];
+    const b23 = b[2 * 4 + 3];
+    const b30 = b[3 * 4 + 0];
+    const b31 = b[3 * 4 + 1];
+    const b32 = b[3 * 4 + 2];
+    const b33 = b[3 * 4 + 3];
+    const a00 = a[0 * 4 + 0];
+    const a01 = a[0 * 4 + 1];
+    const a02 = a[0 * 4 + 2];
+    const a03 = a[0 * 4 + 3];
+    const a10 = a[1 * 4 + 0];
+    const a11 = a[1 * 4 + 1];
+    const a12 = a[1 * 4 + 2];
+    const a13 = a[1 * 4 + 3];
+    const a20 = a[2 * 4 + 0];
+    const a21 = a[2 * 4 + 1];
+    const a22 = a[2 * 4 + 2];
+    const a23 = a[2 * 4 + 3];
+    const a30 = a[3 * 4 + 0];
+    const a31 = a[3 * 4 + 1];
+    const a32 = a[3 * 4 + 2];
+    const a33 = a[3 * 4 + 3];
+
+    this.elements[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
+    this.elements[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
+    this.elements[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
+    this.elements[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
+    this.elements[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
+    this.elements[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
+    this.elements[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
+    this.elements[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
+    this.elements[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
+    this.elements[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
+    this.elements[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
+    this.elements[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
+    this.elements[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
+    this.elements[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
+    this.elements[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
+    this.elements[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
+
+    return this;
   }
 
   /**
    * Multiply matrix with a scalar.
-   * Return a new instance of matrix
    *
    * @param scalar
    */
   public multiplyScalar(scalar: number): Matrix4 {
     const a = this.elements;
 
-    return new Matrix4([
-      a[0] * scalar,
-      a[1] * scalar,
-      a[2] * scalar,
-      a[3] * scalar,
-      a[4] * scalar,
-      a[5] * scalar,
-      a[6] * scalar,
-      a[7] * scalar,
-      a[8] * scalar,
-      a[9] * scalar,
-      a[10] * scalar,
-      a[11] * scalar,
-      a[12] * scalar,
-      a[13] * scalar,
-      a[14] * scalar,
-      a[15] * scalar
-    ]);
+    this.elements[0] *= scalar;
+    this.elements[1] *= scalar;
+    this.elements[2] *= scalar;
+    this.elements[3] *= scalar;
+    this.elements[4] *= scalar;
+    this.elements[5] *= scalar;
+    this.elements[6] *= scalar;
+    this.elements[7] *= scalar;
+    this.elements[8] *= scalar;
+    this.elements[9] *= scalar;
+    this.elements[10] *= scalar;
+    this.elements[11] *= scalar;
+    this.elements[12] *= scalar;
+    this.elements[13] *= scalar;
+    this.elements[14] *= scalar;
+    this.elements[15] *= scalar;
+
+    return this;
   }
 
   /**
    * Add matrix with other matrix
-   * Return a new instance of matrix
    * @param other
    */
   public addMatrix(other: Matrix4): Matrix4 {
-    const a = this.elements;
-    const b = other.elements;
+    this.elements[0] += other.elements[0];
+    this.elements[1] += other.elements[1];
+    this.elements[2] += other.elements[2];
+    this.elements[3] += other.elements[3];
+    this.elements[4] += other.elements[4];
+    this.elements[5] += other.elements[5];
+    this.elements[6] += other.elements[6];
+    this.elements[7] += other.elements[7];
+    this.elements[8] += other.elements[8];
+    this.elements[9] += other.elements[9];
+    this.elements[10] += other.elements[10];
+    this.elements[11] += other.elements[11];
+    this.elements[12] += other.elements[12];
+    this.elements[13] += other.elements[13];
+    this.elements[14] += other.elements[14];
+    this.elements[15] += other.elements[15];
 
-    return new Matrix4([
-      a[0] + b[0],
-      a[1] + b[1],
-      a[2] + b[2],
-      a[3] + b[3],
-      a[4] + b[4],
-      a[5] + b[5],
-      a[6] + b[6],
-      a[7] + b[7],
-      a[8] + b[8],
-      a[9] + b[9],
-      a[10] + b[10],
-      a[11] + b[11],
-      a[12] + b[12],
-      a[13] + b[13],
-      a[14] + b[14],
-      a[15] + b[15]
-    ]);
+    return this;
   }
 
   /**
    * Subtract matrix with other matrix
-   * Return a new instance of matrix
    * @param other
    */
   public subtractMatrix(other: Matrix4): Matrix4 {
-    const a = this.elements;
-    const b = other.elements;
+    this.elements[0] -= other.elements[0];
+    this.elements[1] -= other.elements[1];
+    this.elements[2] -= other.elements[2];
+    this.elements[3] -= other.elements[3];
+    this.elements[4] -= other.elements[4];
+    this.elements[5] -= other.elements[5];
+    this.elements[6] -= other.elements[6];
+    this.elements[7] -= other.elements[7];
+    this.elements[8] -= other.elements[8];
+    this.elements[9] -= other.elements[9];
+    this.elements[10] -= other.elements[10];
+    this.elements[11] -= other.elements[11];
+    this.elements[12] -= other.elements[12];
+    this.elements[13] -= other.elements[13];
+    this.elements[14] -= other.elements[14];
+    this.elements[15] -= other.elements[15];
 
-    return new Matrix4([
-      a[0] - b[0],
-      a[1] - b[1],
-      a[2] - b[2],
-      a[3] - b[3],
-      a[4] - b[4],
-      a[5] - b[5],
-      a[6] - b[6],
-      a[7] - b[7],
-      a[8] - b[8],
-      a[9] - b[9],
-      a[10] - b[10],
-      a[11] - b[11],
-      a[12] - b[12],
-      a[13] - b[13],
-      a[14] - b[14],
-      a[15] - b[15]
-    ]);
+    return this;
   }
 
   /**
@@ -214,7 +267,6 @@ export class Matrix4 extends Serializable<Matrix4Serialized> {
 
   /**
    * Transpose this matrix
-   * Return a new instance of matrix
    */
   public transpose(): Matrix4 {
     const m = this.elements;
@@ -237,34 +289,34 @@ export class Matrix4 extends Serializable<Matrix4Serialized> {
     dst[14] = m[11];
     dst[15] = m[15];
 
-    return new Matrix4(dst);
+    this._elements = dst;
+
+    return this;
   }
 
   /**
    * Find the inverse of a matrix
-   *
-   * Return new instance of inversed matrix
    */
   public inverse(): Matrix4 {
     const dst = [];
     const m = this.elements;
 
-    var m00 = m[0 * 4 + 0];
-    var m01 = m[0 * 4 + 1];
-    var m02 = m[0 * 4 + 2];
-    var m03 = m[0 * 4 + 3];
-    var m10 = m[1 * 4 + 0];
-    var m11 = m[1 * 4 + 1];
-    var m12 = m[1 * 4 + 2];
-    var m13 = m[1 * 4 + 3];
-    var m20 = m[2 * 4 + 0];
-    var m21 = m[2 * 4 + 1];
-    var m22 = m[2 * 4 + 2];
-    var m23 = m[2 * 4 + 3];
-    var m30 = m[3 * 4 + 0];
-    var m31 = m[3 * 4 + 1];
-    var m32 = m[3 * 4 + 2];
-    var m33 = m[3 * 4 + 3];
+    const m00 = m[0 * 4 + 0];
+    const m01 = m[0 * 4 + 1];
+    const m02 = m[0 * 4 + 2];
+    const m03 = m[0 * 4 + 3];
+    const m10 = m[1 * 4 + 0];
+    const m11 = m[1 * 4 + 1];
+    const m12 = m[1 * 4 + 2];
+    const m13 = m[1 * 4 + 3];
+    const m20 = m[2 * 4 + 0];
+    const m21 = m[2 * 4 + 1];
+    const m22 = m[2 * 4 + 2];
+    const m23 = m[2 * 4 + 3];
+    const m30 = m[3 * 4 + 0];
+    const m31 = m[3 * 4 + 1];
+    const m32 = m[3 * 4 + 2];
+    const m33 = m[3 * 4 + 3];
     const tmp_0 = m22 * m33;
     const tmp_1 = m32 * m23;
     const tmp_2 = m12 * m33;
@@ -390,7 +442,9 @@ export class Matrix4 extends Serializable<Matrix4Serialized> {
         tmp_21 * m12 -
         (tmp_20 * m12 + tmp_23 * m22 + tmp_17 * m02));
 
-    return new Matrix4(dst);
+    this._elements = dst;
+
+    return this;
   }
 
   public determinant(): number {
