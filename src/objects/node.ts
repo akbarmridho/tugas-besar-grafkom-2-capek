@@ -1,24 +1,33 @@
-import { Euler } from '../utils/math/euler.ts';
-import { Matrix4 } from '../utils/math/matrix4.ts';
+import { Euler, EulerSerialized } from '../utils/math/euler.ts';
+import { Matrix4, Matrix4Serialized } from '../utils/math/matrix4.ts';
 import { Quaternion } from '../utils/math/quaternion.ts';
 import { Transformation } from '../utils/math/transformation.ts';
-import { Vector3 } from '../utils/math/vector3.ts';
+import { Vector3, Vector3Serialized } from '../utils/math/vector3.ts';
 import { Serializable } from './serializable.ts';
 
-export class Node {
+export interface NodeSerialized {
+  transform: {
+    position: Vector3Serialized;
+    rotation: EulerSerialized;
+    scale: Vector3Serialized;
+  };
+  children: NodeSerialized[];
+}
+
+export class Node extends Serializable<NodeSerialized> {
   /* Attribute */
   // Transform attributes
-  private _position: Vector3 = new Vector3();
-  private _rotation: Euler = new Euler();
-  private _quaternion: Quaternion = new Quaternion();
-  private _scale: Vector3 = new Vector3(1, 1, 1);
+  private _position: Vector3;
+  private _rotation: Euler;
+  private _quaternion: Quaternion;
+  private _scale: Vector3;
 
   // Matrices
   private _localMatrix: Matrix4 = Matrix4.identity();
   private _worldMatrix: Matrix4 = Matrix4.identity();
 
   // Relation to other nodes
-  private _parent: Node|null = null;
+  private _parent: Node | null = null;
   private _children: Node[] = [];
 
   // Other
@@ -26,23 +35,65 @@ export class Node {
 
   /* Constructor */
   // Initialize Node object
-  constructor() {}
+  constructor(position?: Vector3, rotation?: Euler, scale?: Vector3) {
+    super();
+    if (position) {
+      this._position = position.clone();
+    } else {
+      this._position = new Vector3();
+    }
+
+    if (rotation) {
+      this._rotation = rotation.clone();
+      this._quaternion = new Quaternion();
+      // todo ganti jadi ini
+      // this._quaternion = Quaternion.setFromEuler()
+    } else {
+      this._rotation = new Euler();
+      this._quaternion = new Quaternion();
+    }
+
+    if (scale) {
+      this._scale = scale.clone();
+    } else {
+      this._scale = new Vector3(1, 1, 1);
+    }
+
+    this.updateLocalMatrix();
+  }
 
   /* Getter */
-  get position(): Vector3 {return this._position;}
-  get rotation(): Euler {return this._rotation;}
-  get quaternion(): Quaternion {return this._quaternion;}
-  get scale(): Vector3 {return this._scale;}
-  get localMatrix(): Matrix4 {return this._localMatrix;}
-  get worldMatrix(): Matrix4 {return this._worldMatrix;}
-  get parent(): Node|null {return this._parent;}
-  get children(): Node[] {return this._children;}
+  get position(): Vector3 {
+    return this._position;
+  }
+  get rotation(): Euler {
+    return this._rotation;
+  }
+  get quaternion(): Quaternion {
+    return this._quaternion;
+  }
+  get scale(): Vector3 {
+    return this._scale;
+  }
+  get localMatrix(): Matrix4 {
+    return this._localMatrix;
+  }
+  get worldMatrix(): Matrix4 {
+    return this._worldMatrix;
+  }
+  get parent(): Node | null {
+    return this._parent;
+  }
+  get children(): Node[] {
+    return this._children;
+  }
 
   /* Manage Relation With Other Nodes */
   // Set parent for this node
-  set parent(parent: Node|null) {
+  set parent(parent: Node | null) {
     if (this._parent !== parent) {
       this._parent = parent;
+      this.updateWorldMatrix(false, true);
     }
   }
 
@@ -84,15 +135,30 @@ export class Node {
     const rotation = this._rotation;
     const scale = this._scale;
 
-    this._localMatrix = Transformation.translation(position.getComponent(0), position.getComponent(1), position.getComponent(2))
-                    .multiplyMatrix(Transformation.zRotation(rotation.z)
-                    .multiplyMatrix(Transformation.yRotation(rotation.y)
-                    .multiplyMatrix(Transformation.xRotation(rotation.x)
-                    .multiplyMatrix(Transformation.scaling(scale.getComponent(0), scale.getComponent(1), scale.getComponent(2))))));
+    this._localMatrix = Transformation.translation(
+      position.getComponent(0),
+      position.getComponent(1),
+      position.getComponent(2)
+    ).multiplyMatrix(
+      Transformation.zRotation(rotation.z).multiplyMatrix(
+        Transformation.yRotation(rotation.y).multiplyMatrix(
+          Transformation.xRotation(rotation.x).multiplyMatrix(
+            Transformation.scaling(
+              scale.getComponent(0),
+              scale.getComponent(1),
+              scale.getComponent(2)
+            )
+          )
+        )
+      )
+    );
   }
 
-  // Update the matrix of all node 
-  updateWorldMatrix(updateParents: boolean = true, updateChildren: boolean = true): void {
+  // Update the matrix of all node
+  updateWorldMatrix(
+    updateParents: boolean = true,
+    updateChildren: boolean = true
+  ): void {
     if (updateParents && this._parent !== null) {
       this._parent.updateWorldMatrix(true, false);
     }
@@ -100,9 +166,10 @@ export class Node {
     this.updateLocalMatrix();
 
     if (this._parent !== null) {
-      this._worldMatrix = this._parent.worldMatrix.multiplyMatrix(this._localMatrix);
-    }
-    else {
+      this._worldMatrix = this._parent.worldMatrix
+        .copy()
+        .multiplyMatrix(this._localMatrix);
+    } else {
       this._worldMatrix = this._localMatrix.copy();
     }
 
@@ -115,20 +182,31 @@ export class Node {
 
   /* Node Rotation */
   applyQuaternion(q: Quaternion): Node {
+    // todo premultiply
     this._quaternion = q.multiply(this._quaternion);
+    this._rotation.setFromQuaternion(this._quaternion);
+    this.updateWorldMatrix(false, true);
     return this;
   }
 
   setRotationFromAxisAngle(axis: Vector3, angle: number) {
+    // todo panggil from method instead of function
     this._quaternion = Quaternion.fromAxisAngle(axis, angle);
+    this._rotation.setFromQuaternion(this._quaternion);
+    this.updateWorldMatrix(false, true);
   }
 
   setRotationFromRotationMatrix(m: Matrix4) {
+    // todo panggil from method instead of function
     this._quaternion = Quaternion.fromRotationMatrix(m);
+    this._rotation.setFromRotationMatrix(m);
+    this.updateWorldMatrix(false, true);
   }
 
   setRotationFromQuaternion(q: Quaternion) {
-    this._quaternion = new Quaternion(q.elements[0], q.elements[1], q.elements[2], q.elements[3]);
+    this._quaternion = q.copy();
+    this._rotation.setFromQuaternion(this._quaternion);
+    this.updateWorldMatrix(false, true);
   }
 
   rotateOnWorldAxis(axis: Vector3, angle: number): Node {
@@ -141,6 +219,8 @@ export class Node {
   rotateOnAxis(axis: Vector3, angle: number): Node {
     const q: Quaternion = Quaternion.fromAxisAngle(axis, angle);
     this._quaternion = this._quaternion.multiply(q);
+    this._rotation.setFromQuaternion(this._quaternion);
+    this.updateWorldMatrix(false, true);
 
     return this;
   }
@@ -159,9 +239,9 @@ export class Node {
 
   /* Node Translation */
   translateOnAxis(axis: Vector3, distance: number): Node {
-    const v: Vector3 = (new Vector3()).copyFrom(axis).applyQuaternion(this.quaternion);
+    const v: Vector3 = axis.clone().applyQuaternion(this.quaternion);
     this.position.addVector(v.multiplyScalar(distance));
-    
+    this.updateWorldMatrix(false, true);
     return this;
   }
 
@@ -180,14 +260,36 @@ export class Node {
   /* Additional Method */
   // Transform from local space to world space
   localToWorld(v: Vector3): Vector3 {
-    this.updateWorldMatrix(true, false);
     return v.applyMatrix4(this.worldMatrix);
   }
 
   // Transform from world space to local space
   worldToLocal(v: Vector3): Vector3 {
-    this.updateWorldMatrix(true, false);
     return v.applyMatrix4(this.worldMatrix.inverse());
   }
-  
+
+  public toJSON(): NodeSerialized {
+    return {
+      transform: {
+        position: this.position.toJSON(),
+        rotation: this.rotation.toJSON(),
+        scale: this.scale.toJSON()
+      },
+      children: this.children.map((child) => child.toJSON())
+    };
+  }
+
+  public static fromJSON(raw: NodeSerialized): Node {
+    const position = Vector3.fromJSON(raw.transform.position);
+    const scale = Vector3.fromJSON(raw.transform.scale);
+    const rotation = Euler.fromJSON(raw.transform.rotation);
+
+    const node = new Node(position, rotation, scale);
+
+    for (const child of raw.children) {
+      node.addChildren(Node.fromJSON(child));
+    }
+
+    return node;
+  }
 }

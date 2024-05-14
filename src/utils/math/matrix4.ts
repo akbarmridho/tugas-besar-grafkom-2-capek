@@ -1,5 +1,7 @@
 import { Vector3 } from './vector3.ts';
 import { Serializable } from '@/objects/serializable.ts';
+import { Quaternion } from '@/utils/math/quaternion.ts';
+import { Transformation } from '@/utils/math/transformation.ts';
 
 export interface Matrix4Serialized {
   elements: number[];
@@ -501,6 +503,14 @@ export class Matrix4 extends Serializable<Matrix4Serialized> {
       (tmp_4 * m01 + tmp_9 * m11 + tmp_10 * m21);
 
     return 1.0 / (m00 * t0 + m10 * t1 + m20 * t2 + m30 * t3);
+  }
+
+  public static makeRotationFromQuaternion(q: Quaternion): Matrix4 {
+    return Transformation.compose(
+      new Vector3(0, 0, 0),
+      q,
+      new Vector3(1, 1, 1)
+    );
   }
 
   // these todo need to implement vector4 first

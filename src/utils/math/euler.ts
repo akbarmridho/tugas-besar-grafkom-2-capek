@@ -1,5 +1,8 @@
 import { Serializable } from '@/objects/serializable.ts';
-import { Vector3Serialized } from '@/utils/math/vector3.ts';
+import { Matrix4 } from '@/utils/math/matrix4.ts';
+import { Vector3 } from '@/utils/math/vector3.ts';
+import { Quaternion } from '@/utils/math/quaternion.ts';
+import { Transformation } from '@/utils/math/transformation.ts';
 
 export interface EulerSerialized {
   elements: number[];
@@ -72,11 +75,7 @@ export class Euler extends Serializable<EulerSerialized> {
     return this;
   }
 
-  setRotMatrix(
-    m: { elements: number[] },
-    order: string = this._order,
-    update: boolean = true
-  ): this {
+  setFromRotationMatrix(m: Matrix4, order: string = this._order): this {
     const t: number[] = m.elements,
       m11: number = t[0],
       m12: number = t[3],
@@ -164,11 +163,19 @@ export class Euler extends Serializable<EulerSerialized> {
 
   // setQuaternion (butuh matrix4.ts)
 
-  setVec3(
-    v: { x: number; y: number; z: number },
-    order: string = this._order
-  ): this {
-    return this.set(v.x, v.y, v.z, order);
+  setFromQuaternion(q: Quaternion) {
+    const matrix = Matrix4.makeRotationFromQuaternion(q);
+    this.setFromRotationMatrix(matrix);
+    return this;
+  }
+
+  setFromVector3(v: Vector3, order: string = this._order): this {
+    return this.set(
+      v.getComponent(0),
+      v.getComponent(1),
+      v.getComponent(2),
+      order
+    );
   }
 
   // reorder (butuh quaternion.ts)
