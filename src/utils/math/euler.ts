@@ -1,16 +1,33 @@
-export class Euler {
-  isEuler : boolean;
-  private _x : number;
-  private _y : number;
-  private _z : number;
-  private _order : string;
-  static DEFAULT_ORDER : string = "XYZ";
+import { Serializable } from '@/objects/serializable.ts';
+import { Matrix4 } from '@/utils/math/matrix4.ts';
+import { Vector3 } from '@/utils/math/vector3.ts';
+import { Quaternion } from '@/utils/math/quaternion.ts';
+import { Transformation } from '@/utils/math/transformation.ts';
 
-  static clamp(val:number, min:number, max:number):number {
+export interface EulerSerialized {
+  elements: number[];
+  order: string;
+}
+
+export class Euler extends Serializable<EulerSerialized> {
+  isEuler: boolean;
+  private _x: number;
+  private _y: number;
+  private _z: number;
+  private _order: string;
+  static DEFAULT_ORDER: string = 'XYZ';
+
+  static clamp(val: number, min: number, max: number): number {
     return Math.max(min, Math.min(max, val));
   }
 
-  constructor(x:number=0, y:number=0, z:number=0, order:string=Euler.DEFAULT_ORDER) {
+  constructor(
+    x: number = 0,
+    y: number = 0,
+    z: number = 0,
+    order: string = Euler.DEFAULT_ORDER
+  ) {
+    super();
     this.isEuler = true;
     this._x = x;
     this._y = y;
@@ -34,87 +51,111 @@ export class Euler {
     return this._order;
   }
 
-  set x(nilai: number) {
-    this._x = nilai;
+  set x(value: number) {
+    this._x = value;
   }
 
-  set y(nilai: number) {
-    this._y = nilai;
+  set y(value: number) {
+    this._y = value;
   }
 
-  set z(nilai: number) {
-    this._z = nilai;
+  set z(value: number) {
+    this._z = value;
   }
 
-  set order(nilai: string) {
-    this._order = nilai;
+  set order(value: string) {
+    this._order = value;
   }
 
-  set(x:number, y:number, z:number, order:string = this._order):this {
+  set(x: number, y: number, z: number, order: string = this._order): this {
     this._x = x;
     this._y = y;
     this._z = z;
     this._order = order;
     return this;
   }
-  
-  setRotMatrix(m: {elements:number[]}, order: string=this._order, update:boolean=true):this {
+
+  setFromRotationMatrix(m: Matrix4, order: string = this._order): this {
     const t: number[] = m.elements,
-          m11: number = t[0], m12: number = t[3], m13: number = t[6],
-          m21: number = t[1], m22: number = t[4], m23: number = t[7],
-          m31: number = t[2], m32: number = t[5], m33: number = t[8];
+      m11: number = t[0],
+      m12: number = t[3],
+      m13: number = t[6],
+      m21: number = t[1],
+      m22: number = t[4],
+      m23: number = t[7],
+      m31: number = t[2],
+      m32: number = t[5],
+      m33: number = t[8];
 
     switch (order) {
-      case "XYZ":
+      case 'XYZ':
         this._y = Math.asin(Euler.clamp(m13, -1, 1));
         if (Math.abs(m13) < 1) {
-          this._x = Math.atan2(-m23, m33); this._z = Math.atan2(-m12, m11);
+          this._x = Math.atan2(-m23, m33);
+          this._z = Math.atan2(-m12, m11);
         } else {
-          this._x = Math.atan2(m32, m22); this._z = 0;
-        } break;
+          this._x = Math.atan2(m32, m22);
+          this._z = 0;
+        }
+        break;
 
-      case "XZY":
-        this._z = Math.asin(-1 * (Euler.clamp(m12, -1, 1)));
+      case 'XZY':
+        this._z = Math.asin(-1 * Euler.clamp(m12, -1, 1));
         if (Math.abs(m12) < 1) {
-          this._x = Math.atan2(m32, m22); this._y = Math.atan2(m13, m11);
+          this._x = Math.atan2(m32, m22);
+          this._y = Math.atan2(m13, m11);
         } else {
-          this._x = Math.atan2(-m23, m33); this._y = 0;
-        } break;
+          this._x = Math.atan2(-m23, m33);
+          this._y = 0;
+        }
+        break;
 
-      case "YXZ":
-        this._x = Math.asin(-1 * (Euler.clamp(m23, -1, 1)));
+      case 'YXZ':
+        this._x = Math.asin(-1 * Euler.clamp(m23, -1, 1));
         if (Math.abs(m23) < 1) {
-          this._y = Math.atan2(m13, m33); this._z = Math.atan2(m21, m22);
+          this._y = Math.atan2(m13, m33);
+          this._z = Math.atan2(m21, m22);
         } else {
-          this._y = Math.atan2(-m31, m11); this._z = 0;
-        } break;
+          this._y = Math.atan2(-m31, m11);
+          this._z = 0;
+        }
+        break;
 
-      case "YZX":
+      case 'YZX':
         this._z = Math.asin(Euler.clamp(m21, -1, 1));
         if (Math.abs(m21) < 1) {
-          this._x = Math.atan2(-m23, m22); this._y = Math.atan2(-m31, m11);
+          this._x = Math.atan2(-m23, m22);
+          this._y = Math.atan2(-m31, m11);
         } else {
-          this._x = 0; this._y = Math.atan2(m13, m33);
-        } break;
+          this._x = 0;
+          this._y = Math.atan2(m13, m33);
+        }
+        break;
 
-      case "ZXY":
+      case 'ZXY':
         this._x = Math.asin(Euler.clamp(m32, -1, 1));
         if (Math.abs(m32) < 1) {
-          this._y = Math.atan2(-m31, m33); this._z = Math.atan2(-m12, m22);
+          this._y = Math.atan2(-m31, m33);
+          this._z = Math.atan2(-m12, m22);
         } else {
-          this._y = 0; this._z = Math.atan2(m21, m11);
-        } break;
+          this._y = 0;
+          this._z = Math.atan2(m21, m11);
+        }
+        break;
 
-      case "ZYX":
-        this._y = Math.asin(-1 * (Euler.clamp(m31, -1, 1)));
+      case 'ZYX':
+        this._y = Math.asin(-1 * Euler.clamp(m31, -1, 1));
         if (Math.abs(m31) < 1) {
-          this._x = Math.atan2(m32, m33); this._z = Math.atan2(m21, m11);
+          this._x = Math.atan2(m32, m33);
+          this._z = Math.atan2(m21, m11);
         } else {
-          this._x = 0; this._z = Math.atan2(-m12, m22);
-        } break;
+          this._x = 0;
+          this._z = Math.atan2(-m12, m22);
+        }
+        break;
 
       default:
-        console.warn("Unknown order: "+ order);
+        console.warn('Unknown order: ' + order);
     }
     this._order = order;
     return this;
@@ -122,8 +163,19 @@ export class Euler {
 
   // setQuaternion (butuh matrix4.ts)
 
-  setVec3(v: {x:number, y:number, z:number}, order:string = this._order):this {
-    return this.set(v.x, v.y, v.z, order);
+  setFromQuaternion(q: Quaternion) {
+    const matrix = Matrix4.makeRotationFromQuaternion(q);
+    this.setFromRotationMatrix(matrix);
+    return this;
+  }
+
+  setFromVector3(v: Vector3, order: string = this._order): this {
+    return this.set(
+      v.getComponent(0),
+      v.getComponent(1),
+      v.getComponent(2),
+      order
+    );
   }
 
   // reorder (butuh quaternion.ts)
@@ -132,18 +184,23 @@ export class Euler {
     return new Euler(this._x, this._y, this._z, this._order);
   }
 
-  copy(euler:Euler):void {
+  copy(euler: Euler): void {
     this._x = euler._x;
     this._y = euler._y;
     this._z = euler._z;
     this._order = euler._order;
   }
 
-  isEqual(euler:Euler):boolean {
-    return ((euler._x === this._x) && (euler._y === this._y) && (euler._z === this._z) && (euler._order === this._order));
+  isEqual(euler: Euler): boolean {
+    return (
+      euler._x === this._x &&
+      euler._y === this._y &&
+      euler._z === this._z &&
+      euler._order === this._order
+    );
   }
 
-  ArrayToEuler(array:[number, number, number, string?]):this {
+  ArrayToEuler(array: [number, number, number, string?]): this {
     this._x = array[0];
     this._y = array[1];
     this._z = array[2];
@@ -152,20 +209,38 @@ export class Euler {
     return this;
   }
 
-  EulerToArray(array:[number, number, number, string]=[0, 0, 0, Euler.DEFAULT_ORDER], n:number=0):[number, number, number, string] {
+  EulerToArray(
+    array: [number, number, number, string] = [0, 0, 0, Euler.DEFAULT_ORDER],
+    n: number = 0
+  ): [number, number, number, string] {
     array[n] = this._x;
-    array[n+1] = this._y;
-    array[n+2] = this._z;
-    array[n+3] = this._order;
+    array[n + 1] = this._y;
+    array[n + 2] = this._z;
+    array[n + 3] = this._order;
 
     return array;
   }
 
-  *[Symbol.iterator]():IterableIterator<number|string> {
+  *[Symbol.iterator](): IterableIterator<number | string> {
     yield this._x;
     yield this._y;
     yield this._z;
     yield this._order;
   }
 
+  public toJSON(): EulerSerialized {
+    return {
+      elements: [this.x, this.y, this.z],
+      order: this.order
+    };
+  }
+
+  public static fromJSON(raw: EulerSerialized): Euler {
+    return new Euler(
+      raw.elements[0],
+      raw.elements[1],
+      raw.elements[2],
+      raw.order
+    );
+  }
 }
