@@ -31,6 +31,7 @@ export class Node extends Serializable<NodeSerialized> {
   private _children: Node[] = [];
 
   // Other
+  name: string = 'node';
   visible: boolean = true;
 
   /* Constructor */
@@ -45,9 +46,7 @@ export class Node extends Serializable<NodeSerialized> {
 
     if (rotation) {
       this._rotation = rotation.clone();
-      this._quaternion = new Quaternion();
-      // todo ganti jadi ini
-      // this._quaternion = Quaternion.setFromEuler()
+      this._quaternion = new Quaternion().fromEuler(this._rotation);
     } else {
       this._rotation = new Euler();
       this._quaternion = new Quaternion();
@@ -182,23 +181,20 @@ export class Node extends Serializable<NodeSerialized> {
 
   /* Node Rotation */
   applyQuaternion(q: Quaternion): Node {
-    // todo premultiply
-    this._quaternion = q.multiply(this._quaternion);
+    this._quaternion.premultiply(q);
     this._rotation.setFromQuaternion(this._quaternion);
     this.updateWorldMatrix(false, true);
     return this;
   }
 
   setRotationFromAxisAngle(axis: Vector3, angle: number) {
-    // todo panggil from method instead of function
-    this._quaternion = Quaternion.fromAxisAngle(axis, angle);
+    this._quaternion.fromAxisAngle(axis, angle);
     this._rotation.setFromQuaternion(this._quaternion);
     this.updateWorldMatrix(false, true);
   }
 
   setRotationFromRotationMatrix(m: Matrix4) {
-    // todo panggil from method instead of function
-    this._quaternion = Quaternion.fromRotationMatrix(m);
+    this._quaternion.fromRotationMatrix(m);
     this._rotation.setFromRotationMatrix(m);
     this.updateWorldMatrix(false, true);
   }
@@ -218,7 +214,7 @@ export class Node extends Serializable<NodeSerialized> {
 
   rotateOnAxis(axis: Vector3, angle: number): Node {
     const q: Quaternion = Quaternion.fromAxisAngle(axis, angle);
-    this._quaternion = this._quaternion.multiply(q);
+    this._quaternion.multiply(q);
     this._rotation.setFromQuaternion(this._quaternion);
     this.updateWorldMatrix(false, true);
 
@@ -255,6 +251,25 @@ export class Node extends Serializable<NodeSerialized> {
 
   translateOnZ(distance: number): Node {
     return this.translateOnAxis(new Vector3(0, 0, 1), distance);
+  }
+
+  /* Node Scaling */
+  scaleOnX(scale: number): Node {
+    this._scale.setComponent(0, scale);
+    this.updateWorldMatrix(false, true);
+    return this;
+  }
+
+  scaleOnY(scale: number): Node {
+    this._scale.setComponent(1, scale);
+    this.updateWorldMatrix(false, true);
+    return this;
+  }
+
+  scaleOnZ(scale: number): Node {
+    this._scale.setComponent(2, scale);
+    this.updateWorldMatrix(false, true);
+    return this;
   }
 
   /* Additional Method */
