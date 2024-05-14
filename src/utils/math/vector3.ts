@@ -1,3 +1,6 @@
+import { Matrix4 } from "./matrix4";
+import { Quaternion } from "./quaternion";
+
 export class Vector3 {
   /* Attribute */
   // Correspond to three vector components
@@ -438,5 +441,33 @@ export class Vector3 {
     return Math.acos(Math.max( -1, Math.min( 1, theta ) ))
   }
   
-  /* To do: need other class */
+  // Apply quaternion to this Vector3
+  applyQuaternion(q: Quaternion): Vector3 {
+    const vx = this.x, vy = this.y, vz = this.z;
+		const qx = q.elements[0], qy = q.elements[1], qz = q.elements[2], qw = q.elements[3];
+
+		const tx = 2 * ( qy * vz - qz * vy );
+		const ty = 2 * ( qz * vx - qx * vz );
+		const tz = 2 * ( qx * vy - qy * vx );
+
+		this.x = vx + qw * tx + qy * tz - qz * ty;
+		this.y = vy + qw * ty + qz * tx - qx * tz;
+		this.z = vz + qw * tz + qx * ty - qy * tx;
+
+		return this;
+  }
+
+  // Apply or multiply a Matrix to this Vector3
+  applyMatrix4(m: Matrix4): Vector3 {
+    const x = this.x, y = this.y, z = this.z;
+		const e = m.elements;
+
+		const w = 1 / ( e[3] * x + e[7] * y + e[11] * z + e[15] );
+
+		this.x = ( e[0] * x + e[4] * y + e[8] * z + e[12] ) * w;
+		this.y = ( e[1] * x + e[5] * y + e[9] * z + e[13] ) * w;
+		this.z = ( e[2] * x + e[6] * y + e[10] * z + e[14] ) * w;
+
+		return this;
+  }
 }
