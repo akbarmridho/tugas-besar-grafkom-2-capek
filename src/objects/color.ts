@@ -20,6 +20,7 @@ export class Color extends Serializable<ColorSerialized> {
         this.b = b;
     }
 
+    /* Methods*/
     clone(): Color {
         return new Color(this.r, this.g, this.b);
     }
