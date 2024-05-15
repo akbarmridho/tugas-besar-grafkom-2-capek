@@ -15,7 +15,7 @@ export interface NodeSerialized {
   children: NodeSerialized[];
 }
 
-export abstract class Node extends Serializable<NodeSerialized> {
+export abstract class Node<T extends NodeSerialized> extends Serializable<T> {
   /* Attribute */
   // Transform attributes
   private _position: Vector3;
@@ -28,8 +28,10 @@ export abstract class Node extends Serializable<NodeSerialized> {
   private _worldMatrix: Matrix4 = Matrix4.identity();
 
   // Relation to other nodes
-  private _parent: Node | null = null;
-  private _children: Node[] = [];
+  // @ts-ignore
+  private _parent: Node<unknown> | null = null;
+  // @ts-ignore
+  private _children: Node<unknown>[] = [];
 
   // Other
   name: string = 'node';
@@ -89,16 +91,19 @@ export abstract class Node extends Serializable<NodeSerialized> {
   get worldMatrix(): Matrix4 {
     return this._worldMatrix;
   }
-  get parent(): Node | null {
+  // @ts-ignore
+  get parent(): Node<unknown> | null {
     return this._parent;
   }
-  get children(): Node[] {
+  // @ts-ignore
+  get children(): Node<unknown>[] {
     return this._children;
   }
 
   /* Manage Relation With Other Nodes */
   // Set parent for this node
-  set parent(parent: Node | null) {
+  // @ts-ignore
+  set parent(parent: Node<unknown> | null) {
     if (this._parent !== parent) {
       this._parent = parent;
       this.updateWorldMatrix(false, true);
@@ -107,7 +112,8 @@ export abstract class Node extends Serializable<NodeSerialized> {
 
   // Add a new children for this node
   // If the children already have parent, replace parent with this node
-  addChildren(node: Node): Node {
+  // @ts-ignore
+  addChildren(node: Node<unknown>): Node<T> {
     node.removeFromParent();
     node.parent = this;
     this._children.push(node);
@@ -116,7 +122,8 @@ export abstract class Node extends Serializable<NodeSerialized> {
   }
 
   // Remove a children and set that children parent to null
-  removeChildren(node: Node): Node {
+  // @ts-ignore
+  removeChildren(node: Node<unknown>): Node<T> {
     const indexToRemove = this._children.indexOf(node);
 
     if (indexToRemove !== -1) {
@@ -128,7 +135,7 @@ export abstract class Node extends Serializable<NodeSerialized> {
   }
 
   // Remove this node from its parent
-  removeFromParent(): Node {
+  removeFromParent(): Node<T> {
     if (this._parent !== null) {
       this._parent.removeChildren(this);
     }
@@ -189,7 +196,7 @@ export abstract class Node extends Serializable<NodeSerialized> {
   }
 
   /* Node Rotation */
-  applyQuaternion(q: Quaternion): Node {
+  applyQuaternion(q: Quaternion): Node<T> {
     this._quaternion.premultiply(q);
     this._rotation.setFromQuaternion(this._quaternion);
     this.updateWorldMatrix(false, true);
@@ -214,14 +221,14 @@ export abstract class Node extends Serializable<NodeSerialized> {
     this.updateWorldMatrix(false, true);
   }
 
-  rotateOnWorldAxis(axis: Vector3, angle: number): Node {
+  rotateOnWorldAxis(axis: Vector3, angle: number): Node<T> {
     const q: Quaternion = Quaternion.fromAxisAngle(axis, angle);
     this.applyQuaternion(q);
 
     return this;
   }
 
-  rotateOnAxis(axis: Vector3, angle: number): Node {
+  rotateOnAxis(axis: Vector3, angle: number): Node<T> {
     const q: Quaternion = Quaternion.fromAxisAngle(axis, angle);
     this._quaternion.multiply(q);
     this._rotation.setFromQuaternion(this._quaternion);
@@ -230,52 +237,52 @@ export abstract class Node extends Serializable<NodeSerialized> {
     return this;
   }
 
-  rotateOnX(angle: number): Node {
+  rotateOnX(angle: number): Node<T> {
     return this.rotateOnAxis(new Vector3(1, 0, 0), angle);
   }
 
-  rotateOnY(angle: number): Node {
+  rotateOnY(angle: number): Node<T> {
     return this.rotateOnAxis(new Vector3(0, 1, 0), angle);
   }
 
-  rotateOnZ(angle: number): Node {
+  rotateOnZ(angle: number): Node<T> {
     return this.rotateOnAxis(new Vector3(0, 0, 1), angle);
   }
 
   /* Node Translation */
-  translateOnAxis(axis: Vector3, distance: number): Node {
+  translateOnAxis(axis: Vector3, distance: number): Node<T> {
     const v: Vector3 = axis.clone().applyQuaternion(this.quaternion);
     this.position.addVector(v.multiplyScalar(distance));
     this.updateWorldMatrix(false, true);
     return this;
   }
 
-  translateOnX(distance: number): Node {
+  translateOnX(distance: number): Node<T> {
     return this.translateOnAxis(new Vector3(1, 0, 0), distance);
   }
 
-  translateOnY(distance: number): Node {
+  translateOnY(distance: number): Node<T> {
     return this.translateOnAxis(new Vector3(0, 1, 0), distance);
   }
 
-  translateOnZ(distance: number): Node {
+  translateOnZ(distance: number): Node<T> {
     return this.translateOnAxis(new Vector3(0, 0, 1), distance);
   }
 
   /* Node Scaling */
-  scaleOnX(scale: number): Node {
+  scaleOnX(scale: number): Node<T> {
     this._scale.setComponent(0, scale);
     this.updateWorldMatrix(false, true);
     return this;
   }
 
-  scaleOnY(scale: number): Node {
+  scaleOnY(scale: number): Node<T> {
     this._scale.setComponent(1, scale);
     this.updateWorldMatrix(false, true);
     return this;
   }
 
-  scaleOnZ(scale: number): Node {
+  scaleOnZ(scale: number): Node<T> {
     this._scale.setComponent(2, scale);
     this.updateWorldMatrix(false, true);
     return this;
@@ -292,12 +299,13 @@ export abstract class Node extends Serializable<NodeSerialized> {
     return v.applyMatrix4(this.worldMatrix.inverse());
   }
 
-  public getChildByName(name: string): Node | null {
+  // @ts-ignore
+  public getChildByName(name: string): Node<unknown> | null {
     const node = this.children.find((c) => c.name === name);
     return node || null;
   }
 
-  public toJSON(): NodeSerialized {
+  public toNodeSerialized(): NodeSerialized {
     return {
       name: this.name,
       transform: {
@@ -305,7 +313,7 @@ export abstract class Node extends Serializable<NodeSerialized> {
         rotation: this.rotation.toJSON(),
         scale: this.scale.toJSON()
       },
-      children: this.children.map((child) => child.toJSON())
+      children: this.children.map((child) => child.toJSON()) as NodeSerialized[]
     };
   }
 }

@@ -1,13 +1,29 @@
 import { BufferGeometry } from './buffer-geometry.ts';
-import { Serializable } from './serializable.ts';
 import { ShaderMaterial } from './shader-material.ts';
+import { Node, NodeSerialized } from '@/objects/node.ts';
+import { Vector3 } from '@/utils/math/vector3.ts';
+import { Euler } from '@/utils/math/euler.ts';
 
-export class Mesh extends Serializable {
-  geometry: BufferGeometry;
-  material: ShaderMaterial;
+export interface MeshSerialized extends NodeSerialized {
+  geometry: unknown;
+  material: unknown;
+}
 
-  constructor(geometry: BufferGeometry, material: ShaderMaterial) {
-    super();
+export class Mesh extends Node<MeshSerialized> {
+  // @ts-ignore
+  geometry: BufferGeometry<unknown>;
+  material: ShaderMaterial<unknown>;
+
+  constructor(
+    name: string,
+    // @ts-ignore
+    geometry: BufferGeometry<unknown>,
+    material: ShaderMaterial<unknown>,
+    position?: Vector3,
+    rotation?: Euler,
+    scale?: Vector3
+  ) {
+    super(name, position, rotation, scale);
     this.geometry = geometry;
     this.material = material;
   }
@@ -15,7 +31,8 @@ export class Mesh extends Serializable {
   public toJSON() {
     return {
       geometry: this.geometry.toJSON(),
-      material: this.material.toJSON()
+      material: this.material.toJSON(),
+      ...super.toNodeSerialized()
     };
   }
 }

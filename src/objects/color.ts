@@ -44,6 +44,14 @@ export class Color extends Serializable<ColorSerialized> {
     return new Color(255, 0, 0);
   }
 
+  public static fromHex(hex: number) {
+    const r = (hex >> 16) & 255;
+    const g = (hex >> 8) & 255;
+    const b = hex & 255;
+
+    return new Color(r, g, b);
+  }
+
   /**
    * Iterator for WebGL
    * WebGL receive color in normalized so we need to divide by 255
