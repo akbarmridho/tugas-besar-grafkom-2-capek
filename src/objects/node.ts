@@ -6,6 +6,7 @@ import { Vector3, Vector3Serialized } from '../utils/math/vector3.ts';
 import { Serializable } from './serializable.ts';
 
 export interface NodeSerialized {
+  name: string;
   transform: {
     position: Vector3Serialized;
     rotation: EulerSerialized;
@@ -14,7 +15,7 @@ export interface NodeSerialized {
   children: NodeSerialized[];
 }
 
-export class Node extends Serializable<NodeSerialized> {
+export abstract class Node extends Serializable<NodeSerialized> {
   /* Attribute */
   // Transform attributes
   private _position: Vector3;
@@ -36,8 +37,16 @@ export class Node extends Serializable<NodeSerialized> {
 
   /* Constructor */
   // Initialize Node object
-  constructor(position?: Vector3, rotation?: Euler, scale?: Vector3) {
+  constructor(
+    name: string,
+    position?: Vector3,
+    rotation?: Euler,
+    scale?: Vector3
+  ) {
     super();
+
+    this.name = name;
+
     if (position) {
       this._position = position.clone();
     } else {
@@ -283,8 +292,14 @@ export class Node extends Serializable<NodeSerialized> {
     return v.applyMatrix4(this.worldMatrix.inverse());
   }
 
+  public getChildByName(name: string): Node | null {
+    const node = this.children.find((c) => c.name === name);
+    return node || null;
+  }
+
   public toJSON(): NodeSerialized {
     return {
+      name: this.name,
       transform: {
         position: this.position.toJSON(),
         rotation: this.rotation.toJSON(),
@@ -292,19 +307,5 @@ export class Node extends Serializable<NodeSerialized> {
       },
       children: this.children.map((child) => child.toJSON())
     };
-  }
-
-  public static fromJSON(raw: NodeSerialized): Node {
-    const position = Vector3.fromJSON(raw.transform.position);
-    const scale = Vector3.fromJSON(raw.transform.scale);
-    const rotation = Euler.fromJSON(raw.transform.rotation);
-
-    const node = new Node(position, rotation, scale);
-
-    for (const child of raw.children) {
-      node.addChildren(Node.fromJSON(child));
-    }
-
-    return node;
   }
 }

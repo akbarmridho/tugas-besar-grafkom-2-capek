@@ -22,7 +22,12 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
   private _offset = 0;
   private _isDirty = true; // copy attributes at the start, at least once.
 
-  // Constructor, as a way to create an instance of BufferAttribute.
+  /**
+   * Creates an instance of BufferAttribute
+   * @param data
+   * @param size
+   * @param opt
+   */
   constructor(
     data: TypedArray,
     size: number,
@@ -68,6 +73,7 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
   // Setter, sets private variables.
   set data(data: TypedArray) {
     this._data = data;
+    this._isDirty = true;
   }
   set size(size: number) {
     this._size = size;
@@ -85,10 +91,11 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
     this._offset = offset;
   }
 
-
   // Mark buffer as clean (No need for copying back to GPU);
   // Only called at setter attributes.
-  consume() {this._isDirty = false;}
+  consume() {
+    this._isDirty = false;
+  }
 
   // Retrive the length of a buffer & number of elements inside of said buffer.
   get length(): number {
@@ -98,20 +105,34 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
     return length / this._size;
   }
 
-  set(id:number, data:number[]) {
+  set(index: number, data: number[]) {
     // Sets elemen[index] with data, adjust it with offset and stride.
+
+    if (data.length !== this._size) {
+      throw new Error(
+        `Data length does not match. Expect ${this.size} got ${data.length}`
+      );
+    }
+
     this._isDirty = true;
+    index *= this._size;
+
+    data.forEach((val, j) => {
+      this.data[index + j] = val;
+    });
   }
 
-  get(id:number, size?:number) {
+  get(index: number, size?: number) {
     // Takes elemen[index] into data, adjust it with offset and stride.
-    const data:number[] = [];
-    id *= this._size;
-    if (!size) {size = this._size;}
-    return data;
+    index *= this._size;
+    if (!size) {
+      size = this._size;
+    }
+
+    return Array.from(this.data.slice(index, index + size));
   }
 
-  toJSON() {
+  toJSON(): BufferAttributeSerialized {
     return {
       data: {
         type: this._data.constructor.name,
