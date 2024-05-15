@@ -1,28 +1,36 @@
-import { Matrix4 } from '../../utils/math/matrix4';
-import { Node } from '../node'; 
+import { Matrix4 } from '@/utils/math/matrix4.ts';
+import { Node, NodeSerialized } from '../node';
 
-class Camera extends Node {
-    matrixWorldInverse: Matrix4;
-    projectionMatrix: Matrix4;
-    projectionMatrixInverse: Matrix4;
+export abstract class Camera<T extends NodeSerialized> extends Node<T> {
+  protected _projectionMatrix: Matrix4 = Matrix4.identity();
+  protected _viewProjectionMatrix: Matrix4 = Matrix4.identity();
+  protected _invWorldMatrix: Matrix4 = Matrix4.identity();
 
-    constructor() {
-        super();
-        this.matrixWorldInverse = new Matrix4([]);
-        this.projectionMatrix = new Matrix4([]); 
-        this.projectionMatrixInverse = new Matrix4([]);
-    }
+  updateWorldMatrix(
+    updateParents: boolean = true,
+    updateChildren: boolean = true
+  ) {
+    super.updateWorldMatrix(updateParents, updateChildren);
+    this._invWorldMatrix = this.worldMatrix.copy().inverse();
+    this._viewProjectionMatrix = this._invWorldMatrix
+      .copy()
+      .multiplyMatrix(this.projectionMatrix);
+  }
 
-    // getWorldDirection(target?: Vector3): Vector3 {
-    //     return super.getWorldDirection(target).negate();
-    // }
+  get viewProjectionMatrix() {
+    return this._viewProjectionMatrix;
+  }
 
+  get projectionMatrix() {
+    return this._projectionMatrix;
+  }
 
-    updateWorldMatrix(updateParents?: boolean, updateChildren?: boolean): void {
-        super.updateWorldMatrix(updateParents, updateChildren);
-        this.matrixWorldInverse.copy().inverse();
-    }
+  protected set projectionMatrix(val) {
+    this._projectionMatrix = val;
+    this._viewProjectionMatrix = this._invWorldMatrix
+      .copy()
+      .multiplyMatrix(this.projectionMatrix);
+  }
 
+  abstract computeProjectionMatrix(): void;
 }
-
-export { Camera };
