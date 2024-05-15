@@ -91,10 +91,10 @@ export class WebGLUtils {
    * @param gl
    * @param program
    */
-  public static createAttributeSetters<T extends AttributeObject>(
+  public static createAttributeSetters(
     gl: WebGLRenderingContext,
     program: WebGLProgram
-  ): AttributeMapSetters<T> {
+  ): AttributeMapSetters {
     function createAttributeSetter(info: WebGLActiveInfo): AttributeSetters {
       // initialization time
       const loc = gl.getAttribLocation(program, info.name);
@@ -165,7 +165,7 @@ export class WebGLUtils {
       };
     }
 
-    const attribSetters: AttributeMapSetters<T> = {} as AttributeMapSetters<T>;
+    const attribSetters: AttributeMapSetters = {};
 
     const numAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
 
@@ -176,20 +176,20 @@ export class WebGLUtils {
         continue;
       }
 
-      attribSetters[info.name as keyof T] = createAttributeSetter(info);
+      attribSetters[info.name] = createAttributeSetter(info);
     }
 
     return attribSetters;
   }
 
-  public static setAttributes<T extends AttributeObject>(
-    programInfo: ProgramInfo<T>,
-    attributes: T
+  public static setAttributes(
+    programInfo: ProgramInfo,
+    attributes: AttributeObject
   ) {
     for (const attributeName of Object.keys(attributes)) {
-      if (attributeName in programInfo.attributeSetters) {
-        programInfo.attributeSetters[attributeName](attributes[attributeName]);
-      }
+      programInfo.attributeSetters[`a_${attributeName}`]!(
+        attributes[attributeName]!
+      );
     }
   }
 
@@ -295,5 +295,11 @@ export class WebGLUtils {
     }
 
     return uniformSetters;
+  }
+
+  public static setUniforms(programInfo: ProgramInfo, uniforms: UniformObject) {
+    for (const uniformName of Object.keys(uniforms)) {
+      programInfo.uniformSetters[`u_${uniformName}`]!(uniforms[uniformName]!);
+    }
   }
 }

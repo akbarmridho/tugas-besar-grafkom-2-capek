@@ -6,7 +6,7 @@ import { Serializable } from './serializable.ts';
 import { AttributeObject } from '@/interfaces/attribute-properties.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 
-export interface BaseBufferGeometryAttribute extends Partial<AttributeObject> {
+export interface BaseBufferGeometryAttribute extends AttributeObject {
   position: BufferAttribute;
   normal: BufferAttribute;
   texcoord?: BufferAttribute;

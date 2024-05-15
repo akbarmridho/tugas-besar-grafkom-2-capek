@@ -22,9 +22,11 @@ export type UniformDataType = Matrix4 | Iterable<number>;
 
 export type UniformSetters = (val: UniformDataType) => void;
 
-export interface UniformObject {
+export interface BaseUniformObject {
   [uniformName: string]: UniformDataType;
 }
+
+export interface UniformObject extends Partial<BaseUniformObject> {}
 
 export type UniformMapSetters = {
   [keyName: string]: UniformSetters;

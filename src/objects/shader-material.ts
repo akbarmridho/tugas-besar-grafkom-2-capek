@@ -7,13 +7,13 @@ export abstract class ShaderMaterial<T> extends Serializable<T> {
   /* Attribute */
   private _vertexShader: string;
   private _fragmentShader: string;
-  private _uniforms: Partial<UniformObject>;
+  private _uniforms: UniformObject;
 
   /* Constructor */
   protected constructor(
     vertexShader: string = '',
     fragmentShader: string = '',
-    uniforms: Partial<UniformObject> = {}
+    uniforms: UniformObject = {}
   ) {
     super();
     this._vertexShader = vertexShader;

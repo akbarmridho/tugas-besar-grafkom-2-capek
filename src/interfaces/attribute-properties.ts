@@ -4,10 +4,14 @@ export type AttributeDataType = BufferAttribute | Float32Array | number[];
 
 export type AttributeSetters = (v: AttributeDataType) => void;
 
-export interface AttributeObject {
+interface BaseAttributeObject {
   [attributeName: string]: AttributeDataType;
 }
 
-export type AttributeMapSetters<T extends Partial<AttributeObject>> = {
-  [Property in keyof T]: AttributeSetters;
-};
+export interface AttributeObject extends Partial<BaseAttributeObject> {}
+
+interface BaseAttributeMapSetters {
+  [attributeName: string]: AttributeSetters;
+}
+
+export interface AttributeMapSetters extends Partial<BaseAttributeMapSetters> {}

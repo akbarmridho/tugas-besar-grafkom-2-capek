@@ -21,7 +21,16 @@ export class Texture {
   private _generateMipmaps: boolean;
 
   /* Constructor */
-  constructor(image: ArrayBuffer | null = null, wrapS: number, wrapT: number, magFilter: number, minFilter: number, format: number, dtype: number, generateMipmaps: boolean) {
+  constructor(
+    image: ArrayBuffer | null = null,
+    wrapS: number,
+    wrapT: number,
+    magFilter: number,
+    minFilter: number,
+    format: number,
+    dtype: number,
+    generateMipmaps: boolean
+  ) {
     this._image = image;
     this._wrapS = wrapS;
     this._wrapT = wrapT;
@@ -33,14 +42,16 @@ export class Texture {
   }
 
   /* Getter */
-  get image() : ArrayBuffer | null {return this._image;}
+  get image(): ArrayBuffer | null {
+    return this._image;
+  }
 
   /* Setter */
   set image(newImage: ArrayBuffer | null) {
     this._image = newImage;
   }
 }
-
-const canvas = document.createElement('canvas')
-const gl = canvas.getContext('webgl2')
-gl?.REPEAT
+//
+// const canvas = document.createElement('canvas')
+// const gl = canvas.getContext('webgl2')
+// gl?.REPEAT

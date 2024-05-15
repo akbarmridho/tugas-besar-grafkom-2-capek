@@ -4,8 +4,8 @@ import {
 } from './attribute-properties.ts';
 import { UniformMapSetters } from '@/interfaces/uniform-properties.ts';
 
-export interface ProgramInfo<T extends AttributeObject> {
+export interface ProgramInfo {
   program: WebGLProgram;
-  attributeSetters: AttributeMapSetters<T>;
+  attributeSetters: AttributeMapSetters;
   uniformSetters: UniformMapSetters;
 }
