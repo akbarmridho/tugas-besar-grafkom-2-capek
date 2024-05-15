@@ -8,6 +8,6 @@ export interface AttributeObject {
   [attributeName: string]: AttributeDataType;
 }
 
-export type AttributeMapSetters<T extends AttributeObject> = {
+export type AttributeMapSetters<T extends Partial<AttributeObject>> = {
   [Property in keyof T]: AttributeSetters;
 };

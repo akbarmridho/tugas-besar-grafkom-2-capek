@@ -17,9 +17,9 @@ export class Transformation {
     target: Vector3,
     up: Vector3
   ): Matrix4 {
-    const zAxis = cameraPosition.subVector(target).normalize();
-    const xAxis = up.cross(zAxis).normalize();
-    const yAxis = zAxis.cross(xAxis).normalize();
+    const zAxis = Vector3.subVectors(cameraPosition, target).normalize();
+    const xAxis = Vector3.crossVectors(up, zAxis).normalize();
+    const yAxis = Vector3.crossVectors(zAxis, xAxis).normalize();
 
     // prettier-ignore
     return new Matrix4([

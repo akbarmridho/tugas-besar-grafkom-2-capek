@@ -153,6 +153,14 @@ export class Vector3 extends Serializable<Vector3Serialized> {
     return this;
   }
 
+  subArray(otherVector: number[]): Vector3 {
+    this.x -= otherVector[0];
+    this.y -= otherVector[1];
+    this.z -= otherVector[2];
+
+    return this;
+  }
+
   // Subtract a scalar from components of this Vector3
   subScalar(scalar: number): Vector3 {
     this.x -= scalar;
@@ -353,7 +361,18 @@ export class Vector3 extends Serializable<Vector3Serialized> {
 
   // Find the cross product of vectors
   cross(otherVector: Vector3): Vector3 {
-    return Vector3.crossVectors(this, otherVector);
+    const x1 = this.x,
+      y1 = this.y,
+      z1 = this.z;
+    const x2 = otherVector.x,
+      y2 = otherVector.y,
+      z2 = otherVector.z;
+
+    this.x = y1 * z2 - z1 * y2;
+    this.y = z1 * x2 - x1 * z2;
+    this.z = x1 * y2 - y1 * x2;
+
+    return this;
   }
 
   // Find the cross product of two vectors
@@ -503,6 +522,10 @@ export class Vector3 extends Serializable<Vector3Serialized> {
     this.z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * w;
 
     return this;
+  }
+
+  public toArray(): number[] {
+    return [this.x, this.y, this.z];
   }
 
   public toJSON(): Vector3Serialized {
