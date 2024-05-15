@@ -1,19 +1,22 @@
 import { Node, NodeSerialized } from './node.ts';
-import { Vector3 } from '@/utils/math/vector3.ts';
-import { Euler } from '@/utils/math/euler.ts';
+import { Color, ColorSerialized } from '@/objects/color.ts';
 
-export class Scene extends Node {
-  public static fromJSON(raw: NodeSerialized): Scene {
-    const position = Vector3.fromJSON(raw.transform.position);
-    const scale = Vector3.fromJSON(raw.transform.scale);
-    const rotation = Euler.fromJSON(raw.transform.rotation);
+export interface SceneSerialized extends NodeSerialized {
+  color: ColorSerialized;
+}
 
-    const scene = new Scene(position, rotation, scale);
+export class Scene extends Node<SceneSerialized> {
+  protected color: Color;
 
-    for (const child of raw.children) {
-      scene.addChildren(Node.fromJSON(child));
-    }
+  constructor(name: string, color: Color) {
+    super(name);
+    this.color = color;
+  }
 
-    return scene;
+  toJSON(): SceneSerialized {
+    return {
+      color: this.color.toJSON(),
+      ...this.toNodeSerialized()
+    };
   }
 }
