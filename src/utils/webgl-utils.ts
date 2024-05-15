@@ -183,7 +183,7 @@ export class WebGLUtils {
   }
 
   public static setAttributes<T extends AttributeObject>(
-    programInfo: ProgramInfo<T, any>,
+    programInfo: ProgramInfo<T>,
     attributes: T
   ) {
     for (const attributeName of Object.keys(attributes)) {
@@ -200,10 +200,10 @@ export class WebGLUtils {
    * @param gl
    * @param program
    */
-  public static createUniformSetters<T extends UniformObject>(
+  public static createUniformSetters(
     gl: WebGLRenderingContext,
     program: WebGLProgram
-  ): UniformMapSetters<T> {
+  ): UniformMapSetters {
     let textureUnit = 0;
 
     function createUniformSetter(uniformInfo: WebGLActiveInfo): UniformSetters {
@@ -234,10 +234,11 @@ export class WebGLUtils {
               type === gl.SAMPLER_2D ? gl.TEXTURE_2D : gl.TEXTURE_CUBE_MAP;
 
             gl.uniform1iv(location, units);
-            v.forEach((val, i) => {
+
+            for (const [i, val] of [...v].entries()) {
               gl.activeTexture(gl.TEXTURE0 + units[i]);
               gl.bindTexture(bindPoint, val);
-            });
+            }
           }
         } else {
           let data;
@@ -273,7 +274,7 @@ export class WebGLUtils {
       };
     }
 
-    const uniformSetters: UniformMapSetters<T> = {} as UniformMapSetters<T>;
+    const uniformSetters: UniformMapSetters = {};
 
     const numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
 
@@ -290,7 +291,7 @@ export class WebGLUtils {
         name = name.substring(0, name.length - 3);
       }
 
-      uniformSetters[info.name as keyof T] = createUniformSetter(info);
+      uniformSetters[info.name] = createUniformSetter(info);
     }
 
     return uniformSetters;

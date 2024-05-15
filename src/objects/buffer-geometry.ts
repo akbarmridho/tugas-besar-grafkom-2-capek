@@ -12,10 +12,6 @@ export interface BaseBufferGeometryAttribute extends Partial<AttributeObject> {
   texcoord?: BufferAttribute;
 }
 
-export interface BufferGeometryAttributesSerialized {
-  position: BufferGeometryAttributesSerialized;
-}
-
 export interface BufferGeometrySerialized {
   attributes: {
     position: BufferAttributeSerialized;
@@ -24,8 +20,10 @@ export interface BufferGeometrySerialized {
   } & Partial<{ [attr: string]: BufferAttributeSerialized }>;
 }
 
-export abstract class BufferGeometry extends Serializable<BufferGeometrySerialized> {
-  private _attributes: BaseBufferGeometryAttribute;
+export abstract class BufferGeometry<
+  T extends BufferGeometrySerialized
+> extends Serializable<T> {
+  protected _attributes: BaseBufferGeometryAttribute;
   protected hasDefaultNormal: boolean;
 
   protected constructor(attributes: {
@@ -115,27 +113,5 @@ export abstract class BufferGeometry extends Serializable<BufferGeometrySerializ
       normal.set(i + 1, n.toArray());
       normal.set(i + 2, n.toArray());
     }
-  }
-
-  toJSON(): BufferGeometrySerialized {
-    const data: BufferGeometrySerialized = {
-      attributes: {}
-    } as BufferGeometrySerialized;
-
-    for (const key of Object.keys(this.attributes)) {
-      const value = this.attributes[key];
-
-      if (value) {
-        if (value instanceof BufferAttribute) {
-          data.attributes[key] = value.toJSON();
-        } else {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          data.attributes[key] = value;
-        }
-      }
-    }
-
-    return data;
   }
 }
