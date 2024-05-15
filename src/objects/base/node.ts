@@ -1,8 +1,8 @@
-import { Euler, EulerSerialized } from '../utils/math/euler.ts';
-import { Matrix4 } from '../utils/math/matrix4.ts';
-import { Quaternion } from '../utils/math/quaternion.ts';
-import { Transformation } from '../utils/math/transformation.ts';
-import { Vector3, Vector3Serialized } from '../utils/math/vector3.ts';
+import { Euler, EulerSerialized } from '../../utils/math/euler.ts';
+import { Matrix4 } from '../../utils/math/matrix4.ts';
+import { Quaternion } from '../../utils/math/quaternion.ts';
+import { Transformation } from '../../utils/math/transformation.ts';
+import { Vector3, Vector3Serialized } from '../../utils/math/vector3.ts';
 import { Serializable } from './serializable.ts';
 
 export interface NodeSerialized {

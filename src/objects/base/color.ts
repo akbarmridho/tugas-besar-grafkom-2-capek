@@ -1,4 +1,4 @@
-import { Serializable } from './serializable';
+import { Serializable } from './serializable.ts';
 
 export interface ColorSerialized {
   r: number;

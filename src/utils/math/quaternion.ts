@@ -1,4 +1,4 @@
-import { Serializable } from '../../objects/serializable.ts';
+import { Serializable } from '../../objects/base/serializable.ts';
 import { Euler } from './euler.ts';
 import { Matrix4 } from './matrix4.ts';
 import { Vector3 } from './vector3.ts';

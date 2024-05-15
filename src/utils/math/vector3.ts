@@ -1,6 +1,6 @@
 import { Matrix4, Matrix4Serialized } from './matrix4';
 import { Quaternion } from './quaternion';
-import { Serializable } from '@/objects/serializable.ts';
+import { Serializable } from '@/objects/base/serializable.ts';
 
 export interface Vector3Serialized {
   elements: number[];

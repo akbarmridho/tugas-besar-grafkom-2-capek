@@ -1,5 +1,5 @@
-import { Node, NodeSerialized } from './node.ts';
-import { Color, ColorSerialized } from '@/objects/color.ts';
+import { Node, NodeSerialized } from './base/node.ts';
+import { Color, ColorSerialized } from '@/objects/base/color.ts';
 
 export interface SceneSerialized extends NodeSerialized {
   color: ColorSerialized;

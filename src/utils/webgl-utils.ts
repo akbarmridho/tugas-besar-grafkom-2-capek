@@ -4,7 +4,7 @@ import {
   AttributeObject,
   AttributeSetters
 } from '../interfaces/attribute-properties.ts';
-import { BufferAttribute } from '../objects/buffer-attribute.ts';
+import { BufferAttribute } from '../objects/base/buffer-attribute.ts';
 import { ProgramInfo } from '../interfaces/program.ts';
 import {
   UniformMapSetters,

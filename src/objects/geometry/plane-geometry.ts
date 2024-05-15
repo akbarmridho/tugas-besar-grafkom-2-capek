@@ -1,8 +1,8 @@
 import {
   BufferGeometry,
   BufferGeometrySerialized
-} from '@/objects/buffer-geometry.ts';
-import { BufferAttribute } from '@/objects/buffer-attribute.ts';
+} from '@/objects/base/buffer-geometry.ts';
+import { BufferAttribute } from '@/objects/base/buffer-attribute.ts';
 
 export interface PlaneGeometrySerialized extends BufferGeometrySerialized {
   width: number;

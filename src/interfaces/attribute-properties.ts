@@ -1,4 +1,4 @@
-import { BufferAttribute } from '../objects/buffer-attribute.ts';
+import { BufferAttribute } from '../objects/base/buffer-attribute.ts';
 
 export type AttributeDataType = BufferAttribute | Float32Array | number[];
 

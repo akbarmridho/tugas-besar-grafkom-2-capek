@@ -1,5 +1,5 @@
 import { Vector3 } from './vector3.ts';
-import { Serializable } from '@/objects/serializable.ts';
+import { Serializable } from '@/objects/base/serializable.ts';
 import { Quaternion } from '@/utils/math/quaternion.ts';
 import { Transformation } from '@/utils/math/transformation.ts';
 

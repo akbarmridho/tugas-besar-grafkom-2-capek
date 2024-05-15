@@ -1,4 +1,4 @@
-import { SerializationResult } from '../interfaces/serializable.ts';
+import { SerializationResult } from '../../interfaces/serializable.ts';
 
 export abstract class Serializable<T> {
   public abstract toJSON(): T;

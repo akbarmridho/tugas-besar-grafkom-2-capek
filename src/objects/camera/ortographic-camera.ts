@@ -1,5 +1,5 @@
-import { Camera } from '@/objects/camera/camera.ts';
-import { NodeSerialized } from '@/objects/node.ts';
+import { Camera } from '@/objects/base/camera.ts';
+import { NodeSerialized } from '@/objects/base/node.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Transformation } from '@/utils/math/transformation.ts';
