@@ -1,7 +1,7 @@
 import { Serializable } from './serializable.ts';
 import { UniformObject } from '@/interfaces/uniform-properties.ts';
 
-export abstract class ShaderMaterial<T> extends Serializable<T> {
+export abstract class ShaderMaterial<T = unknown> extends Serializable<T> {
   static #idCounter = 0;
   private readonly _id: string = 'M' + ShaderMaterial.#idCounter++;
   /* Attribute */

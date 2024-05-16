@@ -14,10 +14,3 @@
 // requestAnimationFrame(runAnim);
 
 // setup untuk webgl
-
-function setup(gl: WebGLRenderingContext) {
-  // untuk melakukan sorting depth
-  gl.enable(gl.DEPTH_TEST);
-  // enable back face culling (rekomendasi dari guidebook)
-  gl.cullFace(gl.BACK);
-}

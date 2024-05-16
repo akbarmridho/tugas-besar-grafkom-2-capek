@@ -12,13 +12,13 @@ export interface MeshSerialized extends NodeSerialized {
 export class Mesh extends Node<MeshSerialized> {
   // @ts-ignore
   geometry: BufferGeometry<unknown>;
-  material: ShaderMaterial<unknown>;
+  material: ShaderMaterial;
 
   constructor(
     name: string,
     // @ts-ignore
     geometry: BufferGeometry<unknown>,
-    material: ShaderMaterial<unknown>,
+    material: ShaderMaterial,
     position?: Vector3,
     rotation?: Euler,
     scale?: Vector3

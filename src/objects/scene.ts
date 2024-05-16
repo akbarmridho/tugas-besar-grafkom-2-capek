@@ -6,16 +6,20 @@ export interface SceneSerialized extends NodeSerialized {
 }
 
 export class Scene extends Node<SceneSerialized> {
-  protected color: Color;
+  protected _color: Color;
 
   constructor(name: string, color: Color) {
     super(name);
-    this.color = color;
+    this._color = color;
+  }
+
+  get color() {
+    return this._color;
   }
 
   toJSON(): SceneSerialized {
     return {
-      color: this.color.toJSON(),
+      color: this._color.toJSON(),
       ...this.toNodeSerialized()
     };
   }

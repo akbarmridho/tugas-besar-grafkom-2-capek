@@ -1,7 +1,10 @@
 import { Matrix4 } from '@/utils/math/matrix4.ts';
 import { Node, NodeSerialized } from './node.ts';
 
-export abstract class Camera<T extends NodeSerialized> extends Node<T> {
+export abstract class Camera<
+  // @ts-ignore
+  T extends NodeSerialized = unknown
+> extends Node<T> {
   protected _projectionMatrix: Matrix4 = Matrix4.identity();
   protected _viewProjectionMatrix: Matrix4 = Matrix4.identity();
   protected _invWorldMatrix: Matrix4 = Matrix4.identity();

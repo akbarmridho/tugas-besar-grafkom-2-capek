@@ -1,6 +1,5 @@
 import './style.css';
 import { useEffect, useRef, useState } from 'react';
-import { useWindowDimension } from '@/hooks/use-window-dimension.ts';
 import { SaveAndLoad } from '@/components/save-and-load.tsx';
 import { TooltipProvider } from '@/components/ui/tooltip.tsx';
 import { PerspectiveSelector } from '@/components/perspective-selector.tsx';
@@ -12,7 +11,6 @@ import { Coordinate, getCoordinate } from '@/utils/coordinates.ts';
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const GLRef = useRef<WebGLRenderingContext | null>(null);
-  const [width, height] = useWindowDimension();
   const [startClick, setStartClick] = useState<Coordinate | null>(null);
 
   useEffect(() => {
@@ -33,12 +31,7 @@ function App() {
           <div className={'flex-grow h-full'}>
             <canvas
               ref={canvasRef}
-              width={width - 300}
-              height={height}
-              style={{
-                height,
-                width: width - 300
-              }}
+              className={'w-full h-full'}
               onWheel={(e) => {
                 console.log(e.deltaY);
                 /** todo implement zoom in-out of camera here
