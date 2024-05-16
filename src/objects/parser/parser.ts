@@ -13,6 +13,10 @@ import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Mesh } from '@/objects/mesh.ts';
+import {
+  BoxGeometry,
+  BoxGeometryProps
+} from '@/objects/geometry/box-geometry.ts';
 
 export function parseModel(data: PModel) {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
@@ -42,6 +46,17 @@ export function parseModel(data: PModel) {
         geometry,
         material
       });
+    } else if (rawMesh.type === 'BoxGeometry') {
+      const primitives = rawMesh.primitives as BoxGeometryProps;
+      const geometry = BoxGeometry.fromJSON(primitives);
+      const material = materials[rawMesh.material];
+
+      baseMesh.push({
+        geometry,
+        material
+      });
+    } else {
+      throw new Error('Invalid raw mesh type');
     }
   }
 

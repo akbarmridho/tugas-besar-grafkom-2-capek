@@ -102,7 +102,7 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
     return this._data.length;
   }
   get count(): number {
-    return length / this._size;
+    return this.length / this._size;
   }
 
   set(index: number, data: number[]) {

@@ -18,28 +18,30 @@ export function neoArmstrongCycloneJetArmstrongCannon() {
    */
   const canonMaterial = new BasicMaterial(Color.fromHex(0x63716e));
 
-  const baseCanonShape = new BoxGeometry(0.5, 2, 0.5);
-  const ballShape = new BoxGeometry(0.25, 0.25, 0.25);
+  const baseCanonShape = new BoxGeometry(0.25, 0.75, 0.25);
+  const ballShape = new BoxGeometry(0.1, 0.1, 0.1);
 
   const canonMesh = new Mesh('canon', baseCanonShape, canonMaterial);
 
+  canonMesh.rotateOnX(360);
+
   scene.addChildren(canonMesh);
 
-  const leftBallMesh = new Mesh(
-    'LBall',
-    ballShape,
-    canonMaterial,
-    new Vector3(-0.375, 0, 0)
-  );
-  const rightBallMesh = new Mesh(
-    'LBall',
-    ballShape,
-    canonMaterial,
-    new Vector3(-0.375, 0, 0)
-  );
-
-  canonMesh.addChildren(leftBallMesh);
-  canonMesh.addChildren(rightBallMesh);
+  // const leftBallMesh = new Mesh(
+  //   'LBall',
+  //   ballShape,
+  //   canonMaterial,
+  //   new Vector3(-0.175, -0.325, 0)
+  // );
+  // const rightBallMesh = new Mesh(
+  //   'RBall',
+  //   ballShape,
+  //   canonMaterial,
+  //   new Vector3(0.175, -0.325, 0)
+  // );
+  //
+  // canonMesh.addChildren(leftBallMesh);
+  // canonMesh.addChildren(rightBallMesh);
 
   const mainCamera = new OrthographicCamera('orthographic camera');
 

@@ -107,12 +107,18 @@ export class WebGLRenderer {
       viewProjectionMatrix: camera.viewProjectionMatrix
     };
 
+    console.log(
+      `global uniforms ${JSON.stringify(globalUniforms.viewProjectionMatrix.toJSON())}`
+    );
+
     // @ts-ignore
     const toRender: Node<unknown>[] = [...scene.children];
 
     while (toRender.length !== 0) {
       const child = toRender.shift()!;
       // handle for light etc ( i guess handle the lights first before the mesh)
+
+      console.log(`rendering ${child.name}`);
 
       if (child instanceof Mesh) {
         if (
@@ -129,8 +135,21 @@ export class WebGLRenderer {
           child.geometry.attributes
         );
         WebGLUtils.setUniforms(this.currentProgram, child.material.uniforms);
-
-        gl.drawArrays(gl.TRIANGLES, 0, child.geometry.attributes.position.size);
+        WebGLUtils.setUniforms(this.currentProgram, {
+          worldMatrix: child.worldMatrix
+        });
+        console.log(child.rotation.toJSON());
+        console.log(child.position.toJSON());
+        console.log(child.worldMatrix.toJSON());
+        console.log(
+          `Drawing triangle ${child.geometry.attributes.position.count}`
+        );
+        console.log(child.geometry.attributes);
+        gl.drawArrays(
+          gl.TRIANGLES,
+          0,
+          child.geometry.attributes.position.count
+        );
       }
 
       if (child.children.length !== 0) {

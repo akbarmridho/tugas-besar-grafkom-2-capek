@@ -16,11 +16,13 @@ const DEBUG = true;
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const GLRef = useRef<WebGLRenderingContext | null>(null);
+  const run = useRef<boolean>(false);
   const rendererRef = useRef<WebGLRenderer | null>(null);
   const [startClick, setStartClick] = useState<Coordinate | null>(null);
 
   useEffect(() => {
-    if (canvasRef.current) {
+    if (canvasRef.current && !run.current) {
+      run.current = true;
       GLRef.current = canvasRef.current.getContext('webgl');
       const renderer = new WebGLRenderer(canvasRef.current, GLRef.current!);
       rendererRef.current = renderer;
@@ -57,7 +59,7 @@ function App() {
               ref={canvasRef}
               className={'w-full h-full'}
               onWheel={(e) => {
-                console.log(e.deltaY);
+                // console.log(e.deltaY);
                 /** todo implement zoom in-out of camera here
                  * value of deltaY is always the same
                  * scroll down is positive
@@ -81,7 +83,7 @@ function App() {
                   y: currentCoord.y - startClick.y
                 };
 
-                console.log(delta);
+                // console.log(delta);
               }}
             />
           </div>

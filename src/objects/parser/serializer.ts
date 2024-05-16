@@ -33,6 +33,10 @@ export function serializeScene(scene: Scene): PModel {
     const node = toTraverse.shift()!;
     nodes.push(node);
 
+    if (node.children.length !== 0) {
+      toTraverse.push(...node.children);
+    }
+
     if (node instanceof Mesh) {
       const inMaterials =
         materials.findIndex((m) => m === node.material) !== -1;

@@ -190,6 +190,9 @@ export class WebGLUtils {
 
       if (Object.hasOwn(programInfo.attributeSetters, key)) {
         programInfo.attributeSetters[key]!(attributes[attributeName]!);
+        console.log(`attribute setting value for ${key}`);
+      } else {
+        console.log(`attribute setters does not have ${key}`);
       }
     }
   }
@@ -259,7 +262,7 @@ export class WebGLUtils {
               gl[`uniform${funcName}`](location, false, data);
             } else {
               // @ts-ignore
-              gl[`uniform${funcName}`](location, data);
+              gl[`uniform${funcName}`](location, ...data);
             }
           } else if (type === gl.SAMPLER_2D || type === gl.SAMPLER_CUBE) {
             const bindPoint =
@@ -303,7 +306,10 @@ export class WebGLUtils {
       const key = `u_${uniformName}`;
 
       if (Object.hasOwn(programInfo.uniformSetters, key)) {
+        console.log(`uniform setting value for ${key}`);
         programInfo.uniformSetters[key]!(uniforms[uniformName]!);
+      } else {
+        console.log(`uniform setters does not have ${key}`);
       }
     }
   }

@@ -101,4 +101,8 @@ export class BoxGeometry extends BufferGeometry<BoxGeometrySerialized> {
 
     return data;
   }
+
+  public static fromJSON(data: BoxGeometryProps): BoxGeometry {
+    return new BoxGeometry(data.width, data.height, data.length);
+  }
 }
