@@ -13,8 +13,8 @@ export abstract class Light<
   T extends NodeSerialized = unknown
 > extends Node<T> {
   /* Attributes */
-  protected _color: Color = new Color(255, 255, 255);
-  protected _intensity: number = 1;
+  protected _color: Color;
+  protected _intensity: number;
 
   /* CSonstructor */
   constructor(
@@ -22,12 +22,22 @@ export abstract class Light<
     position?: Vector3,
     rotation?: Euler,
     scale?: Vector3,
-    color: Color = new Color(255, 255, 255),
-    intensity: number = 1
+    color?: Color,
+    intensity?: number
   ) {
     super(name, position, rotation, scale);
-    this._color = color;
-    this._intensity = intensity;
+
+    if (color) {
+      this._color = color.clone();
+    } else {
+      this._color = Color.White();
+    }
+
+    if (intensity) {
+      this._intensity = intensity;
+    } else {
+      this._intensity = 1;
+    }
   }
 
   /* Getter */

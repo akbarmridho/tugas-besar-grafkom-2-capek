@@ -48,6 +48,10 @@ export class Color extends Serializable<ColorSerialized> {
     return new Color(255, 0, 0);
   }
 
+  public static White() {
+    return new Color(255, 255, 255);
+  }
+
   public static fromHex(hex: number) {
     const r = (hex >> 16) & 255;
     const g = (hex >> 8) & 255;

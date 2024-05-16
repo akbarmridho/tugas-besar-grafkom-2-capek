@@ -11,8 +11,8 @@ export class AmbientLight extends Light<AmbientLightSerialized> {
     position?: Vector3,
     rotation?: Euler,
     scale?: Vector3,
-    color: Color = new Color(255, 255, 255),
-    intensity: number = 1
+    color?: Color,
+    intensity?: number
   ) {
     super(name, position, rotation, scale, color, intensity);
     this.position.setComponents(0, 1, 0);
