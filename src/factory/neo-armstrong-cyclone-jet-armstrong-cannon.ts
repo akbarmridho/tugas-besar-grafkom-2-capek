@@ -3,11 +3,11 @@ import { Color } from '@/objects/base/color.ts';
 import { Mesh } from '@/objects/mesh.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
-import { Vector3 } from '@/utils/math/vector3.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { PModel } from '@/interfaces/parser.ts';
 
-export function neoArmstrongCycloneJetArmstrongCannon() {
+export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
    * Define scenes
    */

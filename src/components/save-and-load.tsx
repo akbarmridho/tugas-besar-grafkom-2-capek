@@ -5,8 +5,18 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@/components/ui/tooltip.tsx';
+import { neoArmstrongCycloneJetArmstrongCannon } from '@/factory/neo-armstrong-cyclone-jet-armstrong-cannon.ts';
+import { parseModel } from '@/objects/parser/parser.ts';
+import { useApp } from '@/components/context.ts';
+import { PModel } from '@/interfaces/parser.ts';
+
+type seederFunc = () => PModel;
+const PRE_SEED_MODEL = true;
+const seeder: seederFunc | null = neoArmstrongCycloneJetArmstrongCannon;
 
 export const SaveAndLoad = () => {
+  const app = useApp();
+
   return (
     <div>
       <h3 className={'text-md font-bold'}>Project</h3>
@@ -53,29 +63,44 @@ export const SaveAndLoad = () => {
               variant={'ghost'}
               size={'icon'}
               onClick={() => {
-                showOpenFilePicker({
-                  multiple: false,
-                  types: [
-                    {
-                      description: 'Saved scene data',
-                      accept: {
-                        'model/gltf+json': ['.gltf']
-                      }
-                    }
-                  ]
-                })
-                  .then((handlers) => {
-                    const handle = handlers[0];
+                /**
+                 * DEBUG LINES
+                 */
+                if (PRE_SEED_MODEL) {
+                  const serialized = seeder!();
 
-                    handle.getFile().then((file) => {
-                      file.text().then((rawResult) => {
-                        console.log(rawResult);
-                      });
-                    });
-                  })
-                  .catch((e) => {
-                    // ignore
+                  const parsed = parseModel(serialized);
+
+                  parsed.materials.forEach((material) => {
+                    app.renderer.current!.programFromMaterial(material);
                   });
+
+                  app.renderer.current!.render(parsed.scene, parsed.cameras[0]);
+                } else {
+                  showOpenFilePicker({
+                    multiple: false,
+                    types: [
+                      {
+                        description: 'Saved scene data',
+                        accept: {
+                          'model/gltf+json': ['.gltf']
+                        }
+                      }
+                    ]
+                  })
+                    .then((handlers) => {
+                      const handle = handlers[0];
+
+                      handle.getFile().then((file) => {
+                        file.text().then((rawResult) => {
+                          console.log(rawResult);
+                        });
+                      });
+                    })
+                    .catch((e) => {
+                      // ignore
+                    });
+                }
               }}
             >
               <FolderOpen />

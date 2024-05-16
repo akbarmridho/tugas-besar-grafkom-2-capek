@@ -8,10 +8,6 @@ import { SceneGraph } from '@/components/scene-graph.tsx';
 import { AppContext } from '@/components/context.ts';
 import { Coordinate, getCoordinate } from '@/utils/coordinates.ts';
 import { WebGLRenderer } from '@/objects/renderer.ts';
-import { neoArmstrongCycloneJetArmstrongCannon } from '@/factory/neo-armstrong-cyclone-jet-armstrong-cannon.ts';
-import { parseModel } from '@/objects/parser/parser.ts';
-
-const DEBUG = true;
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -24,24 +20,10 @@ function App() {
     if (canvasRef.current && !run.current) {
       run.current = true;
       GLRef.current = canvasRef.current.getContext('webgl');
-      const renderer = new WebGLRenderer(canvasRef.current, GLRef.current!);
-      rendererRef.current = renderer;
-
-      /**
-       * DEBUG LINES
-       */
-
-      if (DEBUG) {
-        const serializedCannon = neoArmstrongCycloneJetArmstrongCannon();
-
-        const parsed = parseModel(serializedCannon);
-
-        parsed.materials.forEach((material) => {
-          renderer.programFromMaterial(material);
-        });
-
-        renderer.render(parsed.scene, parsed.cameras[0]);
-      }
+      rendererRef.current = new WebGLRenderer(
+        canvasRef.current,
+        GLRef.current!
+      );
     }
   }, []);
 
@@ -50,7 +32,8 @@ function App() {
       <AppContext.Provider
         value={{
           gl: GLRef,
-          canvas: canvasRef
+          canvas: canvasRef,
+          renderer: rendererRef
         }}
       >
         <div className={'w-full h-screen flex'}>
