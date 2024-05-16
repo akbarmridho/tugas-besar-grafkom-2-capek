@@ -110,7 +110,8 @@ export class WebGLRenderer {
     // @ts-ignore
     const toRender: Node<unknown>[] = [...scene.children];
 
-    for (const child of toRender) {
+    while (toRender.length !== 0) {
+      const child = toRender.shift()!;
       // handle for light etc ( i guess handle the lights first before the mesh)
 
       if (child instanceof Mesh) {

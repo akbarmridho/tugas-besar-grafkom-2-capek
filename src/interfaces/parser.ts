@@ -26,9 +26,9 @@ export interface PBasicMaterial {
   primitives: BasicMaterialSerialized;
 }
 
-type PCamera = POrthographicCamera;
+export type PCamera = POrthographicCamera;
 
-type PMaterial = PBasicMaterial;
+export type PMaterial = PBasicMaterial;
 
 export interface PMesh {
   type: 'PlaneGeometry' | 'BoxGeometry';
