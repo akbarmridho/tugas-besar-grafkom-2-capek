@@ -223,6 +223,10 @@ export class WebGLUtils {
             throw new Error('Value cannot be a type of matrix');
           }
 
+          if (typeof v === 'number') {
+            v = [v];
+          }
+
           if (type === gl.FLOAT) {
             gl.uniform1fv(location, v);
           } else if (gl.INT) {
