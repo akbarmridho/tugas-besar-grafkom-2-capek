@@ -22,7 +22,14 @@ export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
 
   constructor(
     name: string,
-    projection: OrthographicProjection,
+    projection: OrthographicProjection = {
+      top: 1,
+      bottom: -1,
+      left: -1,
+      right: 1,
+      near: 1,
+      far: -1
+    },
     position?: Vector3,
     rotation?: Euler,
     scale?: Vector3
