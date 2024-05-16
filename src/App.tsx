@@ -7,15 +7,39 @@ import { AnimationControl } from '@/components/animation-control.tsx';
 import { SceneGraph } from '@/components/scene-graph.tsx';
 import { AppContext } from '@/components/context.ts';
 import { Coordinate, getCoordinate } from '@/utils/coordinates.ts';
+import { WebGLRenderer } from '@/objects/renderer.ts';
+import { neoArmstrongCycloneJetArmstrongCannon } from '@/factory/neo-armstrong-cyclone-jet-armstrong-cannon.ts';
+import { parseModel } from '@/objects/parser/parser.ts';
+
+const DEBUG = true;
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const GLRef = useRef<WebGLRenderingContext | null>(null);
+  const rendererRef = useRef<WebGLRenderer | null>(null);
   const [startClick, setStartClick] = useState<Coordinate | null>(null);
 
   useEffect(() => {
     if (canvasRef.current) {
       GLRef.current = canvasRef.current.getContext('webgl');
+      const renderer = new WebGLRenderer(canvasRef.current, GLRef.current!);
+      rendererRef.current = renderer;
+
+      /**
+       * DEBUG LINES
+       */
+
+      if (DEBUG) {
+        const serializedCannon = neoArmstrongCycloneJetArmstrongCannon();
+
+        const parsed = parseModel(serializedCannon);
+
+        parsed.materials.forEach((material) => {
+          renderer.programFromMaterial(material);
+        });
+
+        renderer.render(parsed.scene, parsed.cameras[0]);
+      }
     }
   }, []);
 
