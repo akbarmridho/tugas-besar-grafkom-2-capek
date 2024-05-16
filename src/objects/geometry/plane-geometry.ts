@@ -33,10 +33,10 @@ export class PlaneGeometry extends BufferGeometry<PlaneGeometrySerialized> {
 
     // prettier-ignore
     const vertices = new Float32Array(quadFromFlatPoints([
-          -hw,  hh, 0,
-           hw,  hh, 0,
-          -hw, -hh, 0,
-           hw, -hh, 0,
+          -hw,  hh, 0, // a
+           hw,  hh, 0, // b
+          -hw, -hh, 0, // c
+           hw, -hh, 0, // d
         ]))
 
     super({

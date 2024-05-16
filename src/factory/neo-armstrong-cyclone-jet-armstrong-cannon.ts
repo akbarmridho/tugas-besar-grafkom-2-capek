@@ -23,8 +23,8 @@ export function neoArmstrongCycloneJetArmstrongCannon() {
 
   const canonMesh = new Mesh('canon', baseCanonShape, canonMaterial);
 
-  canonMesh.rotateOnX(360);
-
+  // canonMesh.rotateOnX(1.57079633 * 4);
+  // canonMesh.translateOnZ(0.25);
   scene.addChildren(canonMesh);
 
   // const leftBallMesh = new Mesh(

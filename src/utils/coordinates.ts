@@ -25,7 +25,7 @@ export function quadFromFlatPoints(data: number[]): number[] {
 
   /**
    * a b
-   * c d
+   * d c
    *
    * Two triangles:
    * triangle abc, bdc
@@ -35,10 +35,10 @@ export function quadFromFlatPoints(data: number[]): number[] {
   return [
       data[a], data[a+1], data[a+2], // a -> drawing triangle abc
       data[b], data[b+1], data[b+2], // b
-      data[c], data[c+1], data[c+2], // c
-      data[b], data[b+1], data[b+2], // b -> drawing triangle bdc
       data[d], data[d+1], data[d+2], // d
+      data[b], data[b+1], data[b+2], // b -> drawing triangle bdc
       data[c], data[c+1], data[c+2], // c
+      data[d], data[d+1], data[d+2], // d
   ]
 }
 
@@ -50,7 +50,7 @@ export function quadFromPoints(
 ): number[] {
   /**
    * a b
-   * c d
+   * d c
    *
    * Two triangles:
    * triangle abc, bdc
@@ -60,27 +60,35 @@ export function quadFromPoints(
   return [
     a[0], a[1], a[2], // a -> drawing triangle abc
     b[0], b[1], b[2], // b
-    c[0], c[1], c[2], // c
-    b[0], b[1], b[2], // b -> drawing triangle bdc
     d[0], d[1], d[2], // d
+    b[0], b[1], b[2], // b -> drawing triangle bdc
     c[0], c[1], c[2], // c
+    d[0], d[1], d[2], // d
   ]
 }
 
 export function triangleFromPoints(
-  a: number[], b: number[], c: number[]
+  a: number[],
+  b: number[],
+  c: number[]
 ): number[] {
   /**
    *  a
    * b c
-   * 
+   *
    * One triangle:
    * triangle abc
    */
 
   return [
-    a[0], a[1], a[2], // a -> drawing triangle abc
-    b[0], b[1], b[2], // b
-    c[0], c[1], c[2], // c
-  ]
+    a[0],
+    a[1],
+    a[2], // a -> drawing triangle abc
+    b[0],
+    b[1],
+    b[2], // b
+    c[0],
+    c[1],
+    c[2] // c
+  ];
 }

@@ -78,14 +78,14 @@ export class Euler extends Serializable<EulerSerialized> {
   setFromRotationMatrix(m: Matrix4, order: string = this._order): this {
     const t: number[] = m.elements,
       m11: number = t[0],
-      m12: number = t[3],
-      m13: number = t[6],
-      m21: number = t[1],
-      m22: number = t[4],
-      m23: number = t[7],
-      m31: number = t[2],
-      m32: number = t[5],
-      m33: number = t[8];
+      m12: number = t[1],
+      m13: number = t[2],
+      m21: number = t[4],
+      m22: number = t[5],
+      m23: number = t[6],
+      m31: number = t[8],
+      m32: number = t[9],
+      m33: number = t[10];
 
     switch (order) {
       case 'XYZ':
