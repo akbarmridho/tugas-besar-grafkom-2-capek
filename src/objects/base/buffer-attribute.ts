@@ -21,7 +21,7 @@ export class BufferAttribute extends Serializable<BufferAttributeSerialized> {
   private _stride = 0;
   private _offset = 0;
   private _isDirty = true; // copy attributes at the start, at least once.
-
+  public _buffer: WebGLBuffer | null = null;
   /**
    * Creates an instance of BufferAttribute
    * @param data

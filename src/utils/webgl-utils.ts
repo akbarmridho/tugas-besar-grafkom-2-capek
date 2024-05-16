@@ -98,13 +98,12 @@ export class WebGLUtils {
     function createAttributeSetter(info: WebGLActiveInfo): AttributeSetters {
       // initialization time
       const loc = gl.getAttribLocation(program, info.name);
-      const buf = gl.createBuffer();
 
       return (value) => {
-        // Render time (saat memanggil setAttributes() pada render loop
-        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-
         if (value instanceof BufferAttribute) {
+          value._buffer = value._buffer || gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, value._buffer);
+
           if (value.isDirty) {
             gl.bufferData(gl.ARRAY_BUFFER, value.data, gl.STATIC_DRAW);
             value.consume();
@@ -187,9 +186,11 @@ export class WebGLUtils {
     attributes: AttributeObject
   ) {
     for (const attributeName of Object.keys(attributes)) {
-      programInfo.attributeSetters[`a_${attributeName}`]!(
-        attributes[attributeName]!
-      );
+      const key = `a_${attributeName}`;
+
+      if (Object.hasOwn(programInfo.attributeSetters, key)) {
+        programInfo.attributeSetters[key]!(attributes[attributeName]!);
+      }
     }
   }
 
@@ -299,7 +300,11 @@ export class WebGLUtils {
 
   public static setUniforms(programInfo: ProgramInfo, uniforms: UniformObject) {
     for (const uniformName of Object.keys(uniforms)) {
-      programInfo.uniformSetters[`u_${uniformName}`]!(uniforms[uniformName]!);
+      const key = `u_${uniformName}`;
+
+      if (Object.hasOwn(programInfo.uniformSetters, key)) {
+        programInfo.uniformSetters[key]!(uniforms[uniformName]!);
+      }
     }
   }
 }
