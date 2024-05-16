@@ -1,4 +1,4 @@
-import { PModel } from '@/interfaces/parser.ts';
+import { ParseModelResult, PModel } from '@/interfaces/parser.ts';
 import { Scene } from '@/objects/scene.ts';
 import { Color } from '@/objects/base/color.ts';
 import { Node } from '@/objects/base/node.ts';
@@ -17,12 +17,13 @@ import {
   BoxGeometry,
   BoxGeometryProps
 } from '@/objects/geometry/box-geometry.ts';
+import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 
-export function parseModel(data: PModel) {
+export function parseModel(data: PModel): ParseModelResult {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
 
   // initialize materials
-  const materials: BasicMaterial[] = [];
+  const materials: ShaderMaterial[] = [];
 
   for (const rawMaterial of data.materials) {
     if (rawMaterial.type === 'BasicMaterial') {
@@ -34,7 +35,7 @@ export function parseModel(data: PModel) {
 
   // initialize meshes
 
-  const baseMesh: { geometry: BufferGeometry; material: BasicMaterial }[] = [];
+  const baseMesh: { geometry: BufferGeometry; material: ShaderMaterial }[] = [];
 
   for (const rawMesh of data.meshes) {
     if (rawMesh.type === 'PlaneGeometry') {

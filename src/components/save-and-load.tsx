@@ -9,6 +9,7 @@ import { neoArmstrongCycloneJetArmstrongCannon } from '@/factory/neo-armstrong-c
 import { parseModel } from '@/objects/parser/parser.ts';
 import { useApp } from '@/components/context.ts';
 import { PModel } from '@/interfaces/parser.ts';
+import { serializeScene } from '@/objects/parser/serializer.ts';
 
 type seederFunc = () => PModel;
 const PRE_SEED_MODEL = true;
@@ -27,6 +28,12 @@ export const SaveAndLoad = () => {
               variant={'ghost'}
               size={'icon'}
               onClick={() => {
+                const renderer = app.renderer.current!;
+
+                if (renderer.model === null) {
+                  return;
+                }
+
                 showSaveFilePicker({
                   types: [
                     {
@@ -39,8 +46,9 @@ export const SaveAndLoad = () => {
                 })
                   .then((handle) => {
                     handle.createWritable().then((writeable) => {
-                      // todo change this
-                      writeable.write('todo ganti').then(() => {
+                      const serialized = serializeScene(renderer.model!.scene);
+
+                      writeable.write(JSON.stringify(serialized)).then(() => {
                         void writeable.close();
                       });
                     });
@@ -67,15 +75,12 @@ export const SaveAndLoad = () => {
                  * DEBUG LINES
                  */
                 if (PRE_SEED_MODEL) {
+                  const renderer = app.renderer.current!;
                   const serialized = seeder!();
 
                   const parsed = parseModel(serialized);
-
-                  parsed.materials.forEach((material) => {
-                    app.renderer.current!.programFromMaterial(material);
-                  });
-
-                  app.renderer.current!.render(parsed.scene, parsed.cameras[0]);
+                  renderer.updateFromParsedModel(parsed);
+                  renderer.render();
                 } else {
                   showOpenFilePicker({
                     multiple: false,
@@ -93,7 +98,10 @@ export const SaveAndLoad = () => {
 
                       handle.getFile().then((file) => {
                         file.text().then((rawResult) => {
-                          console.log(rawResult);
+                          const renderer = app.renderer.current!;
+                          const parsed = parseModel(JSON.parse(rawResult));
+                          renderer.updateFromParsedModel(parsed);
+                          renderer.render();
                         });
                       });
                     })

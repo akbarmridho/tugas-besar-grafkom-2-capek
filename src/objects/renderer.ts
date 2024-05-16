@@ -6,12 +6,15 @@ import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { WebGLUtils } from '@/utils/webgl-utils.ts';
 import { ShaderType } from '@/interfaces/shader-type.ts';
 import { Mesh } from '@/objects/mesh.ts';
+import { ParseModelResult } from '@/interfaces/parser.ts';
 
 export class WebGLRenderer {
   canvas: HTMLCanvasElement;
   gl: WebGLRenderingContext;
   shaderCache: { [attr: string]: ProgramInfo } = {};
   currentProgram: ProgramInfo | null = null;
+  cameraIndex: number = 0;
+  model: ParseModelResult | null = null;
 
   constructor(canvas: HTMLCanvasElement, gl: WebGLRenderingContext) {
     this.gl = gl;
@@ -71,13 +74,27 @@ export class WebGLRenderer {
     };
   }
 
+  public updateFromParsedModel(model: ParseModelResult) {
+    this.model = model;
+    this.shaderCache = {};
+    this.currentProgram = null;
+    this.cameraIndex = 0;
+
+    model.materials.forEach((material) => {
+      this.programFromMaterial(material);
+    });
+  }
+
   /**
    * One render cycle
    *
-   * @param scene
-   * @param camera
    */
-  render(scene: Scene, camera: Camera) {
+  render() {
+    if (this.model === null) return;
+
+    const scene = this.model.scene;
+    const camera = this.model.cameras[this.cameraIndex];
+
     /**
      * Scene has the instance of the camera in the children
      * assume that scene could have multiple cameras, so the camera in parameter is the selected camera

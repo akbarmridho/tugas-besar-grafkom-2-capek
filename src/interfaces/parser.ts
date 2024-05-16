@@ -5,6 +5,9 @@ import { OrthographicProjection } from '@/objects/camera/ortographic-camera.ts';
 import { BasicMaterialSerialized } from '@/objects/material/basic-material.ts';
 import { PlaneGeometryProps } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometryProps } from '@/objects/geometry/box-geometry.ts';
+import { ShaderMaterial } from '@/objects/base/shader-material.ts';
+import { Scene } from '@/objects/scene.ts';
+import { Camera } from '@/objects/base/camera.ts';
 
 export interface PNode {
   name: string;
@@ -46,4 +49,10 @@ export interface PModel {
   cameras: PCamera[];
   meshes: PMesh[];
   materials: PMaterial[];
+}
+
+export interface ParseModelResult {
+  materials: ShaderMaterial[];
+  scene: Scene;
+  cameras: Camera[];
 }
