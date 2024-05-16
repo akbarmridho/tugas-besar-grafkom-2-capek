@@ -18,7 +18,7 @@ export const UniformSetterWebGLType = {
   [WebGLRenderingContext.FLOAT_MAT4]: 'Matrix4fv'
 };
 
-export type UniformDataType = Matrix4 | Iterable<number>;
+export type UniformDataType = Matrix4 | Iterable<number> | number;
 
 export type UniformSetters = (val: UniformDataType) => void;
 
