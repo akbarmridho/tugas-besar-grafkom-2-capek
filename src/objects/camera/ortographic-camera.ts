@@ -4,7 +4,7 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Transformation } from '@/utils/math/transformation.ts';
 
-interface OrthographicProjection {
+export interface OrthographicProjection {
   top: number;
   bottom: number;
   left: number;
@@ -66,5 +66,9 @@ export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
       projection: { ...this._baseProjection },
       ...this.toNodeSerialized()
     };
+  }
+
+  public static fromJSON(name: string, data: OrthographicProjection) {
+    return new OrthographicCamera(name, data);
   }
 }

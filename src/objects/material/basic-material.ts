@@ -27,4 +27,8 @@ export class BasicMaterial extends ShaderMaterial<BasicMaterialSerialized> {
       }
     };
   }
+
+  public static fromJSON(data: BasicMaterialSerialized) {
+    return new BasicMaterial(Color.fromJSON(data.uniforms.color));
+  }
 }

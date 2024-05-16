@@ -12,10 +12,12 @@ export interface NodeSerialized {
     rotation: EulerSerialized;
     scale: Vector3Serialized;
   };
-  children: NodeSerialized[];
 }
 
-export abstract class Node<T extends NodeSerialized> extends Serializable<T> {
+export abstract class Node<
+  // @ts-ignore
+  T extends NodeSerialized = unknown
+> extends Serializable<T> {
   /* Attribute */
   // Transform attributes
   private _position: Vector3;
@@ -312,8 +314,7 @@ export abstract class Node<T extends NodeSerialized> extends Serializable<T> {
         position: this.position.toJSON(),
         rotation: this.rotation.toJSON(),
         scale: this.scale.toJSON()
-      },
-      children: this.children.map((child) => child.toJSON()) as NodeSerialized[]
+      }
     };
   }
 }

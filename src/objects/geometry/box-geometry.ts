@@ -5,11 +5,13 @@ import {
 import { BufferAttribute } from '@/objects/base/buffer-attribute.ts';
 import { quadFromPoints } from '@/utils/coordinates.ts';
 
-export interface BoxGeometrySerialized extends BufferGeometrySerialized {
+export interface BoxGeometryProps {
   width: number;
   height: number;
   length: number;
 }
+
+export type BoxGeometrySerialized = BufferGeometrySerialized & BoxGeometryProps;
 
 export class BoxGeometry extends BufferGeometry<BoxGeometrySerialized> {
   width: number;

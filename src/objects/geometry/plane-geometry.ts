@@ -5,10 +5,13 @@ import {
 import { BufferAttribute } from '@/objects/base/buffer-attribute.ts';
 import { quadFromFlatPoints } from '@/utils/coordinates.ts';
 
-export interface PlaneGeometrySerialized extends BufferGeometrySerialized {
+export interface PlaneGeometryProps {
   width: number;
   height: number;
 }
+
+export type PlaneGeometrySerialized = BufferGeometrySerialized &
+  PlaneGeometryProps;
 
 export class PlaneGeometry extends BufferGeometry<PlaneGeometrySerialized> {
   width: number;
@@ -65,5 +68,9 @@ export class PlaneGeometry extends BufferGeometry<PlaneGeometrySerialized> {
     }
 
     return data;
+  }
+
+  public static fromJSON(data: PlaneGeometryProps): PlaneGeometry {
+    return new PlaneGeometry(data.width, data.height);
   }
 }

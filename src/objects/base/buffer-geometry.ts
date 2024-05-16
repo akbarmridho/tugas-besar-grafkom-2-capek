@@ -21,7 +21,8 @@ export interface BufferGeometrySerialized {
 }
 
 export abstract class BufferGeometry<
-  T extends BufferGeometrySerialized
+  // @ts-ignore
+  T extends BufferGeometrySerialized = unknown
 > extends Serializable<T> {
   protected _attributes: BaseBufferGeometryAttribute;
   protected hasDefaultNormal: boolean;

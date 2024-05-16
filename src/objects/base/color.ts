@@ -40,6 +40,10 @@ export class Color extends Serializable<ColorSerialized> {
     };
   }
 
+  public static fromJSON(data: ColorSerialized): Color {
+    return new Color(data.r, data.g, data.b);
+  }
+
   public static Red() {
     return new Color(255, 0, 0);
   }
