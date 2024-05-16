@@ -10,6 +10,8 @@ import { ParseModelResult } from '@/interfaces/parser.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { CameraSelection } from '@/interfaces/camera.ts';
+import { CameraAvailability } from '@/components/context.ts';
 
 export class WebGLRenderer {
   canvas: HTMLCanvasElement;
@@ -17,7 +19,14 @@ export class WebGLRenderer {
   shaderCache: { [attr: string]: ProgramInfo } = {};
   currentProgram: ProgramInfo | null = null;
 
-  selectedCamera: 'oblique' | 'orthogonal' | 'perspective' | null = null;
+  onSceneChanged:
+    | ((
+        cameraSelection: CameraSelection,
+        cameraAvailability: CameraAvailability
+      ) => void)
+    | null = null;
+
+  selectedCamera: CameraSelection = null;
 
   initialCameraTR: {
     orthogonal: { position: Vector3; rotation: Euler } | null;
@@ -58,7 +67,6 @@ export class WebGLRenderer {
     if (this.selectedCamera === null) return;
 
     const camera = this.camera[this.selectedCamera]!;
-
     const initialPos = this.initialCameraTR[this.selectedCamera]!;
 
     camera.setPosition(initialPos.position);
@@ -132,6 +140,14 @@ export class WebGLRenderer {
     model.materials.forEach((material) => {
       this.programFromMaterial(material);
     });
+
+    if (this.onSceneChanged !== null) {
+      this.onSceneChanged(this.selectedCamera, {
+        oblique: this.camera.oblique !== null,
+        orthogonal: this.camera.orthogonal !== null,
+        perspective: this.camera.perspective !== null
+      });
+    }
   }
 
   /**
