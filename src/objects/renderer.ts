@@ -7,13 +7,30 @@ import { WebGLUtils } from '@/utils/webgl-utils.ts';
 import { ShaderType } from '@/interfaces/shader-type.ts';
 import { Mesh } from '@/objects/mesh.ts';
 import { ParseModelResult } from '@/interfaces/parser.ts';
+import { Vector3 } from '@/utils/math/vector3.ts';
+import { Euler } from '@/utils/math/euler.ts';
+import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 
 export class WebGLRenderer {
   canvas: HTMLCanvasElement;
   gl: WebGLRenderingContext;
   shaderCache: { [attr: string]: ProgramInfo } = {};
   currentProgram: ProgramInfo | null = null;
-  cameraIndex: number = 0;
+
+  selectedCamera: 'oblique' | 'orthogonal' | 'perspective' | null = null;
+
+  initialCameraTR: {
+    orthogonal: { position: Vector3; rotation: Euler } | null;
+    perspective: { position: Vector3; rotation: Euler } | null;
+    oblique: { position: Vector3; rotation: Euler } | null;
+  } = { oblique: null, orthogonal: null, perspective: null };
+
+  camera: {
+    orthogonal: Camera | null;
+    perspective: Camera | null;
+    oblique: Camera | null;
+  } = { oblique: null, perspective: null, orthogonal: null };
+
   model: ParseModelResult | null = null;
 
   constructor(canvas: HTMLCanvasElement, gl: WebGLRenderingContext) {
@@ -35,6 +52,17 @@ export class WebGLRenderer {
       return true;
     }
     return false;
+  }
+
+  public resetCamera() {
+    if (this.selectedCamera === null) return;
+
+    const camera = this.camera[this.selectedCamera]!;
+
+    const initialPos = this.initialCameraTR[this.selectedCamera]!;
+
+    camera.setPosition(initialPos.position);
+    camera.setFromEulerRotation(initialPos.rotation);
   }
 
   programFromMaterial(material: ShaderMaterial) {
@@ -78,7 +106,28 @@ export class WebGLRenderer {
     this.model = model;
     this.shaderCache = {};
     this.currentProgram = null;
-    this.cameraIndex = 0;
+    this.initialCameraTR = {
+      oblique: null,
+      orthogonal: null,
+      perspective: null
+    };
+    this.camera = { oblique: null, orthogonal: null, perspective: null };
+    this.selectedCamera = null;
+
+    model.cameras.forEach((camera, i) => {
+      if (camera instanceof OrthographicCamera) {
+        this.initialCameraTR.orthogonal = {
+          position: camera.position.clone(),
+          rotation: camera.rotation.clone()
+        };
+
+        this.camera.orthogonal = camera;
+
+        if (this.selectedCamera === null) {
+          this.selectedCamera = 'orthogonal';
+        }
+      }
+    });
 
     model.materials.forEach((material) => {
       this.programFromMaterial(material);
@@ -90,10 +139,10 @@ export class WebGLRenderer {
    *
    */
   render() {
-    if (this.model === null) return;
+    if (this.model === null || this.selectedCamera === null) return;
 
     const scene = this.model.scene;
-    const camera = this.model.cameras[this.cameraIndex];
+    const camera = this.camera[this.selectedCamera]!;
 
     /**
      * Scene has the instance of the camera in the children
@@ -135,7 +184,7 @@ export class WebGLRenderer {
       const child = toRender.shift()!;
       // handle for light etc ( i guess handle the lights first before the mesh)
 
-      console.log(`rendering ${child.name}`);
+      // console.log(`rendering ${child.name}`);
 
       if (child instanceof Mesh) {
         if (
@@ -155,13 +204,13 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, {
           worldMatrix: child.worldMatrix
         });
-        console.log(child.rotation.toJSON());
-        console.log(child.position.toJSON());
-        console.log(child.worldMatrix.toJSON());
-        console.log(
-          `Drawing triangle ${child.geometry.attributes.position.count}`
-        );
-        console.log(child.geometry.attributes);
+        // console.log(child.rotation.toJSON());
+        // console.log(child.position.toJSON());
+        // console.log(child.worldMatrix.toJSON());
+        // console.log(
+        //   `Drawing triangle ${child.geometry.attributes.position.count}`
+        // );
+        // console.log(child.geometry.attributes);
         gl.drawArrays(
           gl.TRIANGLES,
           0,

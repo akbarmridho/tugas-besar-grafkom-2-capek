@@ -178,6 +178,10 @@ export class Euler extends Serializable<EulerSerialized> {
     );
   }
 
+  setFromEuler(other: Euler) {
+    return this.set(other.x, other.y, other.z, other.order);
+  }
+
   // reorder (butuh quaternion.ts)
 
   clone(): Euler {

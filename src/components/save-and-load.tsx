@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button.tsx';
-import { FolderOpen, RotateCcw, Save } from 'lucide-react';
+import { FolderOpen, RotateCcw, Save, SwitchCamera } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -39,7 +39,8 @@ export const SaveAndLoad = () => {
                     {
                       description: 'Saved scene data',
                       accept: {
-                        'model/gltf+json': ['.gltf']
+                        'model/gltf+json': ['.gltf'],
+                        'application/json': ['.json']
                       }
                     }
                   ]
@@ -88,7 +89,8 @@ export const SaveAndLoad = () => {
                       {
                         description: 'Saved scene data',
                         accept: {
-                          'model/gltf+json': ['.gltf']
+                          'model/gltf+json': ['.gltf'],
+                          'application/json': ['.json']
                         }
                       }
                     ]
@@ -120,8 +122,18 @@ export const SaveAndLoad = () => {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant={'ghost'} size={'icon'}>
-              <RotateCcw />
+            <Button
+              variant={'ghost'}
+              size={'icon'}
+              onClick={() => {
+                const renderer = app.renderer.current!;
+
+                if (renderer.selectedCamera !== null) {
+                  renderer.resetCamera();
+                }
+              }}
+            >
+              <SwitchCamera />
             </Button>
           </TooltipTrigger>
           <TooltipContent>

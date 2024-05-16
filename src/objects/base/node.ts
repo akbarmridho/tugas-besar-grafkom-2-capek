@@ -307,6 +307,21 @@ export abstract class Node<
     return node || null;
   }
 
+  public setPosition(value: Vector3) {
+    this.position.copyFrom(value);
+    this.updateWorldMatrix(false, true);
+
+    return this;
+  }
+
+  public setFromEulerRotation(value: Euler) {
+    this.rotation.setFromEuler(value);
+    this.quaternion.fromEuler(value);
+    this.updateWorldMatrix(false, true);
+
+    return this;
+  }
+
   public toNodeSerialized(): NodeSerialized {
     return {
       name: this.name,
