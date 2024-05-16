@@ -74,23 +74,27 @@ export class BoxGeometry extends BufferGeometry<BoxGeometrySerialized> {
     this.length = length;
   }
 
-  toJSON(): BoxGeometrySerialized {
+  toJSON(withNodeAttributes: boolean = true): BoxGeometrySerialized {
     const data: BoxGeometrySerialized = {
-      attributes: {},
       height: this.height,
       width: this.width,
       length: this.length
     } as BoxGeometrySerialized;
 
-    for (const key of Object.keys(this.attributes)) {
-      const value = this.attributes[key];
+    if (withNodeAttributes) {
+      // @ts-ignore
+      data.attributes = {};
 
-      if (value) {
-        if (value instanceof BufferAttribute) {
-          data.attributes[key] = value.toJSON();
-        } else {
-          // @ts-ignore
-          data.attributes[key] = value;
+      for (const key of Object.keys(this.attributes)) {
+        const value = this.attributes[key];
+
+        if (value) {
+          if (value instanceof BufferAttribute) {
+            data.attributes[key] = value.toJSON();
+          } else {
+            // @ts-ignore
+            data.attributes[key] = value;
+          }
         }
       }
     }

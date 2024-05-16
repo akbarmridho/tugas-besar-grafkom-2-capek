@@ -47,22 +47,25 @@ export class PlaneGeometry extends BufferGeometry<PlaneGeometrySerialized> {
     this.height = height;
   }
 
-  toJSON(): PlaneGeometrySerialized {
+  toJSON(withNodeAttributes: boolean = true): PlaneGeometrySerialized {
     const data: PlaneGeometrySerialized = {
-      attributes: {},
       height: this.height,
       width: this.width
     } as PlaneGeometrySerialized;
 
-    for (const key of Object.keys(this.attributes)) {
-      const value = this.attributes[key];
+    if (withNodeAttributes) {
+      // @ts-ignore
+      data.attributes = {};
+      for (const key of Object.keys(this.attributes)) {
+        const value = this.attributes[key];
 
-      if (value) {
-        if (value instanceof BufferAttribute) {
-          data.attributes[key] = value.toJSON();
-        } else {
-          // @ts-ignore
-          data.attributes[key] = value;
+        if (value) {
+          if (value instanceof BufferAttribute) {
+            data.attributes[key] = value.toJSON();
+          } else {
+            // @ts-ignore
+            data.attributes[key] = value;
+          }
         }
       }
     }
