@@ -3,6 +3,7 @@ import {
   BufferGeometrySerialized
 } from '@/objects/base/buffer-geometry.ts';
 import { BufferAttribute } from '@/objects/base/buffer-attribute.ts';
+import { quadFromFlatPoints } from '@/utils/coordinates.ts';
 
 export interface PlaneGeometrySerialized extends BufferGeometrySerialized {
   width: number;
@@ -17,15 +18,23 @@ export class PlaneGeometry extends BufferGeometry<PlaneGeometrySerialized> {
     const hw = width / 2;
     const hh = height / 2;
 
+    /**
+     * a  b
+     * c  d
+     *
+     * a = -hw, hh
+     * b = hw, hh
+     * c = -hw, -hh
+     * d = hw, -hh
+     */
+
     // prettier-ignore
-    const vertices = new Float32Array([
-      -hw, 0, -hh,
-      hw,  0, -hh,
-      hw,  0, hh,
-      -hw, 0, hh,
-      -hw, 0, -hh,
-      hw,  0, hh,
-    ])
+    const vertices = new Float32Array(quadFromFlatPoints([
+          -hw,  hh, 0,
+           hw,  hh, 0,
+          -hw, -hh, 0,
+           hw, -hh, 0,
+        ]))
 
     super({
       position: new BufferAttribute(vertices, 3)
