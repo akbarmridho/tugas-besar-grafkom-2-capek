@@ -1,5 +1,6 @@
 import { ProgramInfo } from '@/interfaces/program.ts';
 import { Scene } from '@/objects/scene.ts';
+import { Node } from '@/objects/base/node.ts';
 import { Camera } from '@/objects/base/camera.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { WebGLUtils } from '@/utils/webgl-utils.ts';
@@ -106,7 +107,10 @@ export class WebGLRenderer {
       viewProjectionMatrix: camera.viewProjectionMatrix
     };
 
-    for (const child of scene.children) {
+    // @ts-ignore
+    const toRender: Node<unknown>[] = [...scene.children];
+
+    for (const child of toRender) {
       // handle for light etc ( i guess handle the lights first before the mesh)
 
       if (child instanceof Mesh) {
@@ -126,6 +130,10 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, child.material.uniforms);
 
         gl.drawArrays(gl.TRIANGLES, 0, child.geometry.attributes.position.size);
+      }
+
+      if (child.children.length !== 0) {
+        toRender.push(...child.children);
       }
     }
   }
