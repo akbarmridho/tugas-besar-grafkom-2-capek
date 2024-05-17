@@ -15,6 +15,7 @@ import { CameraAvailability } from '@/components/context.ts';
 import { mod } from '@/utils/math/mod.ts';
 import { AnimationPath } from '@/interfaces/animation.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
+import { Color } from './base/color';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -428,6 +429,11 @@ export class WebGLRenderer {
         // console.log(child.worldMatrix.toJSON());
         // console.log(`material for ${child.name}`);
         // console.log(child.material.uniforms);
+        WebGLUtils.setUniforms(this.currentProgram, {
+          lightColor: Color.White(),
+          lightPos: [1, 0, 1],
+          viewPos: [0, 0, 1]
+        });
         // console.log(child.rotation.toJSON());
         // console.log(child.position.toJSON());
         // console.log(child.worldMatrix.toJSON());

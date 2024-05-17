@@ -18,6 +18,7 @@ import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 import { PyramidGeometry } from '../geometry/pyramid-geometry';
 import { PrismGeometry } from '../geometry/prism-geometry';
 import { AnimationClip } from '@/interfaces/animation.ts';
+import { PhongMaterial } from '../material/phong-material';
 
 export function serializeScene(
   scene: Scene,
@@ -53,6 +54,11 @@ export function serializeScene(
         if (node.material instanceof BasicMaterial) {
           rawMaterials.push({
             type: 'BasicMaterial',
+            primitives: node.material.toJSON()
+          });
+        } else if (node.material instanceof PhongMaterial) {
+          rawMaterials.push({
+            type: 'PhongMaterial',
             primitives: node.material.toJSON()
           });
         } else {

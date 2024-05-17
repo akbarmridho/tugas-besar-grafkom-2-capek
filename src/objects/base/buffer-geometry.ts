@@ -100,7 +100,7 @@ export abstract class BufferGeometry<
     const vA = new Vector3();
     const vB = new Vector3();
 
-    for (let i = 0; i < position.size; i += 3) {
+    for (let i = 0; i < position.count; i += 3) {
       const p1 = position.get(i);
       const p2 = position.get(i + 1);
       const p3 = position.get(i + 2);

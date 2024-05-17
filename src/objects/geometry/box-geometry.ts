@@ -57,12 +57,12 @@ export class BoxGeometry extends BufferGeometry<BoxGeometrySerialized> {
 
     // prettier-ignore
     const vertices = new Float32Array([
-        ...quadFromPoints(a,b,c,d), // front
-        ...quadFromPoints(b,f,g,c), // right
-        ...quadFromPoints(e,a,d,h), // left
-        ...quadFromPoints(e,f,b,a), // top
-        ...quadFromPoints(d,c,g,h), // bottom
-        ...quadFromPoints(f,e,h,g)  // back
+        ...quadFromPoints(a,d,c,b), // front
+        ...quadFromPoints(b,c,g,f), // right
+        ...quadFromPoints(e,h,d,a), // left
+        ...quadFromPoints(e,a,b,f), // top
+        ...quadFromPoints(g,c,d,h), // bottom
+        ...quadFromPoints(f,g,h,e)  // back
     ])
 
     super({

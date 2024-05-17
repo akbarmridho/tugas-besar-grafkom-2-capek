@@ -253,6 +253,8 @@ export class WebGLUtils {
 
           if (v instanceof Matrix4) {
             data = v.toTypedArray();
+          } else if (typeof v === 'number') {
+            data = [v];
           } else {
             data = v;
           }

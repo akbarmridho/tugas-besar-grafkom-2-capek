@@ -11,6 +11,7 @@ import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { Scene } from '@/objects/scene.ts';
 import { Camera } from '@/objects/base/camera.ts';
 import { AnimationClip } from '@/interfaces/animation.ts';
+import { PhongMaterialSerialized } from '@/objects/material/phong-material';
 
 export interface PNode {
   name: string;
@@ -33,9 +34,14 @@ export interface PBasicMaterial {
   primitives: BasicMaterialSerialized;
 }
 
+export interface PPhongMaterial {
+  type: 'PhongMaterial';
+  primitives: PhongMaterialSerialized;
+}
+
 export type PCamera = POrthographicCamera;
 
-export type PMaterial = PBasicMaterial;
+export type PMaterial = PBasicMaterial | PPhongMaterial;
 
 export interface PMesh {
   type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry';

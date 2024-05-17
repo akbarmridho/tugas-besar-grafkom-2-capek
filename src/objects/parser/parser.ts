@@ -26,6 +26,7 @@ import {
   PrismGeometryProps
 } from '@/objects/geometry/prism-geometry.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
+import { PhongMaterial } from '../material/phong-material';
 
 export function parseModel(data: PModel): ParseModelResult {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
@@ -36,6 +37,8 @@ export function parseModel(data: PModel): ParseModelResult {
   for (const rawMaterial of data.materials) {
     if (rawMaterial.type === 'BasicMaterial') {
       materials.push(BasicMaterial.fromJSON(rawMaterial.primitives));
+    } else if (rawMaterial.type === 'PhongMaterial') {
+      materials.push(PhongMaterial.fromJSON(rawMaterial.primitives));
     } else {
       throw new Error('Invalid material type');
     }

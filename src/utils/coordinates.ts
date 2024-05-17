@@ -49,8 +49,8 @@ export function quadFromPoints(
   d: number[]
 ): number[] {
   /**
-   * a b
-   * d c
+   * a d
+   * b c
    *
    * Two triangles:
    * triangle abc, bdc
@@ -60,10 +60,10 @@ export function quadFromPoints(
   return [
     a[0], a[1], a[2], // a -> drawing triangle abc
     b[0], b[1], b[2], // b
-    d[0], d[1], d[2], // d
-    b[0], b[1], b[2], // b -> drawing triangle bdc
+    c[0], c[1], c[2], // c
     c[0], c[1], c[2], // c
     d[0], d[1], d[2], // d
+    a[0], a[1], a[2], // a
   ]
 }
 
