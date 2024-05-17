@@ -1,5 +1,5 @@
 import './style.css';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { SaveAndLoad } from '@/components/save-and-load.tsx';
 import { TooltipProvider } from '@/components/ui/tooltip.tsx';
 import { PerspectiveSelector } from '@/components/perspective-selector.tsx';
@@ -9,6 +9,7 @@ import { AppContext, CameraAvailability } from '@/components/context.ts';
 import { Coordinate, getCoordinate } from '@/utils/coordinates.ts';
 import { WebGLRenderer } from '@/objects/renderer.ts';
 import { CameraSelection } from '@/interfaces/camera.ts';
+import { Scene } from '@/objects/scene.ts';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -24,18 +25,31 @@ function App() {
 
   const [selectedCamera, setSelectedCamera] = useState<CameraSelection>(null);
 
+  const cb = useCallback(
+    (
+      scene: Scene,
+      selection: CameraSelection,
+      availability: CameraAvailability
+    ) => {
+      setCameraSelector(availability);
+      setSelectedCamera(selection);
+    },
+    []
+  );
+
   useEffect(() => {
     if (canvasRef.current && !run.current) {
-      run.current = true;
       GLRef.current = canvasRef.current.getContext('webgl');
       const renderer = new WebGLRenderer(canvasRef.current, GLRef.current!);
       rendererRef.current = renderer;
-      renderer.onSceneChanged = (selection, availability) => {
-        setCameraSelector(availability);
-        setSelectedCamera(selection);
-      };
+      renderer.onSceneChanged.add(cb);
+      run.current = true;
     }
-  }, []);
+
+    return () => {
+      rendererRef.current?.onSceneChanged.delete(cb);
+    };
+  }, [cb]);
 
   return (
     <TooltipProvider>

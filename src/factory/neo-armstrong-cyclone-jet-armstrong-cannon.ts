@@ -6,6 +6,7 @@ import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 import { PModel } from '@/interfaces/parser.ts';
+import { Vector3 } from '@/utils/math/vector3.ts';
 
 export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
@@ -25,23 +26,24 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
 
   // canonMesh.rotateOnX(1.57079633 * 4);
   // canonMesh.translateOnZ(0.25);
+  canonMesh.scaleOnX(2);
   scene.addChildren(canonMesh);
 
-  // const leftBallMesh = new Mesh(
-  //   'LBall',
-  //   ballShape,
-  //   canonMaterial,
-  //   new Vector3(-0.175, -0.325, 0)
-  // );
-  // const rightBallMesh = new Mesh(
-  //   'RBall',
-  //   ballShape,
-  //   canonMaterial,
-  //   new Vector3(0.175, -0.325, 0)
-  // );
-  //
-  // canonMesh.addChildren(leftBallMesh);
-  // canonMesh.addChildren(rightBallMesh);
+  const leftBallMesh = new Mesh(
+    'LBall',
+    ballShape,
+    canonMaterial,
+    new Vector3(-0.175, -0.325, 0)
+  );
+  const rightBallMesh = new Mesh(
+    'RBall',
+    ballShape,
+    canonMaterial,
+    new Vector3(0.175, -0.325, 0)
+  );
+
+  canonMesh.addChildren(leftBallMesh);
+  canonMesh.addChildren(rightBallMesh);
 
   const mainCamera = new OrthographicCamera('orthographic camera');
 

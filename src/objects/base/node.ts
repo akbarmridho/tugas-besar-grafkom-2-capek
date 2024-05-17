@@ -314,6 +314,13 @@ export abstract class Node<
     return this;
   }
 
+  public setScale(value: Vector3) {
+    this.scale.copyFrom(value);
+    this.updateWorldMatrix(false, true);
+
+    return this;
+  }
+
   public setFromEulerRotation(value: Euler) {
     this.rotation.setFromEuler(value);
     this.quaternion.fromEuler(value);

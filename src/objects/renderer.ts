@@ -13,18 +13,19 @@ import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 import { CameraSelection } from '@/interfaces/camera.ts';
 import { CameraAvailability } from '@/components/context.ts';
 
+type SceneChangedCallback = (
+  scene: Scene,
+  cameraSelection: CameraSelection,
+  cameraAvailability: CameraAvailability
+) => void;
+
 export class WebGLRenderer {
   canvas: HTMLCanvasElement;
   gl: WebGLRenderingContext;
   shaderCache: { [attr: string]: ProgramInfo } = {};
   currentProgram: ProgramInfo | null = null;
 
-  onSceneChanged:
-    | ((
-        cameraSelection: CameraSelection,
-        cameraAvailability: CameraAvailability
-      ) => void)
-    | null = null;
+  onSceneChanged: Set<SceneChangedCallback> = new Set();
 
   selectedCamera: CameraSelection = null;
 
@@ -141,8 +142,8 @@ export class WebGLRenderer {
       this.programFromMaterial(material);
     });
 
-    if (this.onSceneChanged !== null) {
-      this.onSceneChanged(this.selectedCamera, {
+    for (const handler of this.onSceneChanged) {
+      handler(this.model.scene, this.selectedCamera, {
         oblique: this.camera.oblique !== null,
         orthogonal: this.camera.orthogonal !== null,
         perspective: this.camera.perspective !== null
