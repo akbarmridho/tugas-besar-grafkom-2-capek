@@ -15,6 +15,8 @@ import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PlaneGeometry } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { PyramidGeometry } from '../geometry/pyramid-geometry';
+import { PrismGeometry } from '../geometry/prism-geometry';
 import { AnimationClip } from '@/interfaces/animation.ts';
 
 export function serializeScene(
@@ -76,6 +78,18 @@ export function serializeScene(
             primitives: node.geometry.toJSON(false),
             material: materialidx
           });
+        } else if (node.geometry instanceof PyramidGeometry) {
+          rawGeometries.push({
+            type: 'PyramidGeometry',
+            primitives: node.geometry.toJSON(false),
+            material: materialidx
+          })
+        } else if (node.geometry instanceof PrismGeometry) {
+          rawGeometries.push({
+            type: 'PrismGeometry',
+            primitives: node.geometry.toJSON(false),
+            material: materialidx
+          })
         } else {
           throw new Error('Invalid geometry type');
         }

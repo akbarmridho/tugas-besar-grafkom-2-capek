@@ -55,8 +55,8 @@ export class PyramidGeometry extends BufferGeometry<PyramidGeometrySerialized> {
             ...quadFromPoints(b, c, d, e),
             ...triangleFromPoints(a, b, c),
             ...triangleFromPoints(a, b, e),
-            ...triangleFromPoints(a, d, e),
-            ...triangleFromPoints(a, c, d)
+            ...triangleFromPoints(a, e, d),
+            ...triangleFromPoints(a, d, c)
         ])
 
         super({position: new BufferAttribute(vertices, 3)});
@@ -66,23 +66,27 @@ export class PyramidGeometry extends BufferGeometry<PyramidGeometrySerialized> {
         this.length = length;
     }
 
-    toJSON(): PyramidGeometrySerialized {
+    toJSON(withNodeAttributes: boolean = true): PyramidGeometrySerialized {
         const data: PyramidGeometrySerialized =  {
-            attributes: {},
             height: this.height,
             width: this.width,
             length: this.length
         } as PyramidGeometrySerialized
 
-        for (const key of Object.keys(this.attributes)) {
-            const value = this.attributes[key];
+        if (withNodeAttributes) {
+            // @ts-ignore
+            data.attributes = {};
       
-            if (value) {
-              if (value instanceof BufferAttribute) {
-                data.attributes[key] = value.toJSON();
-              } else {
-                // @ts-ignore
-                data.attributes[key] = value;
+            for (const key of Object.keys(this.attributes)) {
+              const value = this.attributes[key];
+      
+              if (value) {
+                if (value instanceof BufferAttribute) {
+                  data.attributes[key] = value.toJSON();
+                } else {
+                  // @ts-ignore
+                  data.attributes[key] = value;
+                }
               }
             }
         } return data;

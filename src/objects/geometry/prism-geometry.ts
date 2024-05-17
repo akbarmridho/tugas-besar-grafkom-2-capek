@@ -27,24 +27,37 @@ export class PrismGeometry extends BufferGeometry<PrismGeometrySerialized> {
 
         for (let i = 0; i < numVert; i++) {
             // Bottom face
-            verts.push(...polygonVert[i], -hh);
-            verts.push(...polygonVert[(i + 1) % numVert], -hh);
-            verts.push(...polygonVert[(((i + 1) % numVert) + 1) % numVert], -hh);
+            polygonVert[i][1] = -hh;
+            polygonVert[(i+1) % numVert][1] = -hh;
+            polygonVert[(i+2) % numVert][1] = -hh;
+            verts.push(...polygonVert[i]);
+            verts.push(...polygonVert[(i + 1) % numVert]);
+            verts.push(...polygonVert[(i + 2) % numVert]);
+
             // Top face
-            verts.push(...polygonVert[i], hh);
-            verts.push(...polygonVert[(i + 1) % numVert], hh);
-            verts.push(...polygonVert[(((i + 1) % numVert) + 1) % numVert], hh);
+            polygonVert[i][1] = hh;
+            polygonVert[(i+1) % numVert][1] = hh;
+            polygonVert[(i+2) % numVert][1] = hh;
+            verts.push(...polygonVert[i]);
+            verts.push(...polygonVert[(i + 1) % numVert]);
+            verts.push(...polygonVert[(i + 2) % numVert]);
         }
 
         for (let i = 0; i < numVert; i++) {
             // Triangle 1
-            verts.push(...polygonVert[i], -hh); // Bottom vertex
-            verts.push(...polygonVert[(i + 1) % numVert], -hh); // The other bottom vertex
-            verts.push(...polygonVert[i], hh); // Top vertex
+            polygonVert[i][1] = -hh;
+            polygonVert[(i+1) % numVert][1] = -hh;
+            verts.push(...polygonVert[i]); // Bottom vertex
+            verts.push(...polygonVert[(i + 1) % numVert]); // The other bottom vertex
+            polygonVert[i][1] = hh;
+            verts.push(...polygonVert[i]); // Top vertex
             // Triangle 2
-            verts.push(...polygonVert[i], hh); // Top vertex
-            verts.push(...polygonVert[(i + 1) % numVert], hh); // The other top vertex
-            verts.push(...polygonVert[(i + 1) % numVert], -hh); // The other bottom vertex
+            polygonVert[i][1] = hh;
+            verts.push(...polygonVert[i]); // Top vertex
+            polygonVert[(i+1) % numVert][1] = hh;
+            verts.push(...polygonVert[(i + 1) % numVert]); // The other top vertex
+            polygonVert[(i+1) % numVert][1] = -hh;
+            verts.push(...polygonVert[(i + 1) % numVert]); // The other bottom vertex
         }
         super({position: new BufferAttribute(new Float32Array(verts), 3)});
 
@@ -52,25 +65,29 @@ export class PrismGeometry extends BufferGeometry<PrismGeometrySerialized> {
         this.height = height;
     }
 
-    toJSON(): PrismGeometrySerialized {
+    toJSON(withNodeAttributes: boolean = true): PrismGeometrySerialized {
         const data: PrismGeometrySerialized = {
-            attributes: {},
             polygonVert: this.polygonVert,
             height: this.height
-        } as PrismGeometrySerialized;
+        } as PrismGeometrySerialized
 
-        for (const key of Object.keys(this.attributes)) {
-            const value = this.attributes[key];
+        if (withNodeAttributes) {
+            // @ts-ignore
+            data.attributes = {};
       
-            if (value) {
-              if (value instanceof BufferAttribute) {
-                data.attributes[key] = value.toJSON();
-              } else {
-                // @ts-ignore
-                data.attributes[key] = value;
+            for (const key of Object.keys(this.attributes)) {
+              const value = this.attributes[key];
+      
+              if (value) {
+                if (value instanceof BufferAttribute) {
+                  data.attributes[key] = value.toJSON();
+                } else {
+                  // @ts-ignore
+                  data.attributes[key] = value;
+                }
               }
             }
-          } return data;
+        } return data;
     }
 
     public static fromJSON(data: PrismGeometryProps): PrismGeometry {

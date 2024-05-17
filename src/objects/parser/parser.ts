@@ -17,6 +17,14 @@ import {
   BoxGeometry,
   BoxGeometryProps
 } from '@/objects/geometry/box-geometry.ts';
+import {
+  PyramidGeometry,
+  PyramidGeometryProps
+} from '@/objects/geometry/pyramid-geometry.ts';
+import {
+  PrismGeometry,
+  PrismGeometryProps
+} from '@/objects/geometry/prism-geometry.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 
 export function parseModel(data: PModel): ParseModelResult {
@@ -50,6 +58,24 @@ export function parseModel(data: PModel): ParseModelResult {
     } else if (rawMesh.type === 'BoxGeometry') {
       const primitives = rawMesh.primitives as BoxGeometryProps;
       const geometry = BoxGeometry.fromJSON(primitives);
+      const material = materials[rawMesh.material];
+
+      baseMesh.push({
+        geometry,
+        material
+      });
+    } else if (rawMesh.type === 'PyramidGeometry') {
+      const primitives = rawMesh.primitives as PyramidGeometryProps;
+      const geometry = PyramidGeometry.fromJSON(primitives);
+      const material = materials[rawMesh.material];
+
+      baseMesh.push({
+        geometry,
+        material
+      });
+    } else if (rawMesh.type === 'PrismGeometry') {
+      const primitives = rawMesh.primitives as PrismGeometryProps;
+      const geometry = PrismGeometry.fromJSON(primitives);
       const material = materials[rawMesh.material];
 
       baseMesh.push({

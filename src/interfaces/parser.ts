@@ -5,6 +5,8 @@ import { OrthographicProjection } from '@/objects/camera/ortographic-camera.ts';
 import { BasicMaterialSerialized } from '@/objects/material/basic-material.ts';
 import { PlaneGeometryProps } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometryProps } from '@/objects/geometry/box-geometry.ts';
+import { PyramidGeometryProps } from '@/objects/geometry/pyramid-geometry';
+import { PrismGeometryProps } from '@/objects/geometry/prism-geometry';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { Scene } from '@/objects/scene.ts';
 import { Camera } from '@/objects/base/camera.ts';
@@ -35,8 +37,8 @@ export type PCamera = POrthographicCamera;
 export type PMaterial = PBasicMaterial;
 
 export interface PMesh {
-  type: 'PlaneGeometry' | 'BoxGeometry';
-  primitives: PlaneGeometryProps | BoxGeometryProps;
+  type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry';
+  primitives: PlaneGeometryProps | BoxGeometryProps | PyramidGeometryProps | PrismGeometryProps;
   material: number;
 }
 
