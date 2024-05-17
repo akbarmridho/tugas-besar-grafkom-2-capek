@@ -183,9 +183,9 @@ export abstract class Node<
     this.updateLocalMatrix();
 
     if (this._parent !== null) {
-      this._worldMatrix = this._parent.worldMatrix
+      this._worldMatrix = this._localMatrix
         .copy()
-        .multiplyMatrix(this._localMatrix);
+        .multiplyMatrix(this._parent.worldMatrix);
     } else {
       this._worldMatrix = this._localMatrix.copy();
     }
