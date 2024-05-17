@@ -207,7 +207,9 @@ export class WebGLRenderer {
     // Use root as the parent and traverse according to the frame
     const toUpdate: { node: Node; path: AnimationPath }[] = [
       {
-        node: this.model!.scene,
+        node: this.model!.scene.getChildByName(
+          this.model!.animationClip!.rootName
+        )!,
         path: this.animationFrame
       }
     ];

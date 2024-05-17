@@ -104,10 +104,10 @@ export class WebGLUtils {
           value._buffer = value._buffer || gl.createBuffer();
           gl.bindBuffer(gl.ARRAY_BUFFER, value._buffer);
 
-          // if (value.isDirty) {
-          gl.bufferData(gl.ARRAY_BUFFER, value.data, gl.STATIC_DRAW);
-          //   value.consume();
-          // }
+          if (value.isDirty) {
+            gl.bufferData(gl.ARRAY_BUFFER, value.data, gl.STATIC_DRAW);
+            value.consume();
+          }
 
           gl.enableVertexAttribArray(loc);
           gl.vertexAttribPointer(

@@ -14,5 +14,6 @@ export interface AnimationPath {
 
 export interface AnimationClip {
   name: string;
+  rootName: string;
   frames: AnimationPath[];
 }

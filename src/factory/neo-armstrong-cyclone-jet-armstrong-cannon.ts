@@ -8,6 +8,7 @@ import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 import { PModel } from '@/interfaces/parser.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { AnimationClip } from '@/interfaces/animation.ts';
+import { PhongMaterial } from '@/objects/material/phong-material.ts';
 
 export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
@@ -19,11 +20,17 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
    * Define materials
    */
   const canonMaterial = new BasicMaterial(Color.fromHex(0x63716e));
+  const ballMaterial = new PhongMaterial(
+    Color.Red(),
+    Color.White(),
+    Color.White(),
+    20
+  );
 
   const baseCanonShape = new BoxGeometry(0.25, 0.75, 0.25);
   const ballShape = new BoxGeometry(0.1, 0.1, 0.1);
 
-  const canonMesh = new Mesh('canon', baseCanonShape, canonMaterial);
+  const canonMesh = new Mesh('canon', baseCanonShape, ballMaterial);
 
   // canonMesh.rotateOnX(1.57079633 * 4);
   // canonMesh.translateOnZ(0.25);
@@ -33,14 +40,14 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   const leftBallMesh = new Mesh(
     'LBall',
     ballShape,
-    canonMaterial,
+    ballMaterial,
     new Vector3(-0.175, -0.325, 0)
   );
   const rightBallMesh = new Mesh(
     'RBall',
     ballShape,
     canonMaterial,
-    new Vector3(0.175, -0.325, 0)
+    new Vector3(0.3, -0.325, 0)
   );
 
   canonMesh.addChildren(leftBallMesh);
@@ -52,35 +59,42 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
 
   const clip: AnimationClip = {
     name: 'flip',
+    rootName: 'canon',
     frames: [
       {
         keyframe: {
           rotation: [0, 0, 0]
+          // scale: [1, 1, 1]
         }
       },
       {
         keyframe: {
           rotation: [30, 0, 0]
+          // scale: [1.1, 1, 1]
         }
       },
       {
         keyframe: {
           rotation: [60, 0, 0]
+          // scale: [1.2, 1, 1]
         }
       },
       {
         keyframe: {
           rotation: [90, 0, 0]
+          // scale: [1.3, 1, 1]
         }
       },
       {
         keyframe: {
           rotation: [120, 0, 0]
+          // scale: [1.4, 1, 1]
         }
       },
       {
         keyframe: {
           rotation: [150, 0, 0]
+          // scale: [1.5, 1, 1]
         }
       },
       {
@@ -106,11 +120,13 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
       {
         keyframe: {
           rotation: [300, 0, 0]
+          // scale: [1.3, 1, 1]
         }
       },
       {
         keyframe: {
           rotation: [330, 0, 0]
+          // scale: [1, 1, 1]
         }
       }
     ]
