@@ -8,6 +8,7 @@ import { BoxGeometryProps } from '@/objects/geometry/box-geometry.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { Scene } from '@/objects/scene.ts';
 import { Camera } from '@/objects/base/camera.ts';
+import { AnimationClip } from '@/interfaces/animation.ts';
 
 export interface PNode {
   name: string;
@@ -49,10 +50,12 @@ export interface PModel {
   cameras: PCamera[];
   meshes: PMesh[];
   materials: PMaterial[];
+  animationClip?: AnimationClip;
 }
 
 export interface ParseModelResult {
   materials: ShaderMaterial[];
   scene: Scene;
   cameras: Camera[];
+  animationClip?: AnimationClip;
 }

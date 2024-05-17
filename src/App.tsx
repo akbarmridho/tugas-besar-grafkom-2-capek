@@ -64,8 +64,8 @@ function App() {
           setSelectedCamera
         }}
       >
-        <div className={'w-full h-screen flex'}>
-          <div className={'flex-grow h-full'}>
+        <div className={'w-full h-screen flex justify-center bg-slate-100'}>
+          <div className={'h-full aspect-square'}>
             <canvas
               ref={canvasRef}
               className={'w-full h-full'}

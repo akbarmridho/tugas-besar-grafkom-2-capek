@@ -15,8 +15,12 @@ import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PlaneGeometry } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { AnimationClip } from '@/interfaces/animation.ts';
 
-export function serializeScene(scene: Scene): PModel {
+export function serializeScene(
+  scene: Scene,
+  animationClip?: AnimationClip
+): PModel {
   // assume: node always unique
   const nodes: Node[] = [];
   const rawNodes: PNode[] = [];
@@ -126,6 +130,7 @@ export function serializeScene(scene: Scene): PModel {
     nodes: rawNodes,
     cameras: rawCameras,
     meshes: rawGeometries,
-    materials: rawMaterials
+    materials: rawMaterials,
+    animationClip
   };
 }

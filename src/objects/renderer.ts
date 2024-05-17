@@ -12,6 +12,9 @@ import { Euler } from '@/utils/math/euler.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 import { CameraSelection } from '@/interfaces/camera.ts';
 import { CameraAvailability } from '@/components/context.ts';
+import { mod } from '@/utils/math/mod.ts';
+import { AnimationPath } from '@/interfaces/animation.ts';
+import { degreeToRadian } from '@/utils/math/angle.ts';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -42,6 +45,22 @@ export class WebGLRenderer {
   } = { oblique: null, perspective: null, orthogonal: null };
 
   model: ParseModelResult | null = null;
+
+  private isPlaying: boolean = false;
+  private isBackward: boolean = false;
+  private isRepeat: boolean = true;
+  private fps: number = 30;
+  private currentFrame: number = 0;
+  private _deltaFrame: number = 0;
+  private _lastFrameTime?: number;
+
+  get animationLength() {
+    return this.model!.animationClip!.frames.length;
+  }
+
+  private get animationFrame() {
+    return this.model!.animationClip!.frames[this.currentFrame];
+  }
 
   constructor(canvas: HTMLCanvasElement, gl: WebGLRenderingContext) {
     this.gl = gl;
@@ -149,6 +168,186 @@ export class WebGLRenderer {
         perspective: this.camera.perspective !== null
       });
     }
+  }
+
+  public updateAnimation(deltaSecond: number) {
+    if (this.isPlaying) {
+      if (
+        !this.isRepeat &&
+        ((this.isBackward && this.currentFrame === 0) ||
+          (!this.isBackward && this.currentFrame === this.animationLength - 1))
+      ) {
+        this.isPlaying = false;
+        return;
+      }
+
+      this._deltaFrame += deltaSecond * this.fps;
+      if (this._deltaFrame >= 1) {
+        // 1 frame
+        if (this.isBackward) {
+          this.currentFrame = mod(
+            this.currentFrame - Math.floor(this._deltaFrame),
+            this.animationLength
+          );
+        } else {
+          this.currentFrame =
+            (this.currentFrame + Math.floor(this._deltaFrame)) %
+            this.animationLength;
+        }
+
+        this._deltaFrame %= 1;
+        this.updateSceneGraph();
+      }
+    }
+  }
+
+  private updateSceneGraph() {
+    // Update scene graph with current frame
+    // Use root as the parent and traverse according to the frame
+    const toUpdate: { node: Node; path: AnimationPath }[] = [
+      {
+        node: this.model!.scene,
+        path: this.animationFrame
+      }
+    ];
+
+    while (toUpdate.length !== 0) {
+      const { node, path } = toUpdate.shift()!;
+
+      const keyframe = path.keyframe;
+
+      if (keyframe) {
+        if (keyframe.rotation) {
+          node.setFromEulerRotation(
+            // assume value in degree, not radian
+            new Euler(
+              degreeToRadian(keyframe.rotation[0]),
+              degreeToRadian(keyframe.rotation[1]),
+              degreeToRadian(keyframe.rotation[2])
+            )
+          );
+        }
+
+        if (keyframe.scale) {
+          node.setScale(
+            new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2])
+          );
+        }
+
+        if (keyframe.translation) {
+          node.setPosition(
+            new Vector3(
+              keyframe.translation[0],
+              keyframe.translation[1],
+              keyframe.translation[2]
+            )
+          );
+        }
+      }
+
+      if (path.children) {
+        for (const key of Object.keys(path.children)) {
+          const childNode = node.getChildByName(key);
+
+          if (childNode !== null) {
+            toUpdate.push({
+              node: childNode,
+              path: path.children[key]
+            });
+          }
+        }
+      }
+    }
+  }
+
+  public beginRenderCycle() {
+    requestAnimationFrame((val) => {
+      this.runAnim(val);
+    });
+  }
+
+  private runAnim(currentTime: number) {
+    if (!this.isPlaying) return;
+    if (this._lastFrameTime === undefined) this._lastFrameTime = currentTime;
+
+    const deltaSecond = (currentTime - this._lastFrameTime) / 1000;
+    this.updateAnimation(deltaSecond);
+    this._lastFrameTime = currentTime;
+    this.render();
+
+    requestAnimationFrame((val) => {
+      this.runAnim(val);
+    });
+  }
+
+  public startForward() {
+    this.isPlaying = true;
+    this.isBackward = false;
+    this.currentFrame = 0;
+    this._deltaFrame = 0;
+    this._lastFrameTime = 0;
+
+    this.beginRenderCycle();
+  }
+
+  public startBackward() {
+    this.isPlaying = true;
+    this.isBackward = true;
+    this.currentFrame = this.animationLength - 1;
+    this._deltaFrame = 0;
+    this._lastFrameTime = 0;
+
+    this.beginRenderCycle();
+  }
+
+  public toPrevFrame() {
+    this.isPlaying = false;
+
+    if (this.currentFrame === 0) {
+      return;
+    }
+
+    this.currentFrame--;
+    this.updateSceneGraph();
+    this.render();
+  }
+
+  public toNextFrame() {
+    this.isPlaying = false;
+
+    if (this.currentFrame === this.animationLength - 1) {
+      return;
+    }
+
+    this.currentFrame++;
+    this.updateSceneGraph();
+    this.render();
+  }
+
+  public toFirstFrame() {
+    this.isPlaying = false;
+    this.currentFrame = 0;
+    this.updateSceneGraph();
+    this.render();
+  }
+
+  public toLastFrame() {
+    this.isPlaying = false;
+    this.currentFrame = this.animationLength - 1;
+    this.updateSceneGraph();
+    this.render();
+  }
+
+  public setRepeat(isRepeat: boolean) {
+    this.isRepeat = isRepeat;
+  }
+
+  public setFps(fps: number) {
+    this.fps = fps;
+  }
+
+  public stop() {
+    this.isPlaying = false;
   }
 
   /**

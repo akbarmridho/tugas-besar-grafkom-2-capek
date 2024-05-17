@@ -6,26 +6,80 @@ import {
   ChevronsRight,
   Pause,
   Play,
-  Repeat
+  Repeat,
+  Square
 } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@/components/ui/tooltip.tsx';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group.tsx';
 import { Toggle } from '@/components/ui/toggle.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { Input } from '@/components/ui/input.tsx';
+import { useApp } from '@/components/context.ts';
+import { useCallback, useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 
 export const AnimationControl = () => {
+  const appContext = useApp();
+  const [playState, setPlayState] = useState<
+    'playing' | 'playing-backward' | 'stopped'
+  >('stopped');
+  const [alwaysRepeat, setAlwaysRepeat] = useState<boolean>(true);
+  const [rawFps, setRawFps] = useState<string>('30');
+  const [debouncedFps] = useDebounce(rawFps, 200);
+  const [shouldRender, setShouldRender] = useState<boolean>(false);
+
+  const cb = useCallback(() => {
+    setShouldRender(!shouldRender);
+  }, [shouldRender]);
+
+  useEffect(() => {
+    const renderer = appContext.renderer.current;
+
+    if (renderer !== null) {
+      renderer.onSceneChanged.add(cb);
+    }
+
+    return () => {
+      appContext.renderer.current?.onSceneChanged.delete(cb);
+    };
+  }, [appContext.renderer, cb]);
+
+  useEffect(() => {
+    const val = +debouncedFps;
+
+    if (!isNaN(val)) {
+      appContext.renderer?.current?.setFps(
+        Math.min(144, Math.max(Math.floor(val), 1))
+      );
+    }
+  }, [appContext.renderer, debouncedFps]);
+
+  if (
+    appContext.renderer.current === null ||
+    appContext.renderer.current?.model === null
+  ) {
+    return <></>;
+  }
+
+  const renderer = appContext.renderer.current!;
+
   return (
     <div>
       <h3 className={'text-md font-bold'}>Animation Control</h3>
       <div className={'flex'}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant={'ghost'} size={'xs'}>
+            <Button
+              variant={'ghost'}
+              size={'xs'}
+              onClick={() => {
+                renderer.toFirstFrame();
+                setPlayState('stopped');
+              }}
+            >
               <ChevronsLeft />
             </Button>
           </TooltipTrigger>
@@ -35,7 +89,14 @@ export const AnimationControl = () => {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant={'ghost'} size={'xs'}>
+            <Button
+              variant={'ghost'}
+              size={'xs'}
+              onClick={() => {
+                renderer.toPrevFrame();
+                setPlayState('stopped');
+              }}
+            >
               <ChevronLeft />
             </Button>
           </TooltipTrigger>
@@ -43,41 +104,77 @@ export const AnimationControl = () => {
             <p>Jump To Previous Frame</p>
           </TooltipContent>
         </Tooltip>
-        <ToggleGroup type="single">
-          <ToggleGroupItem value="Ortographic" size={'xs'}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Play className={'rotate-180'} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Play Reverse</p>
-              </TooltipContent>
-            </Tooltip>
-          </ToggleGroupItem>
-          <ToggleGroupItem value="Oblique" size={'xs'}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Pause />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Pause</p>
-              </TooltipContent>
-            </Tooltip>
-          </ToggleGroupItem>
-          <ToggleGroupItem value="Perspective" size={'xs'}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Play />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Play</p>
-              </TooltipContent>
-            </Tooltip>
-          </ToggleGroupItem>
-        </ToggleGroup>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant={'ghost'} size={'xs'}>
+            <Button
+              variant={'ghost'}
+              size={'xs'}
+              disabled={playState !== 'stopped'}
+              onClick={() => {
+                renderer.startBackward();
+
+                if (alwaysRepeat) {
+                  setPlayState('playing-backward');
+                }
+              }}
+            >
+              <Play className={'rotate-180'} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Play Reverse</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={'ghost'}
+              size={'xs'}
+              disabled={playState === 'stopped'}
+              onClick={() => {
+                renderer.stop();
+                renderer.toFirstFrame();
+                setPlayState('stopped');
+              }}
+            >
+              <Square />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Stop</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={'ghost'}
+              size={'xs'}
+              disabled={playState !== 'stopped'}
+              onClick={() => {
+                renderer.startForward();
+
+                if (alwaysRepeat) {
+                  setPlayState('playing');
+                }
+              }}
+            >
+              <Play />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Play</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={'ghost'}
+              size={'xs'}
+              onClick={() => {
+                renderer.toNextFrame();
+                setPlayState('stopped');
+              }}
+            >
               <ChevronRight />
             </Button>
           </TooltipTrigger>
@@ -87,7 +184,14 @@ export const AnimationControl = () => {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant={'ghost'} size={'xs'}>
+            <Button
+              variant={'ghost'}
+              size={'xs'}
+              onClick={() => {
+                renderer.toLastFrame();
+                setPlayState('stopped');
+              }}
+            >
               <ChevronsRight />
             </Button>
           </TooltipTrigger>
@@ -97,23 +201,35 @@ export const AnimationControl = () => {
         </Tooltip>
       </div>
       <div className={'flex mt-2 items-center'}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Toggle>
+        <Toggle
+          className={'h-7 rounded-sm px-1'}
+          pressed={alwaysRepeat}
+          onPressedChange={(val) => {
+            setAlwaysRepeat(val);
+            renderer.setRepeat(val);
+          }}
+        >
+          <Tooltip>
+            <TooltipTrigger asChild>
               <Repeat />
-            </Toggle>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Always Repeat Animation</p>
-          </TooltipContent>
-        </Tooltip>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Always Repeat Animation</p>
+            </TooltipContent>
+          </Tooltip>
+        </Toggle>
         <div className={'ml-2 flex items-center gap-x-3'}>
           <Label>FPS:</Label>
           <Input
             placeholder={'Animation FPS'}
             className={'w-16 h-8'}
             type={'number'}
-            defaultValue={30}
+            min={1}
+            max={144}
+            defaultValue={rawFps}
+            onChange={(e) => {
+              setRawFps(e.target.value);
+            }}
           />
         </div>
       </div>

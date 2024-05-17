@@ -1,5 +1,6 @@
 export interface AnimationTRS {
   translation?: [number, number, number];
+  // for rotation, value in degree, not radian
   rotation?: [number, number, number];
   scale?: [number, number, number];
 }

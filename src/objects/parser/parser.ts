@@ -142,6 +142,7 @@ export function parseModel(data: PModel): ParseModelResult {
   return {
     materials,
     scene,
-    cameras
+    cameras,
+    animationClip: data.animationClip
   };
 }

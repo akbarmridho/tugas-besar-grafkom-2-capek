@@ -7,6 +7,7 @@ import { serializeScene } from '@/objects/parser/serializer.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
 import { PModel } from '@/interfaces/parser.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
+import { AnimationClip } from '@/interfaces/animation.ts';
 
 export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
@@ -49,5 +50,71 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
 
   scene.addChildren(mainCamera);
 
-  return serializeScene(scene);
+  const clip: AnimationClip = {
+    name: 'flip',
+    frames: [
+      {
+        keyframe: {
+          rotation: [0, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [30, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [60, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [90, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [120, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [150, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [180, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [210, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [240, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [270, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [300, 0, 0]
+        }
+      },
+      {
+        keyframe: {
+          rotation: [330, 0, 0]
+        }
+      }
+    ]
+  };
+
+  return serializeScene(scene, clip);
 }
