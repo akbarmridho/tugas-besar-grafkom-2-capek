@@ -43,44 +43,36 @@ export function parseModel(data: PModel): ParseModelResult {
 
   // initialize meshes
 
-  const baseMesh: { geometry: BufferGeometry; material: ShaderMaterial }[] = [];
+  const baseMesh: { geometry: BufferGeometry }[] = [];
 
   for (const rawMesh of data.meshes) {
     if (rawMesh.type === 'PlaneGeometry') {
       const primitives = rawMesh.primitives as PlaneGeometryProps;
       const geometry = PlaneGeometry.fromJSON(primitives);
-      const material = materials[rawMesh.material];
 
       baseMesh.push({
-        geometry,
-        material
+        geometry
       });
     } else if (rawMesh.type === 'BoxGeometry') {
       const primitives = rawMesh.primitives as BoxGeometryProps;
       const geometry = BoxGeometry.fromJSON(primitives);
-      const material = materials[rawMesh.material];
 
       baseMesh.push({
-        geometry,
-        material
+        geometry
       });
     } else if (rawMesh.type === 'PyramidGeometry') {
       const primitives = rawMesh.primitives as PyramidGeometryProps;
       const geometry = PyramidGeometry.fromJSON(primitives);
-      const material = materials[rawMesh.material];
 
       baseMesh.push({
-        geometry,
-        material
+        geometry
       });
     } else if (rawMesh.type === 'PrismGeometry') {
       const primitives = rawMesh.primitives as PrismGeometryProps;
       const geometry = PrismGeometry.fromJSON(primitives);
-      const material = materials[rawMesh.material];
 
       baseMesh.push({
-        geometry,
-        material
+        geometry
       });
     } else {
       throw new Error('Invalid raw mesh type');
@@ -124,7 +116,7 @@ export function parseModel(data: PModel): ParseModelResult {
       node = new Mesh(
         rawNode.name,
         meshData.geometry,
-        meshData.material,
+        materials[rawNode.meshMaterial!],
         position,
         rotation,
         scale

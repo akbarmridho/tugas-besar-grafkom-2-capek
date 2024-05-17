@@ -403,11 +403,15 @@ export class WebGLRenderer {
       // console.log(`rendering ${child.name}`);
 
       if (child instanceof Mesh) {
+        // console.log(this.shaderCache);
+        // console.log(`child name ${child.name}`);
         if (
           this.currentProgram === null ||
           this.currentProgram !== this.shaderCache[child.material.id]
         ) {
+          // console.log(`changing to mat id ${child.material.id}`);
           this.currentProgram = this.shaderCache[child.material.id];
+          this.gl.useProgram(this.currentProgram.program);
           WebGLUtils.setUniforms(this.currentProgram, globalUniforms);
         }
 
@@ -420,6 +424,10 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, {
           worldMatrix: child.worldMatrix
         });
+
+        // console.log(child.worldMatrix.toJSON());
+        // console.log(`material for ${child.name}`);
+        // console.log(child.material.uniforms);
         // console.log(child.rotation.toJSON());
         // console.log(child.position.toJSON());
         // console.log(child.worldMatrix.toJSON());

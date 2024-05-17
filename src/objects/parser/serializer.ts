@@ -49,6 +49,7 @@ export function serializeScene(
 
       if (!inMaterials) {
         materials.push(node.material);
+
         if (node.material instanceof BasicMaterial) {
           rawMaterials.push({
             type: 'BasicMaterial',
@@ -64,32 +65,31 @@ export function serializeScene(
 
       if (!inGeometries) {
         geometries.push(node.geometry);
-        const materialidx = materials.findIndex((m) => node.material);
 
+        /**
+         * A mesh is defined as a combination of Geometry and Material.
+         * So, one instance of geometry should not have different material type
+         */
         if (node.geometry instanceof PlaneGeometry) {
           rawGeometries.push({
             type: 'PlaneGeometry',
-            primitives: node.geometry.toJSON(false),
-            material: materialidx
+            primitives: node.geometry.toJSON(false)
           });
         } else if (node.geometry instanceof BoxGeometry) {
           rawGeometries.push({
             type: 'BoxGeometry',
-            primitives: node.geometry.toJSON(false),
-            material: materialidx
+            primitives: node.geometry.toJSON(false)
           });
         } else if (node.geometry instanceof PyramidGeometry) {
           rawGeometries.push({
             type: 'PyramidGeometry',
-            primitives: node.geometry.toJSON(false),
-            material: materialidx
-          })
+            primitives: node.geometry.toJSON(false)
+          });
         } else if (node.geometry instanceof PrismGeometry) {
           rawGeometries.push({
             type: 'PrismGeometry',
-            primitives: node.geometry.toJSON(false),
-            material: materialidx
-          })
+            primitives: node.geometry.toJSON(false)
+          });
         } else {
           throw new Error('Invalid geometry type');
         }
@@ -124,6 +124,7 @@ export function serializeScene(
 
     if (node instanceof Mesh) {
       baseData.mesh = geometries.findIndex((g) => node.geometry === g);
+      baseData.meshMaterial = materials.findIndex((m) => m === node.material);
     } else if (node instanceof Camera) {
       baseData.camera = cameras.findIndex((c) => node === c);
     } else {

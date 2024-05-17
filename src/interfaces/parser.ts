@@ -17,6 +17,7 @@ export interface PNode {
   children: number[];
   camera?: number;
   mesh?: number;
+  meshMaterial?: number;
   translation: Vector3Serialized;
   rotation?: EulerSerialized;
   scale?: Vector3Serialized;
@@ -38,8 +39,11 @@ export type PMaterial = PBasicMaterial;
 
 export interface PMesh {
   type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry';
-  primitives: PlaneGeometryProps | BoxGeometryProps | PyramidGeometryProps | PrismGeometryProps;
-  material: number;
+  primitives:
+    | PlaneGeometryProps
+    | BoxGeometryProps
+    | PyramidGeometryProps
+    | PrismGeometryProps;
 }
 
 export interface PModel {
