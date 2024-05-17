@@ -190,9 +190,9 @@ export class WebGLRenderer {
       viewProjectionMatrix: camera.viewProjectionMatrix
     };
 
-    console.log(
-      `global uniforms ${JSON.stringify(globalUniforms.viewProjectionMatrix.toJSON())}`
-    );
+    // console.log(
+    //   `global uniforms ${JSON.stringify(globalUniforms.viewProjectionMatrix.toJSON())}`
+    // );
 
     // @ts-ignore
     const toRender: Node<unknown>[] = [...scene.children];

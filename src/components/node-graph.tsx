@@ -18,9 +18,9 @@ interface NodeGraphProps {
 }
 
 interface XYZ {
-  x: number;
-  y: number;
-  z: number;
+  x: string;
+  y: string;
+  z: string;
 }
 
 export const NodeGraph = ({
@@ -32,19 +32,19 @@ export const NodeGraph = ({
   const filtered = data.node.children.filter((child) => child instanceof Mesh);
   const [nodeName, setNodeName] = useState<string>(data.node.name);
   const [position, setPosition] = useState<XYZ>({
-    x: data.node.position.getComponent(0),
-    y: data.node.position.getComponent(1),
-    z: data.node.position.getComponent(2)
+    x: String(data.node.position.getComponent(0)),
+    y: String(data.node.position.getComponent(1)),
+    z: String(data.node.position.getComponent(2))
   });
   const [scale, setScale] = useState<XYZ>({
-    x: data.node.scale.getComponent(0),
-    y: data.node.scale.getComponent(1),
-    z: data.node.scale.getComponent(2)
+    x: String(data.node.scale.getComponent(0)),
+    y: String(data.node.scale.getComponent(1)),
+    z: String(data.node.scale.getComponent(2))
   });
   const [rotation, setRotation] = useState<XYZ>({
-    x: radianToDegree(data.node.rotation.x),
-    y: radianToDegree(data.node.rotation.y),
-    z: radianToDegree(data.node.rotation.z)
+    x: String(radianToDegree(data.node.rotation.x)),
+    y: String(radianToDegree(data.node.rotation.y)),
+    z: String(radianToDegree(data.node.rotation.z))
   });
 
   const [debouncedNode] = useDebounce(nodeName, 200);
@@ -57,26 +57,42 @@ export const NodeGraph = ({
   }, [data.node, debouncedNode]);
 
   useEffect(() => {
-    data.node.setPosition(
-      new Vector3(debouncedPosition.x, debouncedPosition.y, debouncedPosition.z)
-    );
+    const x = +debouncedPosition.x;
+    const y = +debouncedPosition.y;
+    const z = +debouncedPosition.z;
+
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      return;
+    }
+
+    data.node.setPosition(new Vector3(x, y, z));
     appContext.renderer.current?.render();
   }, [appContext.renderer, data.node, debouncedPosition]);
 
   useEffect(() => {
-    data.node.setScale(
-      new Vector3(debouncedScale.x, debouncedScale.y, debouncedScale.z)
-    );
+    const x = +debouncedScale.x;
+    const y = +debouncedScale.y;
+    const z = +debouncedScale.z;
+
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      return;
+    }
+
+    data.node.setScale(new Vector3(x, y, z));
     appContext.renderer.current?.render();
   }, [appContext.renderer, data.node, debouncedScale]);
 
   useEffect(() => {
+    const x = +debouncedRotation.x;
+    const y = +debouncedRotation.y;
+    const z = +debouncedRotation.z;
+
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      return;
+    }
+
     data.node.setFromEulerRotation(
-      new Euler(
-        degreeToRadian(debouncedRotation.x),
-        degreeToRadian(debouncedRotation.x),
-        degreeToRadian(debouncedRotation.x)
-      )
+      new Euler(degreeToRadian(x), degreeToRadian(y), degreeToRadian(z))
     );
     appContext.renderer.current?.render();
   }, [appContext.renderer, data.node, debouncedRotation]);
@@ -128,11 +144,8 @@ export const NodeGraph = ({
               type={'number'}
               value={position.x}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setPosition((prev) => ({ ...prev, x: val }));
-                }
+                const val = e.target.value;
+                setPosition((prev) => ({ ...prev, x: val }));
               }}
             />
             <p>y</p>
@@ -141,11 +154,8 @@ export const NodeGraph = ({
               type={'number'}
               value={position.y}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setPosition((prev) => ({ ...prev, y: val }));
-                }
+                const val = e.target.value;
+                setPosition((prev) => ({ ...prev, y: val }));
               }}
             />
             <p>z</p>
@@ -154,11 +164,8 @@ export const NodeGraph = ({
               type={'number'}
               value={position.z}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setPosition((prev) => ({ ...prev, z: val }));
-                }
+                const val = e.target.value;
+                setPosition((prev) => ({ ...prev, z: val }));
               }}
             />
           </div>
@@ -172,11 +179,8 @@ export const NodeGraph = ({
               type={'number'}
               value={rotation.x}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setRotation((prev) => ({ ...prev, x: val }));
-                }
+                const val = e.target.value;
+                setRotation((prev) => ({ ...prev, x: val }));
               }}
             />
             <p>y</p>
@@ -185,11 +189,8 @@ export const NodeGraph = ({
               type={'number'}
               value={rotation.y}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setRotation((prev) => ({ ...prev, y: val }));
-                }
+                const val = e.target.value;
+                setRotation((prev) => ({ ...prev, y: val }));
               }}
             />
             <p>z</p>
@@ -198,11 +199,8 @@ export const NodeGraph = ({
               type={'number'}
               value={rotation.z}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setRotation((prev) => ({ ...prev, z: val }));
-                }
+                const val = e.target.value;
+                setRotation((prev) => ({ ...prev, z: val }));
               }}
             />
           </div>
@@ -216,11 +214,8 @@ export const NodeGraph = ({
               type={'number'}
               value={scale.x}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setScale((prev) => ({ ...prev, x: val }));
-                }
+                const val = e.target.value;
+                setScale((prev) => ({ ...prev, x: val }));
               }}
             />
             <p>y</p>
@@ -229,11 +224,8 @@ export const NodeGraph = ({
               type={'number'}
               value={scale.y}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setScale((prev) => ({ ...prev, y: val }));
-                }
+                const val = e.target.value;
+                setScale((prev) => ({ ...prev, y: val }));
               }}
             />
             <p>z</p>
@@ -242,11 +234,8 @@ export const NodeGraph = ({
               type={'number'}
               value={scale.z}
               onChange={(e) => {
-                const val = +e.target.value;
-
-                if (!isNaN(val)) {
-                  setScale((prev) => ({ ...prev, z: val }));
-                }
+                const val = e.target.value;
+                setScale((prev) => ({ ...prev, z: val }));
               }}
             />
           </div>

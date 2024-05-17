@@ -190,9 +190,9 @@ export class WebGLUtils {
 
       if (Object.hasOwn(programInfo.attributeSetters, key)) {
         programInfo.attributeSetters[key]!(attributes[attributeName]!);
-        console.log(`attribute setting value for ${key}`);
+        // console.log(`attribute setting value for ${key}`);
       } else {
-        console.log(`attribute setters does not have ${key}`);
+        // console.log(`attribute setters does not have ${key}`);
       }
     }
   }
@@ -310,10 +310,10 @@ export class WebGLUtils {
       const key = `u_${uniformName}`;
 
       if (Object.hasOwn(programInfo.uniformSetters, key)) {
-        console.log(`uniform setting value for ${key}`);
+        // console.log(`uniform setting value for ${key}`);
         programInfo.uniformSetters[key]!(uniforms[uniformName]!);
       } else {
-        console.log(`uniform setters does not have ${key}`);
+        // console.log(`uniform setters does not have ${key}`);
       }
     }
   }
