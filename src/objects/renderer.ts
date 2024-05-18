@@ -434,7 +434,8 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, {
           lightColor: Color.White(),
           lightPos: [1, 0, 1],
-          viewPos: [0, 0, 1]
+          viewPos: [0, 0, 1],
+          normalMatrix: child.worldMatrix.copy().inverse().transpose()
         });
         // console.log(child.rotation.toJSON());
         // console.log(child.position.toJSON());
