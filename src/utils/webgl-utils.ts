@@ -13,6 +13,8 @@ import {
   UniformSetterWebGLType
 } from '../interfaces/uniform-properties.ts';
 import { Matrix4 } from './math/matrix4.ts';
+import { Vector2 } from './math/vector2.ts';
+import { Vector3 } from './math/vector3.ts';
 
 export class WebGLUtils {
   /**
@@ -259,6 +261,8 @@ export class WebGLUtils {
             data = v;
           }
 
+          console.log("A", v, location);
+
           if (Object.hasOwn(UniformSetterWebGLType, type)) {
             // @ts-ignore
             const funcName = UniformSetterWebGLType[type] as string;
@@ -310,7 +314,7 @@ export class WebGLUtils {
   public static setUniforms(programInfo: ProgramInfo, uniforms: UniformObject) {
     for (const uniformName of Object.keys(uniforms)) {
       const key = `u_${uniformName}`;
-
+      console.log(key);
       if (Object.hasOwn(programInfo.uniformSetters, key)) {
         // console.log(`uniform setting value for ${key}`);
         programInfo.uniformSetters[key]!(uniforms[uniformName]!);

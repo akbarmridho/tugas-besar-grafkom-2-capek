@@ -14,6 +14,14 @@ import { AnimationClip } from '@/interfaces/animation.ts';
 import { PhongMaterialSerialized } from '@/objects/material/phong-material';
 import { PerspectiveProjection } from '@/objects/camera/perspective-camera';
 import { ObliqueProjection } from '@/objects/camera/oblique-camera';
+import {
+  AmbientLightProps,
+  AmbientLightSerialized
+} from '@/objects/light/ambient-light';
+import {
+  DirectionalLightProps,
+  DirectionalLightSerialized
+} from '@/objects/light/directional-light';
 
 export interface PNode {
   name: string;
@@ -22,6 +30,7 @@ export interface PNode {
   camera?: number;
   mesh?: number;
   meshMaterial?: number;
+  light?: number;
   translation: Vector3Serialized;
   rotation?: EulerSerialized;
   scale?: Vector3Serialized;
@@ -52,9 +61,21 @@ export interface PPhongMaterial {
   primitives: PhongMaterialSerialized;
 }
 
+export interface PAmbientLight {
+  type: 'AmbientLight';
+  primitives: AmbientLightProps;
+}
+
+export interface PDirectionalLight {
+  type: 'DirectionalLight';
+  primitives: DirectionalLightProps;
+}
+
 export type PCamera = POrthographicCamera | PPerspectiveCamera | PObliqueCamera;
 
 export type PMaterial = PBasicMaterial | PPhongMaterial;
+
+export type PLight = PAmbientLight | PDirectionalLight;
 
 export interface PMesh {
   type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry';
@@ -75,6 +96,7 @@ export interface PModel {
   cameras: PCamera[];
   meshes: PMesh[];
   materials: PMaterial[];
+  lights: PLight[];
   animationClip?: AnimationClip;
 }
 

@@ -551,6 +551,12 @@ export class Vector3 extends Serializable<Vector3Serialized> {
     return [this.x, this.y, this.z];
   }
 
+  *[Symbol.iterator](): IterableIterator<number> {
+    yield this.x;
+    yield this.y;
+    yield this.z;
+  }
+
   public toJSON(): Vector3Serialized {
     return {
       elements: [this.x, this.y, this.z]

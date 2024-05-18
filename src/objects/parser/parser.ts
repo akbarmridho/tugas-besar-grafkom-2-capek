@@ -29,6 +29,9 @@ import {
 } from '@/objects/geometry/prism-geometry.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { PhongMaterial } from '../material/phong-material';
+import { AmbientLight } from '../light/ambient-light';
+import { Divide } from 'lucide-react';
+import { DirectionalLight } from '../light/directional-light';
 
 export function parseModel(data: PModel): ParseModelResult {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
@@ -142,6 +145,24 @@ export function parseModel(data: PModel): ParseModelResult {
         rotation,
         scale
       );
+    } else if (rawNode.light !== undefined) {
+      const rawLightData = data.lights[rawNode.light];
+      if (rawLightData.type === 'AmbientLight') {
+        node = new AmbientLight(
+          rawNode.name,
+          rawLightData.primitives.color,
+          rawLightData.primitives.intensity
+        );
+      } else if (rawLightData.type === 'DirectionalLight') {
+        node = new DirectionalLight(
+          rawNode.name,
+          rawLightData.primitives.color,
+          rawLightData.primitives.direction,
+          rawLightData.primitives.intensity
+        );
+      } else {
+        throw new Error('Invalid light type');
+      }
     } else {
       throw new Error('Invalid node type');
     }

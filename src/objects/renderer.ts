@@ -19,6 +19,9 @@ import { AnimationPath } from '@/interfaces/animation.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
 import { Color } from './base/color';
 import { OrbitControl } from '@/objects/base/orbit-control.ts';
+import { Light } from './base/light';
+import { AmbientLight } from './light/ambient-light';
+import { DirectionalLight } from './light/directional-light';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -435,22 +438,38 @@ export class WebGLRenderer {
 
     // set the viewProjectionMatrix
 
-    const globalUniforms = {
+    const globalUniforms: { [key: string]: any } = {
       viewProjectionMatrix: camera.viewProjectionMatrix
     };
 
-    // console.log(
-    //   `global uniforms ${JSON.stringify(globalUniforms.viewProjectionMatrix.toJSON())}`
-    // );
-
     // @ts-ignore
     const toRender: Node<unknown>[] = [...scene.children];
+    // @ts-ignore
+    const lightToRender: Node<unknown>[] = [...scene.children];
 
+    // render all light
+    while (lightToRender.length !== 0) {
+      const child = lightToRender.shift()!;
+
+      if (child instanceof AmbientLight) {
+        globalUniforms['ambientLight.color'] = child.color;
+        globalUniforms['ambientLight.intensity'] = child.intensity;
+      }
+
+      if (child instanceof DirectionalLight) {
+        globalUniforms['directionalLight.color'] = child.color;
+        globalUniforms['directionalLight.direction'] = child._direction;
+        globalUniforms['directionalLight.intensity'] = child.intensity;
+      }
+
+      if (child.children.length !== 0) {
+        lightToRender.push(...child.children);
+      }
+    }
+
+    // render all mesh
     while (toRender.length !== 0) {
       const child = toRender.shift()!;
-      // handle for light etc ( i guess handle the lights first before the mesh)
-
-      // console.log(`rendering ${child.name}`);
 
       if (child instanceof Mesh) {
         // console.log(this.shaderCache);
@@ -472,18 +491,16 @@ export class WebGLRenderer {
         );
         WebGLUtils.setUniforms(this.currentProgram, child.material.uniforms);
         WebGLUtils.setUniforms(this.currentProgram, {
-          worldMatrix: child.worldMatrix
+          worldMatrix: child.worldMatrix,
+          viewPos: [0, 0, 1],
+          lightColor: Color.White(),
+          lightPos: [1, 0, 1],
+          normalMatrix: child.worldMatrix.copy().inverse().transpose()
         });
 
         // console.log(child.worldMatrix.toJSON());
         // console.log(`material for ${child.name}`);
         // console.log(child.material.uniforms);
-        WebGLUtils.setUniforms(this.currentProgram, {
-          lightColor: Color.White(),
-          lightPos: [1, 0, 1],
-          viewPos: [0, 0, 1],
-          normalMatrix: child.worldMatrix.copy().inverse().transpose()
-        });
         // console.log(child.rotation.toJSON());
         // console.log(child.position.toJSON());
         // console.log(child.worldMatrix.toJSON());

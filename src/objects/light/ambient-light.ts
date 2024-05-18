@@ -1,28 +1,35 @@
 import { Vector3 } from '@/utils/math/vector3';
-import { Light, LightSerialized } from '../base/light';
+import { Light } from '../base/light';
 import { Euler } from '@/utils/math/euler';
 import { Color } from '../base/color';
+import { NodeSerialized } from '../base/node';
 
-export interface AmbientLightSerialized extends LightSerialized {}
+export interface AmbientLightProps {
+  color: Color;
+  intensity: number;
+}
+
+export interface AmbientLightSerialized extends NodeSerialized {
+  color: Color;
+  intensity: number;
+}
 
 export class AmbientLight extends Light<AmbientLightSerialized> {
   constructor(
     name: string,
+    color?: Color,
+    intensity?: number,
     position?: Vector3,
     rotation?: Euler,
-    scale?: Vector3,
-    color?: Color,
-    intensity?: number
+    scale?: Vector3
   ) {
-    super(name, position, rotation, scale, color, intensity);
-    this.position.setComponents(0, 1, 0);
-    this.updateWorldMatrix();
+    super(name, color, intensity, position, rotation, scale);
   }
 
   public toJSON(): AmbientLightSerialized {
     return {
       color: this._color,
-      intensity: this.intensity,
+      intensity: this._intensity,
       ...this.toNodeSerialized()
     };
   }

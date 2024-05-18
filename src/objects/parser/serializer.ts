@@ -5,6 +5,7 @@ import { Mesh } from '@/objects/mesh.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import {
   PCamera,
+  PLight,
   PMaterial,
   PMesh,
   PModel,
@@ -21,6 +22,9 @@ import { PyramidGeometry } from '../geometry/pyramid-geometry';
 import { PrismGeometry } from '../geometry/prism-geometry';
 import { AnimationClip } from '@/interfaces/animation.ts';
 import { PhongMaterial } from '../material/phong-material';
+import { Light } from '../base/light';
+import { AmbientLight } from '../light/ambient-light';
+import { DirectionalLight } from '../light/directional-light';
 
 export function serializeScene(
   scene: Scene,
@@ -35,6 +39,8 @@ export function serializeScene(
   const rawGeometries: PMesh[] = [];
   const materials: ShaderMaterial[] = [];
   const rawMaterials: PMaterial[] = [];
+  const lights: Light[] = [];
+  const rawLights: PLight[] = [];
 
   const toTraverse: Node[] = [...scene.children];
 
@@ -125,6 +131,27 @@ export function serializeScene(
       else {
         throw new Error('Invalid camera type');
       }
+    } else if (node instanceof Light) {
+      lights.push(node as Light);
+
+      if (node instanceof AmbientLight) {
+        rawLights.push({
+          type: 'AmbientLight',
+          primitives: {
+            color: node.color,
+            intensity: node.intensity
+          }
+        });
+      } else if (node instanceof DirectionalLight) {
+        rawLights.push({
+          type: 'DirectionalLight',
+          primitives: {
+            color: node.color,
+            intensity: node.intensity,
+            direction: node._direction
+          }
+        });
+      }
     } else {
       throw new Error('Invalid instance type');
     }
@@ -147,6 +174,8 @@ export function serializeScene(
       baseData.meshMaterial = materials.findIndex((m) => m === node.material);
     } else if (node instanceof Camera) {
       baseData.camera = cameras.findIndex((c) => node === c);
+    } else if (node instanceof Light) {
+      baseData.light = lights.findIndex((l) => node === l);
     } else {
       throw new Error('Invalid instance of node');
     }
@@ -166,6 +195,7 @@ export function serializeScene(
     cameras: rawCameras,
     meshes: rawGeometries,
     materials: rawMaterials,
+    lights: rawLights,
     animationClip
   };
 }

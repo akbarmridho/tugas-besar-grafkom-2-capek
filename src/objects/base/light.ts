@@ -3,11 +3,6 @@ import { Color } from './color';
 import { Node, NodeSerialized } from './node';
 import { Euler } from '@/utils/math/euler';
 
-export interface LightSerialized extends NodeSerialized {
-  color: Color;
-  intensity: number;
-}
-
 export abstract class Light<
   // @ts-ignore
   T extends NodeSerialized = unknown
@@ -19,11 +14,11 @@ export abstract class Light<
   /* CSonstructor */
   constructor(
     name: string,
+    color?: Color,
+    intensity?: number,
     position?: Vector3,
     rotation?: Euler,
-    scale?: Vector3,
-    color?: Color,
-    intensity?: number
+    scale?: Vector3
   ) {
     super(name, position, rotation, scale);
 
