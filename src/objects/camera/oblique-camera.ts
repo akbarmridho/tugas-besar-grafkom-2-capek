@@ -1,44 +1,72 @@
-import { PerspectiveCamera, PerspectiveProjection } from './perspective-camera';
+import { Camera } from '@/objects/base/camera.ts';
+import { NodeSerialized } from '@/objects/base/node.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
+import { Euler } from '@/utils/math/euler.ts';
+import { Transformation } from '@/utils/math/transformation.ts';
 import { Matrix4 } from '@/utils/math/matrix4.ts';
-import { Euler } from '@/utils/math/euler';
 
-export interface ObliqueProjection extends PerspectiveProjection {
-  theta?: number; // Angle of obliqueness in radians
+export interface ObliqueProjection {
+  fov: number;
+  aspect: number;
+  near: number;
+  far: number;
+  theta: number; // Angle of obliqueness in radians
 }
 
-export class ObliqueCamera extends PerspectiveCamera {
-  private theta: number;
+export interface ObliqueCameraSerialized extends NodeSerialized {
+  projection: ObliqueProjection;
+}
+
+export class ObliqueCamera extends Camera<ObliqueCameraSerialized> {
+  _baseProjection: ObliqueProjection;
 
   constructor(
     name: string,
-    theta: number = 0.0, // Default angle of obliqueness
-    projection: PerspectiveProjection = {
+    projection: ObliqueProjection = {
       fov: 75,
       aspect: 16 / 9,
       near: 0.1,
-      far: 1000
+      far: 1000,
+      theta: 0.0 // Default angle of obliqueness
     },
     position?: Vector3,
     rotation?: Euler,
     scale?: Vector3
   ) {
-    super(name, projection, position, rotation, scale);
-    this.theta = theta;
+    super(name, position, rotation, scale); // Setup Node
+    this._baseProjection = projection;
+    this.computeProjectionMatrix();
+  }
+
+  get baseProjection() {
+    return this._baseProjection;
+  }
+
+  set baseProjection(val: ObliqueProjection) {
+    this._baseProjection = val;
+    this.computeProjectionMatrix();
   }
 
   computeProjectionMatrix() {
     // Compute the standard perspective projection matrix
-    super.computeProjectionMatrix();
+    this.projectionMatrix = Transformation.perspective(
+      this._baseProjection.fov,
+      this._baseProjection.aspect,
+      this._baseProjection.near,
+      this._baseProjection.far
+    );
 
     // Apply oblique projection transformation
-    this.projectionMatrix = this.computeObliqueProjectionMatrix(this.projectionMatrix, this.theta);
+    this.projectionMatrix = this.computeObliqueProjectionMatrix(
+      this.projectionMatrix,
+      this._baseProjection.theta
+    );
   }
 
   private computeObliqueProjectionMatrix(matrix: Matrix4, theta: number): Matrix4 {
     // Compute the oblique projection matrix transformation
-    const near = this.baseProjection.near;
-    const far = this.baseProjection.far;
+    const near = this._baseProjection.near;
+    const far = this._baseProjection.far;
     const tanTheta = Math.tan(theta);
 
     const c = (far + near) / (far - near);
@@ -53,5 +81,16 @@ export class ObliqueCamera extends PerspectiveCamera {
 
     // Apply the oblique projection transformation to the standard perspective projection matrix
     return matrix.multiplyMatrix(obliqueMatrix);
+  }
+
+  public toJSON(): ObliqueCameraSerialized {
+    return {
+      projection: { ...this._baseProjection },
+      ...this.toNodeSerialized()
+    };
+  }
+
+  public static fromJSON(name: string, data: ObliqueProjection) {
+    return new ObliqueCamera(name, data);
   }
 }
