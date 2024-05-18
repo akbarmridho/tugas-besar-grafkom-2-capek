@@ -48,6 +48,10 @@ export class Color extends Serializable<ColorSerialized> {
     return new Color(255, 0, 0);
   }
 
+  public static Blue() {
+    return new Color(0, 0, 255);
+  }
+
   public static White() {
     return new Color(255, 255, 255);
   }

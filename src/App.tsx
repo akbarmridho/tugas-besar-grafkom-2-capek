@@ -10,17 +10,17 @@ import { Coordinate, getCoordinate } from '@/utils/coordinates.ts';
 import { WebGLRenderer } from '@/objects/renderer.ts';
 import { CameraSelection } from '@/interfaces/camera.ts';
 import { Scene } from '@/objects/scene.ts';
+import { degreeToRadian } from '@/utils/math/angle.ts';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const GLRef = useRef<WebGLRenderingContext | null>(null);
   const run = useRef<boolean>(false);
   const rendererRef = useRef<WebGLRenderer | null>(null);
-  const [startClick, setStartClick] = useState<Coordinate | null>(null);
   const [cameraSelector, setCameraSelector] = useState<CameraAvailability>({
-    oblique: true,
-    orthogonal: true,
-    perspective: true
+    oblique: false,
+    orthogonal: false,
+    perspective: false
   });
 
   const [selectedCamera, setSelectedCamera] = useState<CameraSelection>(null);
@@ -31,6 +31,7 @@ function App() {
       selection: CameraSelection,
       availability: CameraAvailability
     ) => {
+      console.log('callback is fucking run');
       setCameraSelector(availability);
       setSelectedCamera(selection);
     },
@@ -45,10 +46,6 @@ function App() {
       renderer.onSceneChanged.add(cb);
       run.current = true;
     }
-
-    return () => {
-      rendererRef.current?.onSceneChanged.delete(cb);
-    };
   }, [cb]);
 
   return (
@@ -65,6 +62,14 @@ function App() {
         }}
       >
         <div className={'w-full h-screen flex justify-center bg-slate-100'}>
+          <div
+            className={
+              'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[300px] h-full flex flex-col p-2'
+            }
+          >
+            <AnimationControl />
+            <SceneGraph />
+          </div>
           <div className={'h-full aspect-square'}>
             <canvas
               ref={canvasRef}
@@ -78,29 +83,27 @@ function App() {
                  */
               }}
               onMouseDown={(e) => {
-                setStartClick(getCoordinate(canvasRef.current!, e));
+                rendererRef.current?.currentOrbitControl?.handleMouseDownRotate(
+                  getCoordinate(canvasRef.current!, e)
+                );
               }}
               onMouseUp={(e) => {
-                setStartClick(null);
+                rendererRef.current?.currentOrbitControl?.handleMouseUpRotate();
+              }}
+              onMouseLeave={() => {
+                rendererRef.current?.currentOrbitControl?.handleMouseUpRotate();
               }}
               onMouseMove={(e) => {
-                if (startClick === null) {
-                  return;
-                }
-
-                const currentCoord = getCoordinate(canvasRef.current!, e);
-                const delta: Coordinate = {
-                  x: currentCoord.x - startClick.x,
-                  y: currentCoord.y - startClick.y
-                };
-
-                // console.log(delta);
+                rendererRef.current?.currentOrbitControl?.handleMouseMoveRotate(
+                  getCoordinate(canvasRef.current!, e)
+                );
+                rendererRef.current?.render();
               }}
             />
           </div>
           <div
             className={
-              'border-l-2 border-gray-400 bg-slate-200 w-[300px] h-full flex flex-col p-2'
+              'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[300px] h-full flex flex-col p-2'
             }
           >
             {/** todo component
@@ -110,8 +113,6 @@ function App() {
              */}
             <SaveAndLoad />
             <PerspectiveSelector />
-            <AnimationControl />
-            <SceneGraph />
           </div>
         </div>
       </AppContext.Provider>

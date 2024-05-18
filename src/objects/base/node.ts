@@ -149,25 +149,11 @@ export abstract class Node<
   // Update local matrix from node current attribute
   updateLocalMatrix(): void {
     const position = this._position;
-    const rotation = this._rotation;
-    const scale = this._scale;
 
-    this._localMatrix = Transformation.translation(
-      position.getComponent(0),
-      position.getComponent(1),
-      position.getComponent(2)
-    ).multiplyMatrix(
-      Transformation.zRotation(rotation.z).multiplyMatrix(
-        Transformation.yRotation(rotation.y).multiplyMatrix(
-          Transformation.xRotation(rotation.x).multiplyMatrix(
-            Transformation.scaling(
-              scale.getComponent(0),
-              scale.getComponent(1),
-              scale.getComponent(2)
-            )
-          )
-        )
-      )
+    this._localMatrix = Transformation.compose(
+      position,
+      this._quaternion,
+      this.scale
     );
   }
 

@@ -18,6 +18,7 @@ import { mod } from '@/utils/math/mod.ts';
 import { AnimationPath } from '@/interfaces/animation.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
 import { Color } from './base/color';
+import { OrbitControl } from '@/objects/base/orbit-control.ts';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -45,6 +46,12 @@ export class WebGLRenderer {
     orthogonal: Camera | null;
     perspective: Camera | null;
     oblique: Camera | null;
+  } = { oblique: null, perspective: null, orthogonal: null };
+
+  orbitControl: {
+    orthogonal: OrbitControl | null;
+    perspective: OrbitControl | null;
+    oblique: OrbitControl | null;
   } = { oblique: null, perspective: null, orthogonal: null };
 
   model: ParseModelResult | null = null;
@@ -143,8 +150,8 @@ export class WebGLRenderer {
       perspective: null
     };
     this.camera = { oblique: null, orthogonal: null, perspective: null };
+    this.orbitControl = { oblique: null, orthogonal: null, perspective: null };
     this.selectedCamera = null;
-    console.log(model.cameras);
     model.cameras.forEach((camera, i) => {
       if (camera instanceof OrthographicCamera) {
         this.initialCameraTR.orthogonal = {
@@ -153,6 +160,7 @@ export class WebGLRenderer {
         };
 
         this.camera.orthogonal = camera;
+        this.orbitControl.orthogonal = new OrbitControl(camera);
 
         if (this.selectedCamera === null) {
           this.selectedCamera = 'orthogonal';
@@ -164,18 +172,18 @@ export class WebGLRenderer {
         };
 
         this.camera.perspective = camera;
-
+        this.orbitControl.perspective = new OrbitControl(camera);
         if (this.selectedCamera === null) {
           this.selectedCamera = 'perspective';
         }
       } else if (camera instanceof ObliqueCamera) {
-        console.log("A");
         this.initialCameraTR.oblique = {
           position: camera.position.clone(),
           rotation: camera.rotation.clone()
         };
 
         this.camera.oblique = camera;
+        this.orbitControl.oblique = new OrbitControl(camera);
 
         if (this.selectedCamera === null) {
           this.selectedCamera = 'oblique';
@@ -378,6 +386,20 @@ export class WebGLRenderer {
     this.isPlaying = false;
   }
 
+  public updateCameraRotation(deltaTheta: number, deltaPhi: number) {
+    if (this.model === null || this.selectedCamera === null) return;
+
+    const camera = this.camera[this.selectedCamera]!;
+
+    camera.rotateAlongCenter(deltaTheta, deltaPhi);
+    // camera.lookAt(new Vector3(0, 0, 0));
+    camera.updateWorldMatrix(false, true);
+  }
+
+  get currentOrbitControl() {
+    return this.orbitControl[this.selectedCamera!];
+  }
+
   /**
    * One render cycle
    *
@@ -416,8 +438,6 @@ export class WebGLRenderer {
     const globalUniforms = {
       viewProjectionMatrix: camera.viewProjectionMatrix
     };
-
-    console.log(camera.viewProjectionMatrix);
 
     // console.log(
     //   `global uniforms ${JSON.stringify(globalUniforms.viewProjectionMatrix.toJSON())}`

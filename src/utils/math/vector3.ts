@@ -1,6 +1,7 @@
 import { Matrix4, Matrix4Serialized } from './matrix4';
 import { Quaternion } from './quaternion';
 import { Serializable } from '@/objects/base/serializable.ts';
+import { Spherical } from '@/utils/math/spherical.ts';
 
 export interface Vector3Serialized {
   elements: number[];
@@ -9,9 +10,9 @@ export interface Vector3Serialized {
 export class Vector3 extends Serializable<Vector3Serialized> {
   /* Attribute */
   // Correspond to three vector components
-  private x: number;
-  private y: number;
-  private z: number;
+  public x: number;
+  public y: number;
+  public z: number;
 
   /* Constructor*/
   // Create and initialize Vector3 object
@@ -520,6 +521,28 @@ export class Vector3 extends Serializable<Vector3Serialized> {
     this.x = (e[0] * x + e[4] * y + e[8] * z + e[12]) * w;
     this.y = (e[1] * x + e[5] * y + e[9] * z + e[13]) * w;
     this.z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * w;
+
+    return this;
+  }
+
+  public setFromSpherical(spherical: Spherical) {
+    return this.setFromSphericalCoordinates(
+      spherical.radius,
+      spherical.phi,
+      spherical.theta
+    );
+  }
+
+  public setFromSphericalCoordinates(
+    radius: number,
+    phi: number,
+    theta: number
+  ) {
+    const sinPhiRadius = Math.sin(phi) * radius;
+
+    this.x = sinPhiRadius * Math.sin(theta);
+    this.y = Math.cos(phi) * radius;
+    this.z = sinPhiRadius * Math.cos(theta);
 
     return this;
   }
