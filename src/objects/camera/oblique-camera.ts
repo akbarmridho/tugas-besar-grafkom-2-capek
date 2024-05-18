@@ -47,21 +47,32 @@ export class ObliqueCamera extends Camera<ObliqueCameraSerialized> {
     this.computeProjectionMatrix();
   }
 
-  computeProjectionMatrix() {
-    // Compute the standard perspective projection matrix
-    this.projectionMatrix = Transformation.perspective(
-      this._baseProjection.fov,
-      this._baseProjection.aspect,
-      this._baseProjection.near,
-      this._baseProjection.far
-    );
+computeProjectionMatrix() {
+    const fov = this._baseProjection.fov;
+    const aspect = this._baseProjection.aspect;
+    const near = this._baseProjection.near;
+    const far = this._baseProjection.far;
+    const theta = this._baseProjection.theta;
+
+    const tanHalfFov = Math.tan(fov / 2);
+    const top = near * tanHalfFov;
+    const bottom = -top;
+    const right = top * aspect;
+    const left = -right;
+
+    const projectionMatrix = new Matrix4([
+        (2 * near) / (right - left), 0, 0, 0,
+        0, (2 * near) / (top - bottom), 0, 0,
+        (right + left) / (right - left), (top + bottom) / (top - bottom), -1, -1,
+        0, 0, (-2 * near * far) / (far - near), 0
+    ]);
 
     // Apply oblique projection transformation
     this.projectionMatrix = this.computeObliqueProjectionMatrix(
-      this.projectionMatrix,
-      this._baseProjection.theta
+        projectionMatrix,
+        theta
     );
-  }
+}      
 
   private computeObliqueProjectionMatrix(matrix: Matrix4, theta: number): Matrix4 {
     // Compute the oblique projection matrix transformation
