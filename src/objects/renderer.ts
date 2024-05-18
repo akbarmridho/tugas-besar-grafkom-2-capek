@@ -10,6 +10,8 @@ import { ParseModelResult } from '@/interfaces/parser.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { PerspectiveCamera } from './camera/perspective-camera';
+import { ObliqueCamera } from './camera/oblique-camera';
 import { CameraSelection } from '@/interfaces/camera.ts';
 import { CameraAvailability } from '@/components/context.ts';
 import { mod } from '@/utils/math/mod.ts';
@@ -142,7 +144,7 @@ export class WebGLRenderer {
     };
     this.camera = { oblique: null, orthogonal: null, perspective: null };
     this.selectedCamera = null;
-
+    console.log(model.cameras);
     model.cameras.forEach((camera, i) => {
       if (camera instanceof OrthographicCamera) {
         this.initialCameraTR.orthogonal = {
@@ -154,6 +156,29 @@ export class WebGLRenderer {
 
         if (this.selectedCamera === null) {
           this.selectedCamera = 'orthogonal';
+        }
+      } else if (camera instanceof PerspectiveCamera) {
+        this.initialCameraTR.perspective = {
+          position: camera.position.clone(),
+          rotation: camera.rotation.clone()
+        };
+
+        this.camera.perspective = camera;
+
+        if (this.selectedCamera === null) {
+          this.selectedCamera = 'perspective';
+        }
+      } else if (camera instanceof ObliqueCamera) {
+        console.log("A");
+        this.initialCameraTR.oblique = {
+          position: camera.position.clone(),
+          rotation: camera.rotation.clone()
+        };
+
+        this.camera.oblique = camera;
+
+        if (this.selectedCamera === null) {
+          this.selectedCamera = 'oblique';
         }
       }
     });
@@ -391,6 +416,8 @@ export class WebGLRenderer {
     const globalUniforms = {
       viewProjectionMatrix: camera.viewProjectionMatrix
     };
+
+    console.log(camera.viewProjectionMatrix);
 
     // console.log(
     //   `global uniforms ${JSON.stringify(globalUniforms.viewProjectionMatrix.toJSON())}`

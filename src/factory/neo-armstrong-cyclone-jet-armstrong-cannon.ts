@@ -9,6 +9,8 @@ import { PModel } from '@/interfaces/parser.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { AnimationClip } from '@/interfaces/animation.ts';
 import { PhongMaterial } from '@/objects/material/phong-material.ts';
+import { PerspectiveCamera } from '@/objects/camera/perspective-camera';
+import { ObliqueCamera } from '@/objects/camera/oblique-camera';
 
 export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
@@ -20,12 +22,7 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
    * Define materials
    */
   const canonMaterial = new BasicMaterial(Color.fromHex(0x63716e));
-  const ballMaterial = new PhongMaterial(
-    Color.Red(),
-    Color.White(),
-    Color.White(),
-    20
-  );
+  const ballMaterial = new BasicMaterial(Color.Black())
 
   const baseCanonShape = new BoxGeometry(0.25, 0.75, 0.25);
   const ballShape = new BoxGeometry(0.1, 0.1, 0.1);
@@ -40,7 +37,7 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   const leftBallMesh = new Mesh(
     'LBall',
     ballShape,
-    ballMaterial,
+    canonMaterial,
     new Vector3(-0.175, -0.325, 0)
   );
   const rightBallMesh = new Mesh(
@@ -54,8 +51,16 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   canonMesh.addChildren(rightBallMesh);
 
   const mainCamera = new OrthographicCamera('orthographic camera');
+  const secondCamera = new PerspectiveCamera('perspective camera');
+  const thirdCamera = new ObliqueCamera('Oblique Camera');
+
+  mainCamera.setPosition(new Vector3(0, 0, 1));
+  secondCamera.setPosition(new Vector3(0, 0, 1  ));
+  thirdCamera.setPosition(new Vector3(0, 0, 1));
 
   scene.addChildren(mainCamera);
+  scene.addChildren(secondCamera);
+  scene.addChildren(thirdCamera);
 
   const clip: AnimationClip = {
     name: 'flip',

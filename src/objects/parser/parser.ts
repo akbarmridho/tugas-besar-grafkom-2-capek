@@ -10,6 +10,8 @@ import {
 } from '@/objects/geometry/plane-geometry.ts';
 import { Camera } from '@/objects/base/camera.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { PerspectiveCamera } from '../camera/perspective-camera';
+import { ObliqueCamera } from '../camera/oblique-camera';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Mesh } from '@/objects/mesh.ts';
@@ -102,6 +104,22 @@ export function parseModel(data: PModel): ParseModelResult {
 
       if (rawCameraData.type === 'OrthographicCamera') {
         node = new OrthographicCamera(
+          rawNode.name,
+          rawCameraData.projection,
+          position,
+          rotation,
+          scale
+        );
+      } else if (rawCameraData.type === 'PerspectiveCamera') {
+        node = new PerspectiveCamera(
+          rawNode.name,
+          rawCameraData.projection,
+          position,
+          rotation,
+          scale
+        );
+      } else if (rawCameraData.type === 'ObliqueCamera') {
+        node = new ObliqueCamera(
           rawNode.name,
           rawCameraData.projection,
           position,

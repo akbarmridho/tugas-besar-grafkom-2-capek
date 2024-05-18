@@ -18,9 +18,9 @@ function App() {
   const rendererRef = useRef<WebGLRenderer | null>(null);
   const [startClick, setStartClick] = useState<Coordinate | null>(null);
   const [cameraSelector, setCameraSelector] = useState<CameraAvailability>({
-    oblique: false,
-    orthogonal: false,
-    perspective: false
+    oblique: true,
+    orthogonal: true,
+    perspective: true
   });
 
   const [selectedCamera, setSelectedCamera] = useState<CameraSelection>(null);

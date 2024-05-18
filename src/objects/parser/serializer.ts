@@ -15,6 +15,8 @@ import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PlaneGeometry } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
 import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { PerspectiveCamera } from '../camera/perspective-camera';
+import { ObliqueCamera } from '../camera/oblique-camera';
 import { PyramidGeometry } from '../geometry/pyramid-geometry';
 import { PrismGeometry } from '../geometry/prism-geometry';
 import { AnimationClip } from '@/interfaces/animation.ts';
@@ -108,7 +110,19 @@ export function serializeScene(
           type: 'OrthographicCamera',
           projection: node.toJSON().projection
         });
-      } else {
+      } else if (node instanceof PerspectiveCamera) {
+        rawCameras.push({
+          type: 'PerspectiveCamera',
+          projection: node.toJSON().projection
+        });
+      } else if (node instanceof ObliqueCamera) {
+        rawCameras.push({
+          type: 'ObliqueCamera',
+          projection: node.toJSON().projection
+        });
+      }
+      
+      else {
         throw new Error('Invalid camera type');
       }
     } else {

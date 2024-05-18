@@ -47,21 +47,27 @@ export class Transformation {
    * @param far far far Z clipping plane
    */
   public static perspective(
-    fieldOfViewInRadians: number,
-    aspect: number,
-    near: number,
+    left: number, 
+    right: number,
+    top: number, 
+    bottom: number, 
+    near: number, 
     far: number
   ): Matrix4 {
-    const f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
-    const rangeInv = 1.0 / (near - far);
+    const x = 2 * near / (right - left);
+    const y = 2 * near / (top - bottom);
 
-    // prettier-ignore
+    const a = (right + left) / (right - left);
+    const b = (top + bottom) / (top - bottom);
+    const c = - (far + near) / (far - near);
+    const d = (-2 * far * near) / (far - near);
+
     return new Matrix4([
-        f/aspect, 0, 0, 0,
-        0, f, 0, 0,
-        0, 0, (near+far)*rangeInv, near*far*rangeInv*2,
-        0, 0, -1, 0
-    ])
+      x, 0, a, 0,
+      0, y, b, 0,
+      0, 0, c, d,
+      0, 0, -1, 0
+    ]);
   }
 
   /**

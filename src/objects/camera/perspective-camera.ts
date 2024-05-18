@@ -21,9 +21,9 @@ export class PerspectiveCamera extends Camera<PerspectiveCameraSerialized> {
   constructor(
     name: string,
     projection: PerspectiveProjection = {
-      fov: 75,
-      aspect: 16 / 9,
-      near: 0.1,
+      fov: 100,
+      aspect: 1,
+      near: 1,
       far: 1000
     },
     position?: Vector3,
@@ -47,12 +47,23 @@ export class PerspectiveCamera extends Camera<PerspectiveCameraSerialized> {
   computeProjectionMatrix() {
     // Transformation.perspective() produces a perspective projection matrix
     // with parameters: fov, aspect ratio, near plane, and far plane.
-    this.projectionMatrix = Transformation.perspective(
-      this._baseProjection.fov,
-      this._baseProjection.aspect,
-      this._baseProjection.near,
-      this._baseProjection.far
-    );
+    // this.projectionMatrix = Transformation.perspective(
+    //   this._baseProjection.fov,
+    //   this._baseProjection.aspect,
+    //   this._baseProjection.near,
+    //   this._baseProjection.far
+    //);
+    const near = this._baseProjection.near;
+    const far = this._baseProjection.far;
+    const top = near * Math.tan((Math.PI/180) * 0.5 * this._baseProjection.fov);
+    const height = 2 * top;
+    const width = this._baseProjection.aspect * height;
+    const left = -0.5 * width;
+
+    this.projectionMatrix = Transformation.perspective(left, left+width, top, top-height, near, far);
+
+    
+
   }
 
   public toJSON(): PerspectiveCameraSerialized {

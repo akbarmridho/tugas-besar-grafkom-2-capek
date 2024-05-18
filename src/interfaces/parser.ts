@@ -12,9 +12,12 @@ import { Scene } from '@/objects/scene.ts';
 import { Camera } from '@/objects/base/camera.ts';
 import { AnimationClip } from '@/interfaces/animation.ts';
 import { PhongMaterialSerialized } from '@/objects/material/phong-material';
+import { PerspectiveProjection } from '@/objects/camera/perspective-camera';
+import { ObliqueProjection } from '@/objects/camera/oblique-camera';
 
 export interface PNode {
   name: string;
+  theta?: number;
   children: number[];
   camera?: number;
   mesh?: number;
@@ -29,6 +32,16 @@ export interface POrthographicCamera {
   projection: OrthographicProjection;
 }
 
+export interface PPerspectiveCamera {
+  type: 'PerspectiveCamera';
+  projection: PerspectiveProjection;
+}
+
+export interface PObliqueCamera {
+  type: 'ObliqueCamera';
+  projection: ObliqueProjection;
+}
+
 export interface PBasicMaterial {
   type: 'BasicMaterial';
   primitives: BasicMaterialSerialized;
@@ -39,7 +52,7 @@ export interface PPhongMaterial {
   primitives: PhongMaterialSerialized;
 }
 
-export type PCamera = POrthographicCamera;
+export type PCamera = POrthographicCamera | PPerspectiveCamera | PObliqueCamera;
 
 export type PMaterial = PBasicMaterial | PPhongMaterial;
 
