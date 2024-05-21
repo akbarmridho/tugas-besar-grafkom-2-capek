@@ -44,63 +44,20 @@ export abstract class Camera<
 
     this.rotation.setFromRotationMatrix(look);
     this.quaternion.fromRotationMatrix(look);
-
-    // this.updateWorldMatrix();
     //
-    // if (this.parent) {
-    //   const parent = Transformation.decompose(this.worldMatrix);
-    //   this.quaternion.premultiply(parent.quaternion.invert());
-    // }
+    // console.log('look at transform');
+    // console.log(look.toJSON());
+    //
+    // const dec = Transformation.decompose(look);
+    //
+    // this.quaternion.fromQuaternion(dec.quaternion);
+    // this.rotation.setFromQuaternion(this.quaternion);
 
-    /**
-     *    if ( parent ) {
-     *
-     *      _m1.extractRotation( parent.matrixWorld );
-     *      _q1.setFromRotationMatrix( _m1 );
-     *      this.quaternion.premultiply( _q1.invert() );
-     *
-     *    }
-     *
-     *    use this code if the camera is not a children of scene or if the scene have
-     *    rotation value in it
-     */
-  }
-
-  /**
-   * Create new pos, replace pos but does not update the world matrix
-   * @param deltaThetha
-   * @param deltaPhi
-   */
-  public rotateAlongCenter(deltaThetha: number, deltaPhi: number) {
-    const R = this.position.length();
-    const x = this.position.getComponent(0);
-    const y = this.position.getComponent(1);
-    const z = this.position.getComponent(2);
-
-    // console.log(`length ${R}`);
-    // const xy = Math.sqrt(x * x + y * y);
-
-    const theta = Math.atan2(y, x);
-    const phi = Math.acos(z / R);
-
-    const newTheta = theta + deltaThetha;
-    // const newPhi = mod(phi + deltaPhi + 2 * Math.PI, 2 * Math.PI);
-    const newPhi = phi + deltaPhi;
-    console.log(
-      `initial degree theta ${radianToDegree(theta)} phi ${radianToDegree(phi)}\n
-      new degree theta ${radianToDegree(newTheta)} phi ${radianToDegree(newPhi)} \n
-      with delta theta ${radianToDegree(deltaThetha)} phi ${radianToDegree(deltaPhi)}`
-    );
-
-    const newX = R * Math.sin(newPhi) * Math.cos(newTheta);
-    const newY = R * Math.sin(newPhi) * Math.sin(newTheta);
-    const newZ = R * Math.cos(newPhi);
-
-    console.log(
-      `initial pos ${x}, ${y}, ${z}\nnew pos ${newX}, ${newY}, ${newZ}`
-    );
-
-    this.position.setComponents(newX, newY, newZ);
+    if (this.parent) {
+      const parent = Transformation.decompose(this.worldMatrix);
+      this.quaternion.premultiply(parent.quaternion.invert());
+      this.rotation.setFromQuaternion(this.quaternion);
+    }
   }
 
   abstract computeProjectionMatrix(): void;

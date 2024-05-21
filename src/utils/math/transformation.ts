@@ -17,17 +17,48 @@ export class Transformation {
     target: Vector3,
     up: Vector3
   ): Matrix4 {
-    const zAxis = Vector3.subVectors(cameraPosition, target).normalize();
-    const xAxis = Vector3.crossVectors(up, zAxis).normalize();
-    const yAxis = Vector3.crossVectors(zAxis, xAxis).normalize();
+    const zAxis = Vector3.subVectors(cameraPosition, target);
+
+    if (zAxis.length() === 0) {
+      zAxis.z = 1;
+    }
+
+    zAxis.normalize();
+
+    let xAxis = Vector3.crossVectors(up, zAxis);
+
+    if (xAxis.length() === 0) {
+      // up and z are parallel
+
+      if (Math.abs(up.z) === 1) {
+        zAxis.x += 0.0001;
+      } else {
+        zAxis.z += 0.0001;
+      }
+
+      zAxis.normalize();
+      xAxis = Vector3.crossVectors(up, zAxis);
+    }
+
+    xAxis.normalize();
+
+    const yAxis = Vector3.crossVectors(zAxis, xAxis);
+
+    // // prettier-ignore
+    // return new Matrix4([
+    //   xAxis.x, xAxis.y, xAxis.z, 0,
+    //   yAxis.x, yAxis.y, yAxis.z, 0,
+    //   zAxis.x, zAxis.y, zAxis.z, 0,
+    //   0,       0,       0,       1
+    // ]);
 
     // prettier-ignore
     return new Matrix4([
-        xAxis.getComponent(0), yAxis.getComponent(0), zAxis.getComponent(0), cameraPosition.getComponent(0),
-        xAxis.getComponent(1), yAxis.getComponent(1), zAxis.getComponent(1), cameraPosition.getComponent(1),
-        xAxis.getComponent(2), yAxis.getComponent(2), zAxis.getComponent(2), cameraPosition.getComponent(2),
-        0, 0, 0, 1
-    ]);
+      xAxis.x, yAxis.x, zAxis.x, 0,
+      xAxis.y, yAxis.y, zAxis.y, 0,
+      xAxis.z, yAxis.z, zAxis.z, 0,
+      0      , 0      , 0,       1
+    ])
   }
 
   /**
@@ -47,27 +78,22 @@ export class Transformation {
    * @param far far far Z clipping plane
    */
   public static perspective(
-    left: number, 
+    left: number,
     right: number,
-    top: number, 
-    bottom: number, 
-    near: number, 
+    top: number,
+    bottom: number,
+    near: number,
     far: number
   ): Matrix4 {
-    const x = 2 * near / (right - left);
-    const y = 2 * near / (top - bottom);
+    const x = (2 * near) / (right - left);
+    const y = (2 * near) / (top - bottom);
 
     const a = (right + left) / (right - left);
     const b = (top + bottom) / (top - bottom);
-    const c = - (far + near) / (far - near);
+    const c = -(far + near) / (far - near);
     const d = (-2 * far * near) / (far - near);
 
-    return new Matrix4([
-      x, 0, a, 0,
-      0, y, b, 0,
-      0, 0, c, d,
-      0, 0, -1, 0
-    ]);
+    return new Matrix4([x, 0, a, 0, 0, y, b, 0, 0, 0, c, d, 0, 0, -1, 0]);
   }
 
   /**

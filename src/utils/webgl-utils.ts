@@ -261,7 +261,7 @@ export class WebGLUtils {
             data = v;
           }
 
-          console.log("A", v, location);
+          // console.log("A", v, location);
 
           if (Object.hasOwn(UniformSetterWebGLType, type)) {
             // @ts-ignore
@@ -314,7 +314,7 @@ export class WebGLUtils {
   public static setUniforms(programInfo: ProgramInfo, uniforms: UniformObject) {
     for (const uniformName of Object.keys(uniforms)) {
       const key = `u_${uniformName}`;
-      console.log(key);
+      // console.log(key);
       if (Object.hasOwn(programInfo.uniformSetters, key)) {
         // console.log(`uniform setting value for ${key}`);
         programInfo.uniformSetters[key]!(uniforms[uniformName]!);

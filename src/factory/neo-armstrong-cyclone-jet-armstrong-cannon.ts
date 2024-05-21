@@ -11,6 +11,7 @@ import { AnimationClip } from '@/interfaces/animation.ts';
 import { PhongMaterial } from '@/objects/material/phong-material.ts';
 import { PerspectiveCamera } from '@/objects/camera/perspective-camera';
 import { ObliqueCamera } from '@/objects/camera/oblique-camera';
+import { DirectionalLight } from '@/objects/light/directional-light.ts';
 
 export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
@@ -22,7 +23,12 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
    * Define materials
    */
   const canonMaterial = new BasicMaterial(Color.fromHex(0x63716e));
-  const ballMaterial = new BasicMaterial(Color.Black())
+  const ballMaterial = new PhongMaterial(
+    Color.Red(),
+    Color.White(),
+    Color.White(),
+    0.5
+  );
 
   const baseCanonShape = new BoxGeometry(0.25, 0.75, 0.25);
   const ballShape = new BoxGeometry(0.1, 0.1, 0.1);
@@ -55,12 +61,16 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   const thirdCamera = new ObliqueCamera('Oblique Camera');
 
   mainCamera.setPosition(new Vector3(0, 0, 1));
-  secondCamera.setPosition(new Vector3(0, 0, 1  ));
+  secondCamera.setPosition(new Vector3(0, 0, 1));
   thirdCamera.setPosition(new Vector3(0, 0, 1));
 
   scene.addChildren(mainCamera);
   scene.addChildren(secondCamera);
   scene.addChildren(thirdCamera);
+
+  const directionalLight = new DirectionalLight('sun');
+
+  scene.addChildren(directionalLight);
 
   const clip: AnimationClip = {
     name: 'flip',

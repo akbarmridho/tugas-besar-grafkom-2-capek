@@ -1,6 +1,19 @@
 import { clamp } from '@/utils/other.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 
+/**
+ * Spherical converter
+ *
+ * We assume that upward axis is y axis.
+ * Angle between xz axis is called theta
+ * Angle between line in xz to y (from top is phi)
+ *
+ * x = r sin(phi) cos(theta)
+ * y = r cos(phi)
+ * z = r sin(phi) sin(theta)
+ *
+ * theta = atan(z/x)
+ */
 export class Spherical {
   public radius: number;
   public phi: number;
@@ -48,7 +61,7 @@ export class Spherical {
       this.theta = 0;
       this.phi = 0;
     } else {
-      this.theta = Math.atan2(x, z);
+      this.theta = Math.atan2(z, x);
       this.phi = Math.acos(clamp(y / this.radius, -1, 1));
     }
 

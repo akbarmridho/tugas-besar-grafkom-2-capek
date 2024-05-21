@@ -3,7 +3,20 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Spherical } from '@/utils/math/spherical.ts';
 import { Quaternion } from '@/utils/math/quaternion.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
+import { mod } from '@/utils/math/mod.ts';
 
+/**
+ * "Here I am, here I remain" - Leto Atreides
+ *
+ * This is supposed to be orbit control where the camera is rotated with target as it's center,
+ * but we have a case of skill issue so that the result is somehow rendered incorrectly.
+ *
+ * I'll just leave it here, as a reminder of my effort to implement orbit control this way.
+ *
+ * Time wasted: 10-20 hours, 3 days worth of pengerjaan tubes
+ *
+ * Let's just settle with a trickery, where we just rotate the entire world except the camera.
+ */
 export class OrbitControl {
   camera: Camera;
   target: Vector3 = new Vector3(0, 0, 0); // assume target always at origin
@@ -42,18 +55,29 @@ export class OrbitControl {
   }
 
   update() {
-    const position = this.camera.position;
+    this.spherical.radius = this.distance;
 
-    this.offset.copyFrom(position).subVector(this.target);
+    this.offset.copyFrom(this.camera.position).subVector(this.target);
 
-    console.log(`quat value`);
-    console.log(this.quaternion.toJSON());
-    console.log('quat inv value');
-    console.log(this.quaternionInverse.toJSON());
-    // this.offset.applyQuaternion(this.quaternion);
+    console.log('initial pos');
+    console.log(this.camera.position.toJSON());
+    console.log('initial offset');
+    console.log(this.offset.toJSON());
+    console.log('cam rot initial');
+    console.log(this.camera.rotation.toJSON());
+
+    // console.log(`quat value`);
+    // console.log(this.quaternion.toJSON());
+    // console.log('quat inv value');
+    // console.log(this.quaternionInverse.toJSON());
+    this.offset.applyQuaternion(this.quaternion);
     this.spherical.setFromVector(this.offset);
+    console.log(
+      `initial sphere rad ${this.spherical.radius} phi ${this.spherical.phi} theta ${this.spherical.theta}`
+    );
 
     this.spherical.theta += this.sphericalDelta.theta;
+    // this.spherical.theta = mod(this.spherical.theta + 2 * Math.PI, 2 * Math.PI);
     this.spherical.phi += this.sphericalDelta.phi;
 
     this.spherical.phi = Math.max(
@@ -63,14 +87,25 @@ export class OrbitControl {
 
     this.spherical.makeSafe();
 
-    this.offset.setFromSpherical(this.spherical);
-    // this.offset.applyQuaternion(this.quaternionInverse);
-    position.copyFrom(this.target).addVector(this.offset);
+    console.log(
+      `after sphere rad ${this.spherical.radius} phi ${this.spherical.phi} theta ${this.spherical.theta}`
+    );
 
+    this.offset.setFromSpherical(this.spherical);
+    console.log('fucking ofset offset');
+    console.log(this.offset.toJSON());
+
+    this.offset.applyQuaternion(this.quaternionInverse);
+    this.camera.position.copyFrom(this.target).addVector(this.offset);
+    console.log('after pos');
+    console.log(this.camera.position.toJSON());
     this.camera.lookAt(this.target);
 
+    console.log('cam rot after');
+    console.log(this.camera.rotation.toJSON());
+
     this.sphericalDelta.set(0, 0, 0);
-    this.camera.updateWorldMatrix(true, true);
+    this.camera.updateWorldMatrix(false, true);
   }
 
   public handleMouseDownRotate(pos: { x: number; y: number }) {
@@ -101,8 +136,10 @@ export class OrbitControl {
     const leftrotval = (2 * Math.PI * rotateDelta.x) / 800;
     const uprotval = (2 * Math.PI * rotateDelta.y) / 800;
 
+    // this.rotateLeft(0.1);
+    console.log(`rot left ${leftrotval}`);
     this.rotateLeft(leftrotval);
-    this.rotateUp(uprotval);
+    // this.rotateUp(uprotval);
 
     this.rotateStart = { ...pos };
 

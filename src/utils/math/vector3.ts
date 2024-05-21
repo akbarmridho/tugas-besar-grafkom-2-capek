@@ -539,10 +539,9 @@ export class Vector3 extends Serializable<Vector3Serialized> {
     theta: number
   ) {
     const sinPhiRadius = Math.sin(phi) * radius;
-
-    this.x = sinPhiRadius * Math.sin(theta);
+    this.x = sinPhiRadius * Math.cos(theta);
     this.y = Math.cos(phi) * radius;
-    this.z = sinPhiRadius * Math.cos(theta);
+    this.z = sinPhiRadius * Math.sin(theta);
 
     return this;
   }

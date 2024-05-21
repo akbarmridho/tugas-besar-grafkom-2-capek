@@ -389,16 +389,6 @@ export class WebGLRenderer {
     this.isPlaying = false;
   }
 
-  public updateCameraRotation(deltaTheta: number, deltaPhi: number) {
-    if (this.model === null || this.selectedCamera === null) return;
-
-    const camera = this.camera[this.selectedCamera]!;
-
-    camera.rotateAlongCenter(deltaTheta, deltaPhi);
-    // camera.lookAt(new Vector3(0, 0, 0));
-    camera.updateWorldMatrix(false, true);
-  }
-
   get currentOrbitControl() {
     return this.orbitControl[this.selectedCamera!];
   }
