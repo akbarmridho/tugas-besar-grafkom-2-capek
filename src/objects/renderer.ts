@@ -18,7 +18,7 @@ import { mod } from '@/utils/math/mod.ts';
 import { AnimationPath } from '@/interfaces/animation.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
 import { Color } from './base/color';
-import { OrbitControl } from '@/objects/base/orbit-control.ts';
+import { OrbitControlOld } from '@/objects/base/orbit-control-old.ts';
 import { Light } from './base/light';
 import { AmbientLight } from './light/ambient-light';
 import { DirectionalLight } from './light/directional-light';
@@ -52,9 +52,9 @@ export class WebGLRenderer {
   } = { oblique: null, perspective: null, orthogonal: null };
 
   orbitControl: {
-    orthogonal: OrbitControl | null;
-    perspective: OrbitControl | null;
-    oblique: OrbitControl | null;
+    orthogonal: OrbitControlOld | null;
+    perspective: OrbitControlOld | null;
+    oblique: OrbitControlOld | null;
   } = { oblique: null, perspective: null, orthogonal: null };
 
   model: ParseModelResult | null = null;
@@ -163,7 +163,7 @@ export class WebGLRenderer {
         };
 
         this.camera.orthogonal = camera;
-        this.orbitControl.orthogonal = new OrbitControl(camera);
+        this.orbitControl.orthogonal = new OrbitControlOld(camera);
 
         if (this.selectedCamera === null) {
           this.selectedCamera = 'orthogonal';
@@ -175,7 +175,7 @@ export class WebGLRenderer {
         };
 
         this.camera.perspective = camera;
-        this.orbitControl.perspective = new OrbitControl(camera);
+        this.orbitControl.perspective = new OrbitControlOld(camera);
         if (this.selectedCamera === null) {
           this.selectedCamera = 'perspective';
         }
@@ -186,7 +186,7 @@ export class WebGLRenderer {
         };
 
         this.camera.oblique = camera;
-        this.orbitControl.oblique = new OrbitControl(camera);
+        this.orbitControl.oblique = new OrbitControlOld(camera);
 
         if (this.selectedCamera === null) {
           this.selectedCamera = 'oblique';

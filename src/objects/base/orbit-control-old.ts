@@ -2,8 +2,6 @@ import { Camera } from '@/objects/base/camera.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Spherical } from '@/utils/math/spherical.ts';
 import { Quaternion } from '@/utils/math/quaternion.ts';
-import { degreeToRadian } from '@/utils/math/angle.ts';
-import { mod } from '@/utils/math/mod.ts';
 
 /**
  * "Here I am, here I remain" - Leto Atreides
@@ -17,7 +15,7 @@ import { mod } from '@/utils/math/mod.ts';
  *
  * Let's just settle with a trickery, where we just rotate the entire world except the camera.
  */
-export class OrbitControl {
+export class OrbitControlOld {
   camera: Camera;
   target: Vector3 = new Vector3(0, 0, 0); // assume target always at origin
   spherical: Spherical = new Spherical();
