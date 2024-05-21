@@ -17,9 +17,7 @@ import { CameraAvailability } from '@/components/context.ts';
 import { mod } from '@/utils/math/mod.ts';
 import { AnimationPath } from '@/interfaces/animation.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
-import { Color } from './base/color';
-import { OrbitControlOld } from '@/objects/base/orbit-control-old.ts';
-import { Light } from './base/light';
+import { OrbitControl } from '@/objects/base/orbit-control.ts';
 import { AmbientLight } from './light/ambient-light';
 import { DirectionalLight } from './light/directional-light';
 
@@ -52,9 +50,9 @@ export class WebGLRenderer {
   } = { oblique: null, perspective: null, orthogonal: null };
 
   orbitControl: {
-    orthogonal: OrbitControlOld | null;
-    perspective: OrbitControlOld | null;
-    oblique: OrbitControlOld | null;
+    orthogonal: OrbitControl | null;
+    perspective: OrbitControl | null;
+    oblique: OrbitControl | null;
   } = { oblique: null, perspective: null, orthogonal: null };
 
   model: ParseModelResult | null = null;
@@ -163,7 +161,7 @@ export class WebGLRenderer {
         };
 
         this.camera.orthogonal = camera;
-        this.orbitControl.orthogonal = new OrbitControlOld(camera);
+        this.orbitControl.orthogonal = new OrbitControl(camera);
 
         if (this.selectedCamera === null) {
           this.selectedCamera = 'orthogonal';
@@ -175,7 +173,7 @@ export class WebGLRenderer {
         };
 
         this.camera.perspective = camera;
-        this.orbitControl.perspective = new OrbitControlOld(camera);
+        this.orbitControl.perspective = new OrbitControl(camera);
         if (this.selectedCamera === null) {
           this.selectedCamera = 'perspective';
         }
@@ -186,7 +184,7 @@ export class WebGLRenderer {
         };
 
         this.camera.oblique = camera;
-        this.orbitControl.oblique = new OrbitControlOld(camera);
+        this.orbitControl.oblique = new OrbitControl(camera);
 
         if (this.selectedCamera === null) {
           this.selectedCamera = 'oblique';
@@ -400,6 +398,8 @@ export class WebGLRenderer {
   render() {
     if (this.model === null || this.selectedCamera === null) return;
 
+    console.log('render called');
+
     const scene = this.model.scene;
     const camera = this.camera[this.selectedCamera]!;
 
@@ -448,7 +448,9 @@ export class WebGLRenderer {
 
       if (child instanceof DirectionalLight) {
         globalUniforms['directionalLight.color'] = child.color;
-        globalUniforms['directionalLight.direction'] = child._direction;
+        globalUniforms['directionalLight.direction'] = child._direction
+          .clone()
+          .applyMatrix4(child.worldMatrix);
         globalUniforms['directionalLight.intensity'] = child.intensity;
       }
 
@@ -482,9 +484,9 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, child.material.uniforms);
         WebGLUtils.setUniforms(this.currentProgram, {
           worldMatrix: child.worldMatrix,
-          viewPos: [0, 0, 1],
-          lightColor: Color.White(),
-          lightPos: [1, 0, 1],
+          viewPos: camera.position
+            .clone()
+            .applyQuaternion(scene.quaternion.clone()),
           normalMatrix: child.worldMatrix.copy().inverse().transpose()
         });
 

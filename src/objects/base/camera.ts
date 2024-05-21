@@ -12,6 +12,7 @@ export abstract class Camera<
   protected _projectionMatrix: Matrix4 = Matrix4.identity();
   protected _viewProjectionMatrix: Matrix4 = Matrix4.identity();
   protected _invWorldMatrix: Matrix4 = Matrix4.identity();
+  protected isCamera: boolean = true;
 
   updateWorldMatrix(
     updateParents: boolean = true,

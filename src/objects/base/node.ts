@@ -35,6 +35,8 @@ export abstract class Node<
   // @ts-ignore
   private _children: Node<unknown>[] = [];
 
+  protected isCamera: boolean = false;
+
   // Other
   name: string = 'node';
   visible: boolean = true;
@@ -168,7 +170,8 @@ export abstract class Node<
 
     this.updateLocalMatrix();
 
-    if (this._parent !== null) {
+    // add camera bypass for orbit control
+    if (this._parent !== null && !this.isCamera) {
       this._worldMatrix = this._localMatrix
         .copy()
         .multiplyMatrix(this._parent.worldMatrix);
