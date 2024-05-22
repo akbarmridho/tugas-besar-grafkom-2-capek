@@ -37,12 +37,6 @@ export class WebGLRenderer {
 
   selectedCamera: CameraSelection = null;
 
-  initialCameraTR: {
-    orthogonal: { position: Vector3; rotation: Euler } | null;
-    perspective: { position: Vector3; rotation: Euler } | null;
-    oblique: { position: Vector3; rotation: Euler } | null;
-  } = { oblique: null, orthogonal: null, perspective: null };
-
   camera: {
     orthogonal: Camera | null;
     perspective: Camera | null;
@@ -98,10 +92,10 @@ export class WebGLRenderer {
     if (this.selectedCamera === null) return;
 
     const camera = this.camera[this.selectedCamera]!;
-    const initialPos = this.initialCameraTR[this.selectedCamera]!;
+    camera.zoom = 1;
+    camera.computeProjectionMatrix();
 
-    camera.setPosition(initialPos.position);
-    camera.setFromEulerRotation(initialPos.rotation);
+    this.model?.scene.setFromEulerRotation(new Euler(0, 0, 0));
   }
 
   programFromMaterial(material: ShaderMaterial) {
@@ -145,21 +139,11 @@ export class WebGLRenderer {
     this.model = model;
     this.shaderCache = {};
     this.currentProgram = null;
-    this.initialCameraTR = {
-      oblique: null,
-      orthogonal: null,
-      perspective: null
-    };
     this.camera = { oblique: null, orthogonal: null, perspective: null };
     this.orbitControl = { oblique: null, orthogonal: null, perspective: null };
     this.selectedCamera = null;
     model.cameras.forEach((camera, i) => {
       if (camera instanceof OrthographicCamera) {
-        this.initialCameraTR.orthogonal = {
-          position: camera.position.clone(),
-          rotation: camera.rotation.clone()
-        };
-
         this.camera.orthogonal = camera;
         this.orbitControl.orthogonal = new OrbitControl(camera);
 
@@ -167,22 +151,12 @@ export class WebGLRenderer {
           this.selectedCamera = 'orthogonal';
         }
       } else if (camera instanceof PerspectiveCamera) {
-        this.initialCameraTR.perspective = {
-          position: camera.position.clone(),
-          rotation: camera.rotation.clone()
-        };
-
         this.camera.perspective = camera;
         this.orbitControl.perspective = new OrbitControl(camera);
         if (this.selectedCamera === null) {
           this.selectedCamera = 'perspective';
         }
       } else if (camera instanceof ObliqueCamera) {
-        this.initialCameraTR.oblique = {
-          position: camera.position.clone(),
-          rotation: camera.rotation.clone()
-        };
-
         this.camera.oblique = camera;
         this.orbitControl.oblique = new OrbitControl(camera);
 

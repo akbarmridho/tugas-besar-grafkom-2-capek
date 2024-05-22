@@ -31,7 +31,6 @@ function App() {
       selection: CameraSelection,
       availability: CameraAvailability
     ) => {
-      console.log('callback is fucking run');
       setCameraSelector(availability);
       setSelectedCamera(selection);
     },
@@ -81,6 +80,9 @@ function App() {
                 rendererRef.current?.render();
               }}
               onMouseDown={(e) => {
+                if (e.button !== 0) {
+                  return;
+                }
                 rendererRef.current?.currentOrbitControl?.handleMouseDownRotate(
                   getCoordinate(canvasRef.current!, e)
                 );

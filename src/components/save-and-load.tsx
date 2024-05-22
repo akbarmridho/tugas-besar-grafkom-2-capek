@@ -131,6 +131,7 @@ export const SaveAndLoad = () => {
 
                 if (renderer.selectedCamera !== null) {
                   renderer.resetCamera();
+                  renderer.render();
                 }
               }}
             >
