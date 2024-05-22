@@ -8,12 +8,13 @@ import { serializeScene } from '@/objects/parser/serializer.ts';
 import { OrthographicCamera } from '@/objects/camera/orthographic-camera.ts';
 import { PrismGeometry } from '@/objects/geometry/prism-geometry';
 import { PyramidGeometry } from '@/objects/geometry/pyramid-geometry';
+import { generateBaseScene } from '@/factory/base.ts';
 
 export function Test() {
   /**
    * Define scenes
    */
-  const scene = new Scene('test', Color.fromHex(0x76a0de));
+  const scene = generateBaseScene('test', Color.fromHex(0x76a0de));
 
   /**
    * Define materials
@@ -54,10 +55,6 @@ export function Test() {
   //
   // canonMesh.addChildren(leftBallMesh);
   // canonMesh.addChildren(rightBallMesh);
-
-  const mainCamera = new OrthographicCamera('orthographic camera');
-
-  scene.addChildren(mainCamera);
 
   return serializeScene(scene);
 }

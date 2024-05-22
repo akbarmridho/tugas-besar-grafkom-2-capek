@@ -60,10 +60,14 @@ function App() {
           setSelectedCamera
         }}
       >
-        <div className={'w-full h-screen flex justify-center bg-slate-100'}>
+        <div
+          className={
+            'w-full h-screen flex flex-row justify-center bg-slate-100 overflow-x-auto'
+          }
+        >
           <div
             className={
-              'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[300px] h-full flex flex-col p-2'
+              'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[250px] h-full flex flex-col p-2'
             }
           >
             <AnimationControl />
@@ -106,7 +110,7 @@ function App() {
           </div>
           <div
             className={
-              'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[300px] h-full flex flex-col p-2'
+              'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[250px] h-full flex flex-col p-2'
             }
           >
             {/** todo component

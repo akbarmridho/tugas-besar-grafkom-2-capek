@@ -12,12 +12,13 @@ import { PhongMaterial } from '@/objects/material/phong-material.ts';
 import { PerspectiveCamera } from '@/objects/camera/perspective-camera';
 import { ObliqueCamera } from '@/objects/camera/oblique-camera';
 import { DirectionalLight } from '@/objects/light/directional-light.ts';
+import { generateBaseScene } from '@/factory/base.ts';
 
 export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
    * Define scenes
    */
-  const scene = new Scene('neo-amstrong', Color.fromHex(0x36a0de));
+  const scene = generateBaseScene('neo-amstrong', Color.fromHex(0x36a0de));
 
   /**
    * Define materials
@@ -55,18 +56,6 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
 
   canonMesh.addChildren(leftBallMesh);
   canonMesh.addChildren(rightBallMesh);
-
-  const mainCamera = new OrthographicCamera('orthographic camera');
-  const secondCamera = new PerspectiveCamera('perspective camera');
-  const thirdCamera = new ObliqueCamera('Oblique Camera');
-
-  mainCamera.setPosition(new Vector3(0, 0, 1));
-  secondCamera.setPosition(new Vector3(0, 0, 1));
-  thirdCamera.setPosition(new Vector3(0, 0, 1));
-
-  scene.addChildren(mainCamera);
-  scene.addChildren(secondCamera);
-  scene.addChildren(thirdCamera);
 
   const directionalLight = new DirectionalLight('sun');
 
