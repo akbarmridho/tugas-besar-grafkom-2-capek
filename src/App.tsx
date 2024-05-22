@@ -94,10 +94,13 @@ function App() {
                 rendererRef.current?.currentOrbitControl?.handleMouseUpRotate();
               }}
               onMouseMove={(e) => {
-                rendererRef.current?.currentOrbitControl?.handleMouseMoveRotate(
-                  getCoordinate(canvasRef.current!, e)
-                );
-                rendererRef.current?.render();
+                if (
+                  rendererRef.current?.currentOrbitControl?.handleMouseMoveRotate(
+                    getCoordinate(canvasRef.current!, e)
+                  )
+                ) {
+                  rendererRef.current?.render();
+                }
               }}
             />
           </div>

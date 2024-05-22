@@ -39,8 +39,8 @@ export class OrbitControl {
     this.rotateStart = null;
   }
 
-  public handleMouseMoveRotate(pos: { x: number; y: number }) {
-    if (this.rotateStart === null) return;
+  public handleMouseMoveRotate(pos: { x: number; y: number }): boolean {
+    if (this.rotateStart === null) return false;
 
     const rotateDelta = {
       x: pos.x - this.rotateStart.x,
@@ -52,5 +52,6 @@ export class OrbitControl {
     this.rotateStart = { ...pos };
 
     this.update();
+    return true;
   }
 }

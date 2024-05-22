@@ -398,8 +398,6 @@ export class WebGLRenderer {
   render() {
     if (this.model === null || this.selectedCamera === null) return;
 
-    console.log('render called');
-
     const scene = this.model.scene;
     const camera = this.camera[this.selectedCamera]!;
 
@@ -448,9 +446,7 @@ export class WebGLRenderer {
 
       if (child instanceof DirectionalLight) {
         globalUniforms['directionalLight.color'] = child.color;
-        globalUniforms['directionalLight.direction'] = child._direction
-          .clone()
-          .applyMatrix4(child.worldMatrix);
+        globalUniforms['directionalLight.direction'] = child.direction;
         globalUniforms['directionalLight.intensity'] = child.intensity;
       }
 

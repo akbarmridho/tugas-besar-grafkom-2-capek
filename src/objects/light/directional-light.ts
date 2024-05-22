@@ -19,6 +19,7 @@ export interface DirectionalLightSerialized extends NodeSerialized {
 
 export class DirectionalLight extends Light<DirectionalLightSerialized> {
   _direction: Vector3;
+  _adjustedDirection: Vector3; // direction that has been multiplied with world rotation
 
   constructor(
     name: string,
@@ -36,6 +37,12 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
     } else {
       this._direction = new Vector3(0, -1, 0);
     }
+
+    this._adjustedDirection = this._direction.clone();
+  }
+
+  get direction() {
+    return this._adjustedDirection;
   }
 
   public toJSON(): DirectionalLightSerialized {
@@ -49,5 +56,15 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
 
   public static fromJSON(name: string) {
     return new DirectionalLight(name);
+  }
+
+  updateWorldMatrix(
+    updateParents: boolean = true,
+    updateChildren: boolean = true
+  ): void {
+    super.updateWorldMatrix(updateParents, updateChildren);
+    this._adjustedDirection = this._direction
+      .clone()
+      .applyMatrix4(this.worldMatrix);
   }
 }

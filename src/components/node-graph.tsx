@@ -1,6 +1,6 @@
 import { Node } from '@/objects/base/node.ts';
 import { Mesh } from '@/objects/mesh.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { degreeToRadian, radianToDegree } from '@/utils/math/angle.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
@@ -46,6 +46,9 @@ export const NodeGraph = ({
     y: String(radianToDegree(data.node.rotation.y)),
     z: String(radianToDegree(data.node.rotation.z))
   });
+  const initialPosition = useRef<XYZ | null>({ ...position });
+  const initialRotation = useRef<XYZ | null>({ ...rotation });
+  const initialScale = useRef<XYZ | null>({ ...scale });
 
   const [debouncedNode] = useDebounce(nodeName, 200);
   const [debouncedPosition] = useDebounce(position, 200);
@@ -64,6 +67,14 @@ export const NodeGraph = ({
     if (isNaN(x) || isNaN(y) || isNaN(z)) {
       return;
     }
+    if (
+      initialPosition.current &&
+      x === +initialPosition.current.x &&
+      y === +initialPosition.current.y &&
+      z === +initialPosition.current.z
+    ) {
+      return;
+    }
 
     data.node.setPosition(new Vector3(x, y, z));
     appContext.renderer.current?.render();
@@ -78,6 +89,15 @@ export const NodeGraph = ({
       return;
     }
 
+    if (
+      initialScale.current &&
+      x === +initialScale.current.x &&
+      y === +initialScale.current.y &&
+      z === +initialScale.current.z
+    ) {
+      return;
+    }
+
     data.node.setScale(new Vector3(x, y, z));
     appContext.renderer.current?.render();
   }, [appContext.renderer, data.node, debouncedScale]);
@@ -88,6 +108,15 @@ export const NodeGraph = ({
     const z = +debouncedRotation.z;
 
     if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      return;
+    }
+
+    if (
+      initialRotation.current &&
+      x === +initialRotation.current.x &&
+      y === +initialRotation.current.y &&
+      z === +initialRotation.current.z
+    ) {
       return;
     }
 
@@ -146,6 +175,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setPosition((prev) => ({ ...prev, x: val }));
+                initialPosition.current = null;
               }}
             />
             <p>y</p>
@@ -156,6 +186,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setPosition((prev) => ({ ...prev, y: val }));
+                initialPosition.current = null;
               }}
             />
             <p>z</p>
@@ -166,6 +197,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setPosition((prev) => ({ ...prev, z: val }));
+                initialPosition.current = null;
               }}
             />
           </div>
@@ -181,6 +213,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setRotation((prev) => ({ ...prev, x: val }));
+                initialRotation.current = null;
               }}
             />
             <p>y</p>
@@ -191,6 +224,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setRotation((prev) => ({ ...prev, y: val }));
+                initialRotation.current = null;
               }}
             />
             <p>z</p>
@@ -201,6 +235,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setRotation((prev) => ({ ...prev, z: val }));
+                initialRotation.current = null;
               }}
             />
           </div>
@@ -216,6 +251,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setScale((prev) => ({ ...prev, x: val }));
+                initialScale.current = null;
               }}
             />
             <p>y</p>
@@ -226,6 +262,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setScale((prev) => ({ ...prev, y: val }));
+                initialScale.current = null;
               }}
             />
             <p>z</p>
@@ -236,6 +273,7 @@ export const NodeGraph = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setScale((prev) => ({ ...prev, z: val }));
+                initialScale.current = null;
               }}
             />
           </div>
