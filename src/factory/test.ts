@@ -5,7 +5,7 @@ import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
-import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { OrthographicCamera } from '@/objects/camera/orthographic-camera.ts';
 import { PrismGeometry } from '@/objects/geometry/prism-geometry';
 import { PyramidGeometry } from '@/objects/geometry/pyramid-geometry';
 
@@ -20,11 +20,19 @@ export function Test() {
    */
   const canonMaterial = new BasicMaterial(Color.fromHex(0x63716e));
 
-  const baseCanonShape = new PrismGeometry([[0.1,0,0], [0.3,0,0], [0.1,0,0.5], [0.3,0,0.5], [0.2,0,1]], 0.75);
+  const baseCanonShape = new PrismGeometry(
+    [
+      [0.1, 0, 0],
+      [0.3, 0, 0],
+      [0.1, 0, 0.5],
+      [0.3, 0, 0.5],
+      [0.2, 0, 1]
+    ],
+    0.75
+  );
   const ballShape = new BoxGeometry(0.1, 0.1, 0.1);
 
   const canonMesh = new Mesh('canon', baseCanonShape, canonMaterial);
-
 
   //canonMesh.rotateOnX(1.57079633);
   // canonMesh.rotateOnX(1.57079633 * 4);

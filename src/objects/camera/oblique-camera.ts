@@ -21,6 +21,7 @@ export interface ObliqueCameraSerialized extends NodeSerialized {
 
 export class ObliqueCamera extends Camera<ObliqueCameraSerialized> {
   _baseProjection: ObliqueProjection;
+  _defaultProjection: ObliqueProjection;
 
   constructor(
     name: string,
@@ -39,6 +40,7 @@ export class ObliqueCamera extends Camera<ObliqueCameraSerialized> {
   ) {
     super(name, position, rotation, scale); // Setup Node
     this._baseProjection = projection;
+    this._defaultProjection = { ...projection };
     this.computeProjectionMatrix();
   }
 
@@ -117,5 +119,9 @@ export class ObliqueCamera extends Camera<ObliqueCameraSerialized> {
 
   public static fromJSON(name: string, data: ObliqueProjection) {
     return new ObliqueCamera(name, data);
+  }
+
+  public resetProjection() {
+    this._baseProjection = { ...this._defaultProjection };
   }
 }

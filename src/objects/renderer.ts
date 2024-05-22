@@ -9,7 +9,7 @@ import { Mesh } from '@/objects/mesh.ts';
 import { ParseModelResult } from '@/interfaces/parser.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
-import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { OrthographicCamera } from '@/objects/camera/orthographic-camera.ts';
 import { PerspectiveCamera } from './camera/perspective-camera';
 import { ObliqueCamera } from './camera/oblique-camera';
 import { CameraSelection } from '@/interfaces/camera.ts';
@@ -27,6 +27,8 @@ type SceneChangedCallback = (
   cameraAvailability: CameraAvailability
 ) => void;
 
+type CameraResetCallback = () => void;
+
 export class WebGLRenderer {
   canvas: HTMLCanvasElement;
   gl: WebGLRenderingContext;
@@ -34,6 +36,7 @@ export class WebGLRenderer {
   currentProgram: ProgramInfo | null = null;
 
   onSceneChanged: Set<SceneChangedCallback> = new Set();
+  onCameraReset: Set<CameraResetCallback> = new Set();
 
   selectedCamera: CameraSelection = null;
 
@@ -93,9 +96,14 @@ export class WebGLRenderer {
 
     const camera = this.camera[this.selectedCamera]!;
     camera.zoom = 1;
+    camera.resetProjection();
     camera.computeProjectionMatrix();
 
     this.model?.scene.setFromEulerRotation(new Euler(0, 0, 0));
+
+    for (const handler of this.onCameraReset) {
+      handler();
+    }
   }
 
   programFromMaterial(material: ShaderMaterial) {

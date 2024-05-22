@@ -9,7 +9,7 @@ import {
   PlaneGeometryProps
 } from '@/objects/geometry/plane-geometry.ts';
 import { Camera } from '@/objects/base/camera.ts';
-import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { OrthographicCamera } from '@/objects/camera/orthographic-camera.ts';
 import { PerspectiveCamera } from '../camera/perspective-camera';
 import { ObliqueCamera } from '../camera/oblique-camera';
 import { Vector3 } from '@/utils/math/vector3.ts';

@@ -4,6 +4,7 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Transformation } from '@/utils/math/transformation.ts';
 import { degreeToRadian, radianToDegree } from '@/utils/math/angle.ts';
+import { ObliqueProjection } from '@/objects/camera/oblique-camera.ts';
 
 export interface PerspectiveProjection {
   fov: number;
@@ -18,6 +19,7 @@ export interface PerspectiveCameraSerialized extends NodeSerialized {
 
 export class PerspectiveCamera extends Camera<PerspectiveCameraSerialized> {
   _baseProjection: PerspectiveProjection;
+  _defaultProjection: PerspectiveProjection;
 
   constructor(
     name: string,
@@ -33,6 +35,7 @@ export class PerspectiveCamera extends Camera<PerspectiveCameraSerialized> {
   ) {
     super(name, position, rotation, scale); // Setup Node
     this._baseProjection = projection;
+    this._defaultProjection = { ...projection };
     this.computeProjectionMatrix();
   }
 
@@ -74,5 +77,9 @@ export class PerspectiveCamera extends Camera<PerspectiveCameraSerialized> {
 
   public static fromJSON(name: string, data: PerspectiveProjection) {
     return new PerspectiveCamera(name, data);
+  }
+
+  public resetProjection() {
+    this._baseProjection = { ...this._defaultProjection };
   }
 }

@@ -63,4 +63,6 @@ export abstract class Camera<
   }
 
   abstract computeProjectionMatrix(): void;
+
+  abstract resetProjection(): void;
 }

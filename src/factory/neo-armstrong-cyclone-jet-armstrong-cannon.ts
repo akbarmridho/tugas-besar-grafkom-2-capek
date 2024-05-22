@@ -4,7 +4,7 @@ import { Mesh } from '@/objects/mesh.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
-import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { OrthographicCamera } from '@/objects/camera/orthographic-camera.ts';
 import { PModel } from '@/interfaces/parser.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { AnimationClip } from '@/interfaces/animation.ts';

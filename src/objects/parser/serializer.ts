@@ -15,7 +15,7 @@ import { BufferGeometry } from '@/objects/base/buffer-geometry.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PlaneGeometry } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometry } from '@/objects/geometry/box-geometry.ts';
-import { OrthographicCamera } from '@/objects/camera/ortographic-camera.ts';
+import { OrthographicCamera } from '@/objects/camera/orthographic-camera.ts';
 import { PerspectiveCamera } from '../camera/perspective-camera';
 import { ObliqueCamera } from '../camera/oblique-camera';
 import { PyramidGeometry } from '../geometry/pyramid-geometry';
@@ -126,9 +126,7 @@ export function serializeScene(
           type: 'ObliqueCamera',
           projection: node.toJSON().projection
         });
-      }
-      
-      else {
+      } else {
         throw new Error('Invalid camera type');
       }
     } else if (node instanceof Light) {

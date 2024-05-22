@@ -1,7 +1,7 @@
 import { ColorSerialized } from '@/objects/base/color.ts';
 import { Vector3Serialized } from '@/utils/math/vector3.ts';
 import { EulerSerialized } from '@/utils/math/euler.ts';
-import { OrthographicProjection } from '@/objects/camera/ortographic-camera.ts';
+import { OrthographicProjection } from '@/objects/camera/orthographic-camera.ts';
 import { BasicMaterialSerialized } from '@/objects/material/basic-material.ts';
 import { PlaneGeometryProps } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometryProps } from '@/objects/geometry/box-geometry.ts';

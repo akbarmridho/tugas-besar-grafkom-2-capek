@@ -3,6 +3,7 @@ import { NodeSerialized } from '@/objects/base/node.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Transformation } from '@/utils/math/transformation.ts';
+import { ObliqueProjection } from '@/objects/camera/oblique-camera.ts';
 
 export interface OrthographicProjection {
   top: number;
@@ -19,6 +20,7 @@ export interface OrthographicCameraSerialized extends NodeSerialized {
 
 export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
   _baseProjection: OrthographicProjection;
+  _defaultProjection: OrthographicProjection;
 
   constructor(
     name: string,
@@ -36,6 +38,7 @@ export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
   ) {
     super(name, position, rotation, scale); // Setup Node
     this._baseProjection = projection;
+    this._defaultProjection = { ...projection };
     this.computeProjectionMatrix();
   }
 
@@ -84,5 +87,9 @@ export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
 
   public static fromJSON(name: string, data: OrthographicProjection) {
     return new OrthographicCamera(name, data);
+  }
+
+  public resetProjection() {
+    this._baseProjection = { ...this._defaultProjection };
   }
 }
