@@ -93,7 +93,13 @@ export class Transformation {
     const c = -(far + near) / (far - near);
     const d = (-2 * far * near) / (far - near);
 
-    return new Matrix4([x, 0, a, 0, 0, y, b, 0, 0, 0, c, d, 0, 0, -1, 0]);
+    // prettier-ignore
+    return new Matrix4([
+      x, 0, a, 0,
+      0, y, b, 0,
+      0, 0, c, d,
+      0, 0, -1, 0
+    ])
   }
 
   /**
@@ -119,11 +125,20 @@ export class Transformation {
     near: number,
     far: number
   ): Matrix4 {
+    const w = 1.0 / (right - left);
+    const h = 1.0 / (top - bottom);
+    const p = 1.0 / (far - near);
+
+    const x = (right + left) * w;
+    const y = (top + bottom) * h;
+
+    const z = (far + near) * p;
+    const zInv = -2 * p;
     // prettier-ignore
     return new Matrix4([
-        2/(right-left), 0, 0, (left+right) / (left-right),
-        0, 2/(top-bottom), 0, (bottom+top) / (bottom-top),
-        0, 0, 2/(near-far), (near+far) / (near-far),
+        2*w, 0, 0, -x,
+        0, 2*h, 0, -y,
+        0, 0, zInv, -z,
         0, 0, 0, 1
     ])
   }
