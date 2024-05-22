@@ -75,12 +75,10 @@ function App() {
               ref={canvasRef}
               className={'w-full h-full'}
               onWheel={(e) => {
-                // console.log(e.deltaY);
-                /** todo implement zoom in-out of camera here
-                 * value of deltaY is always the same
-                 * scroll down is positive
-                 * scroll up is negative
-                 */
+                rendererRef.current?.currentOrbitControl?.handleZoom(
+                  e.deltaY < 0
+                );
+                rendererRef.current?.render();
               }}
               onMouseDown={(e) => {
                 rendererRef.current?.currentOrbitControl?.handleMouseDownRotate(

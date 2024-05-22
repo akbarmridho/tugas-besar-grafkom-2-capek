@@ -23,12 +23,12 @@ export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
   constructor(
     name: string,
     projection: OrthographicProjection = {
-      top: 2,
-      bottom: -2,
-      left: -2,
-      right: 2,
-      near: 2,
-      far: -2
+      top: 1,
+      bottom: -1,
+      left: -1,
+      right: 1,
+      near: 100,
+      far: -100
     },
     position?: Vector3,
     rotation?: Euler,
@@ -49,13 +49,27 @@ export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
   }
 
   computeProjectionMatrix() {
+    const dx =
+      (this._baseProjection.right - this._baseProjection.left) /
+      (2 * this.zoom);
+    const dy =
+      (this._baseProjection.top - this._baseProjection.bottom) /
+      (2 * this.zoom);
+    const cx = (this._baseProjection.right + this._baseProjection.left) / 2;
+    const cy = (this._baseProjection.top + this._baseProjection.bottom) / 2;
+
+    const left = cx - dx;
+    const right = cx + dx;
+    const top = cy + dy;
+    const bottom = cy - dy;
+
     // M4.orthographic() menghasilkan proyeksi matriks ortografik
     // dengan 6 tupel left, right, bottom, top, near, dan far.
     this.projectionMatrix = Transformation.orthographic(
-      this._baseProjection.left,
-      this._baseProjection.right,
-      this._baseProjection.bottom,
-      this._baseProjection.top,
+      left,
+      right,
+      bottom,
+      top,
       this._baseProjection.near,
       this._baseProjection.far
     );

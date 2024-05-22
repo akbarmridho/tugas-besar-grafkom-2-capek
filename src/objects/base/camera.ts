@@ -13,6 +13,7 @@ export abstract class Camera<
   protected _viewProjectionMatrix: Matrix4 = Matrix4.identity();
   protected _invWorldMatrix: Matrix4 = Matrix4.identity();
   protected isCamera: boolean = true;
+  public zoom: number = 1;
 
   updateWorldMatrix(
     updateParents: boolean = true,

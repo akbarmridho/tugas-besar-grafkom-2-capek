@@ -6,6 +6,9 @@ export class OrbitControl {
   private rotateStart: { x: number; y: number } | null = null;
   private leftRotationValue: number = 0;
   private upRotationValue: number = 0;
+  private cameraMaxZoom: number = 10;
+  private cameraMinZoom: number = 0.1;
+  private zoomIncrement: number = 0.1;
 
   constructor(camera: Camera) {
     this.camera = camera;
@@ -37,6 +40,20 @@ export class OrbitControl {
 
   public handleMouseUpRotate() {
     this.rotateStart = null;
+  }
+
+  public handleZoom(zoomIn: boolean) {
+    if (zoomIn) {
+      this.camera.zoom += this.zoomIncrement;
+    } else {
+      this.camera.zoom -= this.zoomIncrement;
+    }
+
+    this.camera.zoom = Math.max(
+      this.cameraMinZoom,
+      Math.min(this.camera.zoom, this.cameraMaxZoom)
+    );
+    this.camera.computeProjectionMatrix();
   }
 
   public handleMouseMoveRotate(pos: { x: number; y: number }): boolean {
