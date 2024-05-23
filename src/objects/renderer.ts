@@ -465,9 +465,7 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, child.material.uniforms);
         WebGLUtils.setUniforms(this.currentProgram, {
           worldMatrix: child.worldMatrix,
-          viewPos: camera.position
-            .clone()
-            .applyQuaternion(scene.quaternion.clone()),
+          viewPos: camera.position.clone(),
           normalMatrix: child.worldMatrix.copy().inverse().transpose()
         });
 
