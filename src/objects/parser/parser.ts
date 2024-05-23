@@ -27,6 +27,14 @@ import {
   PrismGeometry,
   PrismGeometryProps
 } from '@/objects/geometry/prism-geometry.ts';
+import {
+  CylinderGeometry,
+  CylinderGeometryProps
+} from '@/objects/geometry/cylinder-geometry.ts';
+import {
+  SphereGeometry,
+  SphereGeometryProps
+} from '@/objects/geometry/sphere-geometry.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { PhongMaterial } from '../material/phong-material';
 import { AmbientLight } from '../light/ambient-light';
@@ -78,6 +86,20 @@ export function parseModel(data: PModel): ParseModelResult {
     } else if (rawMesh.type === 'PrismGeometry') {
       const primitives = rawMesh.primitives as PrismGeometryProps;
       const geometry = PrismGeometry.fromJSON(primitives);
+
+      baseMesh.push({
+        geometry
+      });
+    } else if (rawMesh.type === 'CylinderGeometry') {
+      const primitives = rawMesh.primitives as CylinderGeometryProps;
+      const geometry = CylinderGeometry.fromJSON(primitives);
+
+      baseMesh.push({
+        geometry
+      });
+    } else if (rawMesh.type === 'SphereGeometry') {
+      const primitives = rawMesh.primitives as SphereGeometryProps;
+      const geometry = SphereGeometry.fromJSON(primitives);
 
       baseMesh.push({
         geometry

@@ -56,8 +56,8 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
         this.heightSegments = heightSegments;
     }
 
-    toJSON(): SphereGeometrySerialized {
-        return {
+    toJSON(withNodeAttributes: boolean = true): SphereGeometrySerialized {
+        const data: SphereGeometrySerialized = {
             radius: this.radius,
             widthSegments: this.widthSegments,
             heightSegments: this.heightSegments,
@@ -65,7 +65,25 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
                 position: this.attributes.position.toJSON(),
                 normal: this.attributes.normal.toJSON(),
             },
-        };
+        } as SphereGeometrySerialized
+
+        if (withNodeAttributes) {
+            // @ts-ignore
+            data.attributes = {};
+      
+            for (const key of Object.keys(this.attributes)) {
+              const value = this.attributes[key];
+      
+              if (value) {
+                if (value instanceof BufferAttribute) {
+                  data.attributes[key] = value.toJSON();
+                } else {
+                  // @ts-ignore
+                  data.attributes[key] = value;
+                }
+              }
+            }
+        } return data;
     }
 
     static fromJSON(data: SphereGeometryProps): SphereGeometry {

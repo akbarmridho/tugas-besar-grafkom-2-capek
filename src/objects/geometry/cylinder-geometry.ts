@@ -71,8 +71,8 @@ export class CylinderGeometry extends BufferGeometry<CylinderGeometrySerialized>
         this.heightSegments = heightSegments;
     }
 
-    toJSON(): CylinderGeometrySerialized {
-        return {
+    toJSON(withNodeAttributes: boolean = true): CylinderGeometrySerialized {
+        const data: CylinderGeometrySerialized = {
             radiusTop: this.radiusTop,
             radiusBottom: this.radiusBottom,
             height: this.height,
@@ -82,7 +82,27 @@ export class CylinderGeometry extends BufferGeometry<CylinderGeometrySerialized>
                 position: this.attributes.position.toJSON(),
                 normal: this.attributes.normal.toJSON(),
             },
-        };
+        } as CylinderGeometrySerialized;
+
+        if (withNodeAttributes) {
+            // @ts-ignore
+            data.attributes = {};
+      
+            for (const key of Object.keys(this.attributes)) {
+              const value = this.attributes[key];
+      
+              if (value) {
+                if (value instanceof BufferAttribute) {
+                  data.attributes[key] = value.toJSON();
+                } else {
+                  // @ts-ignore
+                  data.attributes[key] = value;
+                }
+              }
+            }
+          }
+
+          return data;
     }
 
     static fromJSON(data: CylinderGeometryProps): CylinderGeometry {

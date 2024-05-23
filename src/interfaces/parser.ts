@@ -7,6 +7,8 @@ import { PlaneGeometryProps } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometryProps } from '@/objects/geometry/box-geometry.ts';
 import { PyramidGeometryProps } from '@/objects/geometry/pyramid-geometry';
 import { PrismGeometryProps } from '@/objects/geometry/prism-geometry';
+import { CylinderGeometry, CylinderGeometryProps } from '@/objects/geometry/cylinder-geometry';
+import { SphereGeometryProps } from '@/objects/geometry/sphere-geometry';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { Scene } from '@/objects/scene.ts';
 import { Camera } from '@/objects/base/camera.ts';
@@ -78,12 +80,14 @@ export type PMaterial = PBasicMaterial | PPhongMaterial;
 export type PLight = PAmbientLight | PDirectionalLight;
 
 export interface PMesh {
-  type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry';
+  type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry' | 'CylinderGeometry' | 'SphereGeometry' ;
   primitives:
     | PlaneGeometryProps
     | BoxGeometryProps
     | PyramidGeometryProps
-    | PrismGeometryProps;
+    | PrismGeometryProps
+    | CylinderGeometryProps
+    | SphereGeometryProps;
 }
 
 export interface PModel {

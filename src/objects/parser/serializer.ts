@@ -25,6 +25,8 @@ import { PhongMaterial } from '../material/phong-material';
 import { Light } from '../base/light';
 import { AmbientLight } from '../light/ambient-light';
 import { DirectionalLight } from '../light/directional-light';
+import { CylinderGeometry } from '../geometry/cylinder-geometry';
+import { SphereGeometry } from '../geometry/sphere-geometry';
 
 export function serializeScene(
   scene: Scene,
@@ -102,6 +104,16 @@ export function serializeScene(
         } else if (node.geometry instanceof PrismGeometry) {
           rawGeometries.push({
             type: 'PrismGeometry',
+            primitives: node.geometry.toJSON(false)
+          });
+        } else if (node.geometry instanceof CylinderGeometry) {
+          rawGeometries.push({
+            type: 'CylinderGeometry',
+            primitives: node.geometry.toJSON(false)
+          });
+        } else if (node.geometry instanceof SphereGeometry) {
+          rawGeometries.push({
+            type: 'SphereGeometry',
             primitives: node.geometry.toJSON(false)
           });
         } else {
