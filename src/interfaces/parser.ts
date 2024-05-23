@@ -24,6 +24,7 @@ import {
   DirectionalLightProps,
   DirectionalLightSerialized
 } from '@/objects/light/directional-light';
+import { PointLightProps } from '@/objects/light/point-light';
 
 export interface PNode {
   name: string;
@@ -73,11 +74,16 @@ export interface PDirectionalLight {
   primitives: DirectionalLightProps;
 }
 
+export interface PPointLight {
+  type: 'PointLight';
+  primitives: PointLightProps
+}
+
 export type PCamera = POrthographicCamera | PPerspectiveCamera | PObliqueCamera;
 
 export type PMaterial = PBasicMaterial | PPhongMaterial;
 
-export type PLight = PAmbientLight | PDirectionalLight;
+export type PLight = PAmbientLight | PDirectionalLight | PPointLight;
 
 export interface PMesh {
   type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry' | 'CylinderGeometry' | 'SphereGeometry' ;
