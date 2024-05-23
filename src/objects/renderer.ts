@@ -20,6 +20,7 @@ import { degreeToRadian } from '@/utils/math/angle.ts';
 import { OrbitControl } from '@/objects/base/orbit-control.ts';
 import { AmbientLight } from './light/ambient-light';
 import { DirectionalLight } from './light/directional-light';
+import { UniformDataType } from '@/interfaces/uniform-properties.ts';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -408,7 +409,7 @@ export class WebGLRenderer {
 
     // set the viewProjectionMatrix
 
-    const globalUniforms: { [key: string]: any } = {
+    const globalUniforms: { [key: string]: UniformDataType } = {
       viewProjectionMatrix: camera.viewProjectionMatrix
     };
 
@@ -440,6 +441,8 @@ export class WebGLRenderer {
     // render all mesh
     while (toRender.length !== 0) {
       const child = toRender.shift()!;
+
+      if (!child.visible) continue;
 
       if (child instanceof Mesh) {
         // console.log(this.shaderCache);

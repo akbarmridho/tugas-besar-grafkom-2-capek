@@ -15,6 +15,8 @@ import {
 import { Matrix4 } from './math/matrix4.ts';
 import { Vector2 } from './math/vector2.ts';
 import { Vector3 } from './math/vector3.ts';
+import { Texture } from '@/objects/base/texture.ts';
+import { isPowerOf2 } from '@/utils/other.ts';
 
 export class WebGLUtils {
   /**
@@ -210,7 +212,7 @@ export class WebGLUtils {
     gl: WebGLRenderingContext,
     program: WebGLProgram
   ): UniformMapSetters {
-    let textureUnit = 0;
+    let textureUnit = 0; // counter for current number of texture unit used
 
     function createUniformSetter(uniformInfo: WebGLActiveInfo): UniformSetters {
       const location = gl.getUniformLocation(program, uniformInfo.name);
@@ -219,10 +221,123 @@ export class WebGLUtils {
       const isArray =
         uniformInfo.size > 1 && uniformInfo.name.substring(-3) === '[0]';
 
+      if (
+        uniformInfo.type === gl.SAMPLER_2D ||
+        uniformInfo.type === gl.SAMPLER_CUBE
+      ) {
+        // case for texture
+        const unit = textureUnit;
+        textureUnit += uniformInfo.size; // info.size > 1 if it is sampler array
+
+        const setupTexture = (v: Texture) => {
+          v._texture = v._texture || gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, v._texture); // bind temporary texture
+
+          const isPOT = isPowerOf2(v.width) && isPowerOf2(v.height);
+
+          if (v.needsUpload) {
+            // if need to upload data, do upload
+            v.needsUpload = false;
+
+            if (v.isLoaded && v.data !== null) {
+              // begin load
+              const param = [
+                gl.TEXTURE_2D,
+                0,
+                v.format,
+                v.format,
+                v.type,
+                v.data
+              ];
+
+              if (v.data instanceof Uint8Array) {
+                // insert w and h, border for array
+                param.splice(3, 0, v.width, v.height, 0);
+              }
+
+              // @ts-ignore
+              gl.texImage2D(...param);
+
+              if (isPOT) {
+                gl.generateMipmap(gl.TEXTURE_2D);
+              }
+            } else {
+              // data not loaded
+              gl.texImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                1,
+                1,
+                0,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                new Uint8Array(v.defaultColor)
+              );
+            }
+          }
+
+          if (v.parameterChanged) {
+            // if parameter changed, set params
+            v.parameterChanged = false;
+
+            if (!isPOT) {
+              v.wrapS = v.wrapT = gl.CLAMP_TO_EDGE;
+              v.minFilter = gl.LINEAR;
+              console.log('image is not POT, fallback params', v);
+            }
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.wrapS);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.wrapT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.minFilter);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, v.magFilter);
+          }
+          gl.bindTexture(gl.TEXTURE_2D, null); // set bind to null
+        };
+
+        const renderTexture = (v: Texture) => {
+          // select texture unit, bind texture to unit, set uniform sampler to unit
+          gl.activeTexture(gl.TEXTURE0 + unit);
+          gl.bindTexture(gl.TEXTURE_2D, v._texture);
+        };
+
+        const render = (v: unknown) => {
+          if (!(v instanceof Texture)) {
+            console.error(
+              `uniform ${uniformInfo.name}: found not a Texture!`,
+              v
+            );
+            return;
+          }
+
+          setupTexture(v);
+          renderTexture(v);
+        };
+
+        return (v) => {
+          if (isArray && Array.isArray(v)) {
+            v.forEach(render);
+            gl.uniform1iv(
+              location,
+              v.map((_, i) => unit + i)
+            );
+          } else {
+            render(v);
+            gl.uniform1i(location, unit);
+          }
+        };
+      }
+
       return (v) => {
         if (isArray) {
-          if (v instanceof Matrix4) {
-            throw new Error('Value cannot be a type of matrix');
+          if (
+            v instanceof Matrix4 ||
+            v instanceof Texture ||
+            (Array.isArray(v) && v[0] instanceof Texture)
+          ) {
+            throw new Error(
+              'Value cannot be a type of matrix, texture, or array of texture'
+            );
           }
 
           if (typeof v === 'number') {
@@ -230,25 +345,9 @@ export class WebGLUtils {
           }
 
           if (type === gl.FLOAT) {
-            gl.uniform1fv(location, v);
+            gl.uniform1fv(location, v as Iterable<number>);
           } else if (gl.INT) {
-            gl.uniform1iv(location, v);
-          } else if (type === gl.SAMPLER_2D || type === gl.SAMPLER_CUBE) {
-            const units: number[] = [];
-
-            for (let i = 0; i < uniformInfo.size; i++) {
-              units.push(textureUnit++);
-            }
-
-            const bindPoint =
-              type === gl.SAMPLER_2D ? gl.TEXTURE_2D : gl.TEXTURE_CUBE_MAP;
-
-            gl.uniform1iv(location, units);
-
-            for (const [i, val] of [...v].entries()) {
-              gl.activeTexture(gl.TEXTURE0 + units[i]);
-              gl.bindTexture(bindPoint, val);
-            }
+            gl.uniform1iv(location, v as Iterable<number>);
           }
         } else {
           let data;
@@ -274,13 +373,6 @@ export class WebGLUtils {
               // @ts-ignore
               gl[`uniform${funcName}`](location, ...data);
             }
-          } else if (type === gl.SAMPLER_2D || type === gl.SAMPLER_CUBE) {
-            const bindPoint =
-              type === gl.SAMPLER_2D ? gl.TEXTURE_2D : gl.TEXTURE_CUBE_MAP;
-            textureUnit++;
-            gl.uniform1i(location, textureUnit);
-            gl.activeTexture(gl.TEXTURE0 + textureUnit);
-            gl.bindTexture(bindPoint, v);
           } else {
             throw new Error('Invalid type');
           }

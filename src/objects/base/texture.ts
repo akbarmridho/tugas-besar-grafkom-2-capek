@@ -28,37 +28,6 @@ export interface TextureSerialized {
 }
 
 export class Texture extends Serializable<TextureSerialized> {
-  public toJSON(): TextureSerialized {
-    let data:
-      | {
-          url: string;
-        }
-      | { buffer: string; height: number; width: number }
-      | null;
-
-    if (this._data instanceof HTMLImageElement) {
-      data = { url: this._data.src };
-    } else if (this._data instanceof Uint8Array) {
-      data = {
-        buffer: fromByteArray(this._data),
-        height: this._height,
-        width: this._width
-      };
-    } else {
-      data = this._data;
-    }
-
-    return {
-      data,
-      wrapS: this._wrapS,
-      wrapT: this._wrapT,
-      minFilter: this._minFilter,
-      magFilter: this._magFilter,
-      format: this._format,
-      type: this._type
-    };
-  }
-
   private _image: HTMLImageElement = new Image();
   private _data: TextureData | null = null;
   private _callbackFn: (() => void) | null = null;
@@ -81,6 +50,42 @@ export class Texture extends Serializable<TextureSerialized> {
   public _texture: WebGLTexture | null = null; // don't change
   public needsUpload: boolean = true;
   public parameterChanged: boolean = true;
+
+  get wrapS() {
+    return this._wrapS;
+  }
+
+  set wrapS(value: ValueOf<typeof WrapMode>) {
+    this._wrapS = value;
+  }
+
+  get wrapT() {
+    return this._wrapT;
+  }
+
+  set wrapT(value: ValueOf<typeof WrapMode>) {
+    this._wrapT = value;
+  }
+
+  get minFilter() {
+    return this._minFilter;
+  }
+
+  set minFilter(value: ValueOf<typeof MinFilter>) {
+    this._minFilter = value;
+  }
+
+  get magFilter() {
+    return this._magFilter;
+  }
+
+  get format() {
+    return this._format;
+  }
+
+  get type() {
+    return this._type;
+  }
 
   constructor(
     data?: {
@@ -204,5 +209,36 @@ export class Texture extends Serializable<TextureSerialized> {
       },
       props
     );
+  }
+
+  public toJSON(): TextureSerialized {
+    let data:
+      | {
+          url: string;
+        }
+      | { buffer: string; height: number; width: number }
+      | null;
+
+    if (this._data instanceof HTMLImageElement) {
+      data = { url: this._data.src };
+    } else if (this._data instanceof Uint8Array) {
+      data = {
+        buffer: fromByteArray(this._data),
+        height: this._height,
+        width: this._width
+      };
+    } else {
+      data = this._data;
+    }
+
+    return {
+      data,
+      wrapS: this._wrapS,
+      wrapT: this._wrapT,
+      minFilter: this._minFilter,
+      magFilter: this._magFilter,
+      format: this._format,
+      type: this._type
+    };
   }
 }

@@ -19,3 +19,7 @@ export function generateCheckerboard(size = 64, row = 8, col = 8) {
   }
   return myTexels;
 }
+
+export function isPowerOf2(value: number) {
+  return (value & (value - 1)) == 0;
+}
