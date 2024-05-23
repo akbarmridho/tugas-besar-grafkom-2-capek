@@ -53,7 +53,7 @@ export class PyramidGeometry extends BufferGeometry<PyramidGeometrySerialized> {
 
         const vertices = new Float32Array([
             ...quadFromPoints(b, c, d, e),
-            ...triangleFromPoints(a, b, c),
+            ...triangleFromPoints(a, c, b),
             ...triangleFromPoints(a, b, e),
             ...triangleFromPoints(a, e, d),
             ...triangleFromPoints(a, d, c)
