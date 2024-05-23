@@ -38,7 +38,7 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
       this._direction = new Vector3(0, -1, 0);
     }
 
-    this._adjustedDirection = this._direction.clone();
+    this._adjustedDirection = this._direction.clone().multiplyScalar(-1);
   }
 
   get direction() {
@@ -65,6 +65,7 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
     super.updateWorldMatrix(updateParents, updateChildren);
     this._adjustedDirection = this._direction
       .clone()
-      .applyMatrix4(this.worldMatrix);
+      .multiplyScalar(-1)
+      .applyQuaternion(this.parent!.quaternion);
   }
 }
