@@ -110,7 +110,9 @@ export const PerspectiveSelector = () => {
           </TooltipContent>
         </Tooltip>
       </div>
-      <h3 className={'text-md font-bold'}>Camera Setting</h3>
+      {selectedCamera !== null && (
+        <h3 className={'text-md font-bold'}>Camera Setting</h3>
+      )}
       <div>
         {selectedCamera === 'orthogonal' && (
           <OrthographicCameraSetting
