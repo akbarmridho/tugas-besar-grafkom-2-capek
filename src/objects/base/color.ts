@@ -8,35 +8,47 @@ export interface ColorSerialized {
 
 export class Color extends Serializable<ColorSerialized> {
   /* Attribute */
-  private r: number;
-  private g: number;
-  private b: number;
+  private _r: number;
+  private _g: number;
+  private _b: number;
 
   /* Constructor */
   constructor(r: number, g: number, b: number) {
     super();
-    this.r = r;
-    this.g = g;
-    this.b = b;
+    this._r = r;
+    this._g = g;
+    this._b = b;
+  }
+
+  public get r() {
+    return this._r;
+  }
+
+  public get g() {
+    return this._g;
+  }
+
+  public get b() {
+    return this._b;
   }
 
   /* Methods*/
   clone(): Color {
-    return new Color(this.r, this.g, this.b);
+    return new Color(this._r, this._g, this._b);
   }
 
   copy(otherColor: Color): Color {
-    this.r = otherColor.r;
-    this.g = otherColor.g;
-    this.b = otherColor.b;
+    this._r = otherColor._r;
+    this._g = otherColor._g;
+    this._b = otherColor._b;
     return this;
   }
 
   toJSON(): ColorSerialized {
     return {
-      r: this.r,
-      g: this.g,
-      b: this.b
+      r: this._r,
+      g: this._g,
+      b: this._b
     };
   }
 
@@ -73,9 +85,9 @@ export class Color extends Serializable<ColorSerialized> {
    * WebGL receive color in normalized so we need to divide by 255
    */
   *[Symbol.iterator](): IterableIterator<number> {
-    yield this.r / 255.0;
-    yield this.g / 255.0;
-    yield this.b / 255.0;
+    yield this._r / 255.0;
+    yield this._g / 255.0;
+    yield this._b / 255.0;
     yield 1.0;
   }
 }

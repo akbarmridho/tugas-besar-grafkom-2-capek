@@ -24,6 +24,6 @@ export function isPowerOf2(value: number) {
   return (value & (value - 1)) == 0;
 }
 
-export function defineTexture(shader: string): string {
-  return `#define WITH_TEXTURE\n${shader}`;
+export function addDefineToShader(shader: string, defined: string): string {
+  return `#define ${defined}\n${shader}`;
 }

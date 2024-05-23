@@ -443,7 +443,6 @@ export class WebGLRenderer {
         globalUniforms['directionalLight.intensity'] = child.intensity;
       }
 
-      console.log('A');
       if (child instanceof PointLight) {
         globalUniforms['pointLights[' + numPointLights + '].color'] =
           child.color;
@@ -455,10 +454,7 @@ export class WebGLRenderer {
           );
         globalUniforms['pointLights[' + numPointLights + '].intensity'] =
           child.intensity;
-        console.log('Hai');
-        console.log(
-          globalUniforms['pointLights[' + numPointLights + '].position']
-        );
+
         numPointLights++;
       }
 

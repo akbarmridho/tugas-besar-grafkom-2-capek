@@ -239,6 +239,30 @@ export class WebGLUtils {
             // if need to upload data, do upload
             v.needsUpload = false;
 
+            if (v.parameterChanged) {
+              // if parameter changed, set params
+              v.parameterChanged = false;
+
+              if (!isPOT) {
+                v.wrapS = v.wrapT = gl.CLAMP_TO_EDGE;
+                v.minFilter = gl.LINEAR;
+                console.log('image is not POT, fallback params', v);
+              }
+
+              gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.wrapS);
+              gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.wrapT);
+              gl.texParameteri(
+                gl.TEXTURE_2D,
+                gl.TEXTURE_MIN_FILTER,
+                v.minFilter
+              );
+              gl.texParameteri(
+                gl.TEXTURE_2D,
+                gl.TEXTURE_MAG_FILTER,
+                v.magFilter
+              );
+            }
+
             if (v.isLoaded && v.data !== null) {
               // begin load
               const param = [
@@ -262,36 +286,29 @@ export class WebGLUtils {
                 gl.generateMipmap(gl.TEXTURE_2D);
               }
             } else {
+              const rgba = [
+                v.defaultColor.r,
+                v.defaultColor.g,
+                v.defaultColor.b,
+                1
+              ];
+
               // data not loaded
               gl.texImage2D(
                 gl.TEXTURE_2D,
                 0,
                 gl.RGBA,
-                1,
-                1,
+                2,
+                2,
                 0,
                 gl.RGBA,
                 gl.UNSIGNED_BYTE,
-                new Uint8Array(v.defaultColor)
+                new Uint8Array([...rgba, ...rgba, ...rgba, ...rgba])
               );
+              gl.generateMipmap(gl.TEXTURE_2D);
             }
           }
 
-          if (v.parameterChanged) {
-            // if parameter changed, set params
-            v.parameterChanged = false;
-
-            if (!isPOT) {
-              v.wrapS = v.wrapT = gl.CLAMP_TO_EDGE;
-              v.minFilter = gl.LINEAR;
-              console.log('image is not POT, fallback params', v);
-            }
-
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.wrapS);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.wrapT);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, v.minFilter);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, v.magFilter);
-          }
           gl.bindTexture(gl.TEXTURE_2D, null); // set bind to null
         };
 
