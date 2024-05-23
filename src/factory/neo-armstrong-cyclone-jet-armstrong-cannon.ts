@@ -18,7 +18,7 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   /**
    * Define scenes
    */
-  const scene = generateBaseScene('neo-amstrong', Color.fromHex(0x36a0de));
+  const { scene } = generateBaseScene('neo-amstrong', Color.fromHex(0x36a0de));
 
   /**
    * Define materials
@@ -56,10 +56,6 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
 
   canonMesh.addChildren(leftBallMesh);
   canonMesh.addChildren(rightBallMesh);
-
-  const directionalLight = new DirectionalLight('sun');
-
-  scene.addChildren(directionalLight);
 
   const clip: AnimationClip = {
     name: 'flip',

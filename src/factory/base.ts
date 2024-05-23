@@ -4,6 +4,8 @@ import { OrthographicCamera } from '@/objects/camera/orthographic-camera.ts';
 import { PerspectiveCamera } from '@/objects/camera/perspective-camera.ts';
 import { ObliqueCamera } from '@/objects/camera/oblique-camera.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
+import { AmbientLight } from '@/objects/light/ambient-light.ts';
+import { DirectionalLight } from '@/objects/light/directional-light.ts';
 
 export function generateBaseScene(name: string, color: Color = Color.White()) {
   /**
@@ -23,5 +25,13 @@ export function generateBaseScene(name: string, color: Color = Color.White()) {
   scene.addChildren(perspectiveCamera);
   scene.addChildren(obliqueCamera);
 
-  return scene;
+  const ambientLight = new AmbientLight('ambient');
+
+  scene.addChildren(ambientLight);
+
+  const directionalLight = new DirectionalLight('sun');
+
+  scene.addChildren(directionalLight);
+
+  return { scene, ambientLight, directionalLight };
 }
