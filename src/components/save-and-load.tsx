@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button.tsx';
-import { FolderOpen, RotateCcw, Save, SwitchCamera } from 'lucide-react';
+import { FolderOpen, Save, SwitchCamera } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -9,7 +9,6 @@ import { neoArmstrongCycloneJetArmstrongCannon } from '@/factory/neo-armstrong-c
 import { parseModel } from '@/objects/parser/parser.ts';
 import { useApp } from '@/components/context.ts';
 import { PModel } from '@/interfaces/parser.ts';
-import { Test } from '@/factory/test';
 import { serializeScene } from '@/objects/parser/serializer.ts';
 
 type seederFunc = () => PModel;
