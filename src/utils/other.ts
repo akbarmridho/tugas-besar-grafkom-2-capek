@@ -23,3 +23,7 @@ export function generateCheckerboard(size = 64, row = 8, col = 8) {
 export function isPowerOf2(value: number) {
   return (value & (value - 1)) == 0;
 }
+
+export function defineTexture(shader: string): string {
+  return `#define WITH_TEXTURE\n${shader}`;
+}

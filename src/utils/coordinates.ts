@@ -42,6 +42,30 @@ export function quadFromFlatPoints(data: number[]): number[] {
   ]
 }
 
+export function quadFromCoord(
+  a: number[],
+  b: number[],
+  c: number[],
+  d: number[]
+): number[] {
+  /**
+   * a d
+   * b c
+   *
+   * Two triangles:
+   * triangle abc, bdc
+   */
+  // prettier-ignore
+  return [
+    a[0], a[1], // a -> drawing triangle abc
+    b[0], b[1], // b
+    c[0], c[1], // c
+    c[0], c[1], // c
+    d[0], d[1], // d
+    a[0], a[1], // a
+  ]
+}
+
 export function quadFromPoints(
   a: number[],
   b: number[],

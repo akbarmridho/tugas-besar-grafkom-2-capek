@@ -408,8 +408,11 @@ export class WebGLUtils {
       const key = `u_${uniformName}`;
       // console.log(key);
       if (Object.hasOwn(programInfo.uniformSetters, key)) {
-        // console.log(`uniform setting value for ${key}`);
-        programInfo.uniformSetters[key]!(uniforms[uniformName]!);
+        const val = uniforms[uniformName];
+        if (val !== undefined && val !== null) {
+          // console.log(`uniform setting value for ${key}`);
+          programInfo.uniformSetters[key]!(val);
+        }
       } else {
         // console.log(`uniform setters does not have ${key}`);
       }

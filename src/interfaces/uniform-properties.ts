@@ -29,7 +29,7 @@ export type UniformDataType =
 export type UniformSetters = (val: UniformDataType) => void;
 
 export interface BaseUniformObject {
-  [uniformName: string]: UniformDataType;
+  [uniformName: string]: UniformDataType | null;
 }
 
 export interface UniformObject extends Partial<BaseUniformObject> {}

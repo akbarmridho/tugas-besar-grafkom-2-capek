@@ -28,6 +28,7 @@ export interface TextureSerialized {
 }
 
 export class Texture extends Serializable<TextureSerialized> {
+  private _textureSrc: string | null = null;
   private _image: HTMLImageElement = new Image();
   private _data: TextureData | null = null;
   private _callbackFn: (() => void) | null = null;
@@ -146,10 +147,10 @@ export class Texture extends Serializable<TextureSerialized> {
   private _setLoader(image: HTMLImageElement) {
     image.onload = () => {
       this._data = this._image;
-      if (this._callbackFn !== null) {
-        this._callbackFn.call(this);
-      }
       this.needsUpload = true;
+      if (this._callbackFn !== null) {
+        this._callbackFn();
+      }
     };
   }
 
@@ -161,6 +162,7 @@ export class Texture extends Serializable<TextureSerialized> {
     if (typeof data === 'string') {
       this._image.src = data;
       this._data = null;
+      this._textureSrc = data;
     } else {
       this._image.src = '';
       this._data = data || null;
@@ -221,6 +223,8 @@ export class Texture extends Serializable<TextureSerialized> {
 
     if (this._data instanceof HTMLImageElement) {
       data = { url: this._data.src };
+    } else if (this._textureSrc !== null) {
+      data = { url: this._textureSrc };
     } else if (this._data instanceof Uint8Array) {
       data = {
         buffer: fromByteArray(this._data),

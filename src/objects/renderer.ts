@@ -21,6 +21,7 @@ import { OrbitControl } from '@/objects/base/orbit-control.ts';
 import { AmbientLight } from './light/ambient-light';
 import { DirectionalLight } from './light/directional-light';
 import { UniformDataType } from '@/interfaces/uniform-properties.ts';
+import { BasicMaterial } from '@/objects/material/basic-material.ts';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -175,8 +176,16 @@ export class WebGLRenderer {
       }
     });
 
+    const loadCb = () => {
+      this.render();
+    };
+
     model.materials.forEach((material) => {
       this.programFromMaterial(material);
+
+      if (material instanceof BasicMaterial) {
+        material.texture?.onLoad(loadCb);
+      }
     });
 
     for (const handler of this.onSceneChanged) {
@@ -380,7 +389,6 @@ export class WebGLRenderer {
    */
   render() {
     if (this.model === null || this.selectedCamera === null) return;
-
     const scene = this.model.scene;
     const camera = this.camera[this.selectedCamera]!;
 

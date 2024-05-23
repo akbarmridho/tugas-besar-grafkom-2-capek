@@ -2,8 +2,11 @@ import {
   BufferGeometry,
   BufferGeometrySerialized
 } from '@/objects/base/buffer-geometry.ts';
-import { BufferAttribute } from '@/objects/base/buffer-attribute.ts';
-import { quadFromPoints } from '@/utils/coordinates.ts';
+import {
+  BufferAttribute,
+  BufferAttributeSerialized
+} from '@/objects/base/buffer-attribute.ts';
+import { quadFromCoord, quadFromPoints } from '@/utils/coordinates.ts';
 
 export interface BoxGeometryProps {
   width: number;
@@ -63,10 +66,32 @@ export class BoxGeometry extends BufferGeometry<BoxGeometrySerialized> {
         ...quadFromPoints(e,a,b,f), // top
         ...quadFromPoints(g,c,d,h), // bottom
         ...quadFromPoints(f,g,h,e)  // back
-    ])
+    ]);
+
+    const tTopLeft = [0, 0];
+    const tBottomLeft = [0, 1];
+    const tTopRight = [1, 0];
+    const tBottomRight = [1, 1];
+
+    const faceTexCoord = quadFromCoord(
+      tTopLeft,
+      tBottomLeft,
+      tBottomRight,
+      tTopRight
+    );
+
+    const texcoord = new Float32Array([
+      ...faceTexCoord,
+      ...faceTexCoord,
+      ...faceTexCoord,
+      ...faceTexCoord,
+      ...faceTexCoord,
+      ...faceTexCoord
+    ]);
 
     super({
-      position: new BufferAttribute(vertices, 3)
+      position: new BufferAttribute(vertices, 3),
+      texcoord: new BufferAttribute(texcoord, 2)
     });
 
     this.width = width;
