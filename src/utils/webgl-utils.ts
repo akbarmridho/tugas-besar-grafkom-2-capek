@@ -237,6 +237,30 @@ export class WebGLUtils {
 
             const isPOT = isPowerOf2(v.width) && isPowerOf2(v.height);
 
+            if (v.parameterChanged) {
+              // if parameter changed, set params
+              v.parameterChanged = false;
+
+              if (!isPOT) {
+                v.wrapS = v.wrapT = gl.CLAMP_TO_EDGE;
+                v.minFilter = gl.LINEAR;
+                // console.log('image is not POT, fallback params', v);
+              }
+
+              gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.wrapS);
+              gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.wrapT);
+              gl.texParameteri(
+                gl.TEXTURE_2D,
+                gl.TEXTURE_MIN_FILTER,
+                v.minFilter
+              );
+              gl.texParameteri(
+                gl.TEXTURE_2D,
+                gl.TEXTURE_MAG_FILTER,
+                v.magFilter
+              );
+            }
+
             // if need to upload data, do upload
             v.needsUpload = false;
 
@@ -283,30 +307,6 @@ export class WebGLUtils {
                 new Uint8Array([...rgba, ...rgba, ...rgba, ...rgba])
               );
               gl.generateMipmap(gl.TEXTURE_2D);
-            }
-
-            if (v.parameterChanged) {
-              // if parameter changed, set params
-              v.parameterChanged = false;
-
-              if (!isPOT) {
-                v.wrapS = v.wrapT = gl.CLAMP_TO_EDGE;
-                v.minFilter = gl.LINEAR;
-                console.log('image is not POT, fallback params', v);
-              }
-
-              gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, v.wrapS);
-              gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, v.wrapT);
-              gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_MIN_FILTER,
-                v.minFilter
-              );
-              gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_MAG_FILTER,
-                v.magFilter
-              );
             }
 
             gl.bindTexture(gl.TEXTURE_2D, null); // set bind to null

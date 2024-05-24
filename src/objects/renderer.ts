@@ -23,6 +23,7 @@ import { DirectionalLight } from './light/directional-light';
 import { UniformDataType } from '@/interfaces/uniform-properties.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PointLight } from './light/point-light';
+import { PhongMaterial } from '@/objects/material/phong-material.ts';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -186,6 +187,9 @@ export class WebGLRenderer {
 
       if (material instanceof BasicMaterial) {
         material.texture?.onLoad(loadCb);
+      } else if (material instanceof PhongMaterial) {
+        material.diffuseMap.onLoad(loadCb);
+        material.specularMap.onLoad(loadCb);
       }
     });
 

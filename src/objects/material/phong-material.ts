@@ -53,6 +53,14 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
     this._shininess = shininess;
   }
 
+  get diffuseMap() {
+    return this._diffuseMap;
+  }
+
+  get specularMap() {
+    return this._specularMap;
+  }
+
   toJSON(): PhongMaterialSerialized {
     return {
       uniforms: {

@@ -150,6 +150,9 @@ export class Texture extends Serializable<TextureSerialized> {
     image.onload = () => {
       this._data = this._image;
       this.needsUpload = true;
+      this.parameterChanged = true;
+      this._height = this._image.height;
+      this._width = this._image.width;
       if (this._callbackFn !== null) {
         this._callbackFn();
       }
