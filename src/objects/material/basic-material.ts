@@ -3,7 +3,7 @@ import { Color, ColorSerialized } from '@/objects/base/color.ts';
 import basicFrag from '../../shaders/basic/basicFrag.frag';
 import basicVert from '../../shaders/basic/basicVert.glsl';
 import { Texture, TextureSerialized } from '@/objects/base/texture.ts';
-import { defineTexture } from '@/utils/other.ts';
+import { addDefineToShader } from '@/utils/other.ts';
 
 export interface BasicMaterialSerialized {
   uniforms: {
@@ -27,8 +27,8 @@ export class BasicMaterial extends ShaderMaterial<BasicMaterialSerialized> {
     const hasTexture = texture !== null;
 
     super(
-      hasTexture ? defineTexture(basicVert) : basicVert,
-      hasTexture ? defineTexture(basicFrag) : basicFrag,
+      hasTexture ? addDefineToShader(basicVert, 'WITH_TEXTURE') : basicVert,
+      hasTexture ? addDefineToShader(basicFrag, 'WITH_TEXTURE') : basicFrag,
       {
         color,
         texture

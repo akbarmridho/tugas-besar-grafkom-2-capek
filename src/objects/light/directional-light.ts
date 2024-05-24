@@ -65,6 +65,6 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
     super.updateWorldMatrix(updateParents, updateChildren);
     this._adjustedDirection = this._direction
       .clone()
-      .applyMatrix4(this.worldMatrix);
+      .applyQuaternion(this.parent!.quaternion);
   }
 }

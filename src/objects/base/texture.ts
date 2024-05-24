@@ -9,7 +9,7 @@ import {
   ValueOf,
   WrapMode
 } from '@/interfaces/texture.ts';
-import { Color } from '@/objects/base/color.ts';
+import { Color, ColorSerialized } from '@/objects/base/color.ts';
 import { fromByteArray, toByteArray } from 'base64-js';
 
 export interface TextureSerialized {
@@ -18,6 +18,7 @@ export interface TextureSerialized {
         url: string;
       }
     | { buffer: string; height: number; width: number }
+    | ColorSerialized
     | null;
   wrapS?: ValueOf<typeof WrapMode>;
   wrapT?: ValueOf<typeof WrapMode>;
@@ -35,6 +36,7 @@ export class Texture extends Serializable<TextureSerialized> {
   private _width: number = 0;
   private _height: number = 0;
   private _defaultColor: Color = Color.White();
+  private _plainColor: boolean = false;
 
   // Control how texture coordinated outside of [0, 1] are handled
   private _wrapS: ValueOf<typeof WrapMode>;
@@ -90,7 +92,7 @@ export class Texture extends Serializable<TextureSerialized> {
 
   constructor(
     data?: {
-      data?: string | HTMLImageElement | Uint8Array | TextureDataInput;
+      data?: string | HTMLImageElement | Uint8Array | TextureDataInput | Color;
       width?: number;
       height?: number;
     },
@@ -155,7 +157,7 @@ export class Texture extends Serializable<TextureSerialized> {
   }
 
   setData(
-    data?: string | HTMLImageElement | Uint8Array | TextureDataInput,
+    data?: string | HTMLImageElement | Uint8Array | TextureDataInput | Color,
     width?: number,
     height?: number
   ) {
@@ -163,6 +165,9 @@ export class Texture extends Serializable<TextureSerialized> {
       this._image.src = data;
       this._data = null;
       this._textureSrc = data;
+    } else if (data instanceof Color) {
+      this._defaultColor = data;
+      this._plainColor = true;
     } else {
       this._image.src = '';
       this._data = data || null;
@@ -197,6 +202,9 @@ export class Texture extends Serializable<TextureSerialized> {
       ).url;
 
       return new Texture({ data: url }, props);
+    } else if (Object.hasOwn(data, 'r')) {
+      const color = data as ColorSerialized;
+      return new Texture({ data: Color.fromJSON(color) }, props);
     }
 
     const buffer = data as { buffer: string; height: number; width: number };
@@ -219,12 +227,15 @@ export class Texture extends Serializable<TextureSerialized> {
           url: string;
         }
       | { buffer: string; height: number; width: number }
+      | ColorSerialized
       | null;
 
     if (this._data instanceof HTMLImageElement) {
       data = { url: this._data.src };
     } else if (this._textureSrc !== null) {
       data = { url: this._textureSrc };
+    } else if (this._plainColor) {
+      data = this.defaultColor.toJSON();
     } else if (this._data instanceof Uint8Array) {
       data = {
         buffer: fromByteArray(this._data),

@@ -77,7 +77,7 @@ export function quadFromPoints(
    * b c
    *
    * Two triangles:
-   * triangle abc, bdc
+   * triangle abc, cda
    */
 
   // prettier-ignore

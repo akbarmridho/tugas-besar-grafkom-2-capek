@@ -40,6 +40,7 @@ import { PhongMaterial } from '../material/phong-material';
 import { AmbientLight } from '../light/ambient-light';
 import { Divide } from 'lucide-react';
 import { DirectionalLight } from '../light/directional-light';
+import { PointLight } from '../light/point-light';
 
 export function parseModel(data: PModel): ParseModelResult {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
@@ -173,14 +174,29 @@ export function parseModel(data: PModel): ParseModelResult {
         node = new AmbientLight(
           rawNode.name,
           rawLightData.primitives.color,
-          rawLightData.primitives.intensity
+          rawLightData.primitives.intensity,
+          position,
+          rotation,
+          scale
         );
       } else if (rawLightData.type === 'DirectionalLight') {
         node = new DirectionalLight(
           rawNode.name,
           rawLightData.primitives.color,
           rawLightData.primitives.direction,
-          rawLightData.primitives.intensity
+          rawLightData.primitives.intensity,
+          position,
+          rotation,
+          scale
+        );
+      } else if (rawLightData.type === 'PointLight') {
+        node = new PointLight(
+          rawNode.name,
+          rawLightData.primitives.color,
+          rawLightData.primitives.intensity,
+          position,
+          rotation,
+          scale
         );
       } else {
         throw new Error('Invalid light type');

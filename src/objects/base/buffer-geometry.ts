@@ -108,7 +108,7 @@ export abstract class BufferGeometry<
       vA.fromArray(p1).subArray(p2);
       vB.fromArray(p3).subArray(p2);
 
-      const n = vA.cross(vB);
+      const n = vB.cross(vA);
 
       normal.set(i, n.toArray());
       normal.set(i + 1, n.toArray());

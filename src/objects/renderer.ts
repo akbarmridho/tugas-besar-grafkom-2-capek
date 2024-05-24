@@ -22,6 +22,7 @@ import { AmbientLight } from './light/ambient-light';
 import { DirectionalLight } from './light/directional-light';
 import { UniformDataType } from '@/interfaces/uniform-properties.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
+import { PointLight } from './light/point-light';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -425,6 +426,7 @@ export class WebGLRenderer {
     const toRender: Node<unknown>[] = [...scene.children];
     // @ts-ignore
     const lightToRender: Node<unknown>[] = [...scene.children];
+    let numPointLights: number = 0;
 
     // render all light
     while (lightToRender.length !== 0) {
@@ -441,10 +443,22 @@ export class WebGLRenderer {
         globalUniforms['directionalLight.intensity'] = child.intensity;
       }
 
+      if (child instanceof PointLight) {
+        globalUniforms['pointLights[' + numPointLights + '].color'] =
+          child.color;
+        globalUniforms['pointLights[' + numPointLights + '].position'] =
+          child.position.clone().applyQuaternion(scene.quaternion);
+        globalUniforms['pointLights[' + numPointLights + '].intensity'] =
+          child.intensity;
+
+        numPointLights++;
+      }
+
       if (child.children.length !== 0) {
         lightToRender.push(...child.children);
       }
     }
+    globalUniforms['num_lights'] = numPointLights;
 
     // render all mesh
     while (toRender.length !== 0) {
@@ -473,7 +487,7 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, child.material.uniforms);
         WebGLUtils.setUniforms(this.currentProgram, {
           worldMatrix: child.worldMatrix,
-          viewPos: camera.position.clone(),
+          viewPos: camera.position.clone().applyQuaternion(scene.quaternion),
           normalMatrix: child.worldMatrix.copy().inverse().transpose()
         });
 

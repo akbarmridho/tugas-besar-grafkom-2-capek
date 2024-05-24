@@ -46,18 +46,18 @@ export class PrismGeometry extends BufferGeometry<PrismGeometrySerialized> {
         for (let i = 0; i < numVert; i++) {
             // Triangle 1
             polygonVert[i][1] = -hh;
-            polygonVert[(i+1) % numVert][1] = -hh;
             verts.push(...polygonVert[i]); // Bottom vertex
+            polygonVert[(i+1) % numVert][1] = -hh;
             verts.push(...polygonVert[(i + 1) % numVert]); // The other bottom vertex
             polygonVert[i][1] = hh;
             verts.push(...polygonVert[i]); // Top vertex
-            // Triangle 2
+            //// Triangle 2
             polygonVert[i][1] = hh;
             verts.push(...polygonVert[i]); // Top vertex
+            polygonVert[(i+1) % numVert][1] = -hh;
+            verts.push(...polygonVert[(i + 1) % numVert]); // The other bottom vertex
             polygonVert[(i+1) % numVert][1] = hh;
             verts.push(...polygonVert[(i + 1) % numVert]); // The other top vertex
-            polygonVert[(i+1) % numVert][1] = -hh;
-            verts.push(...polygonVert[(i + 1) % numVert]); // The other bottom vertex
         }
         super({position: new BufferAttribute(new Float32Array(verts), 3)});
 

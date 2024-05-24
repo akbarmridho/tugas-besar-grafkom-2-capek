@@ -6,6 +6,7 @@ import { ObliqueCamera } from '@/objects/camera/oblique-camera.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { AmbientLight } from '@/objects/light/ambient-light.ts';
 import { DirectionalLight } from '@/objects/light/directional-light.ts';
+import { PointLight } from '@/objects/light/point-light.ts';
 
 export function generateBaseScene(name: string, color: Color = Color.White()) {
   /**
@@ -29,9 +30,23 @@ export function generateBaseScene(name: string, color: Color = Color.White()) {
 
   scene.addChildren(ambientLight);
 
-  const directionalLight = new DirectionalLight('sun');
+  const directionalLight = new DirectionalLight(
+    'sun',
+    undefined,
+    undefined,
+    0.5
+  );
 
   scene.addChildren(directionalLight);
+
+  const pointLight = new PointLight(
+    'whatever',
+    Color.Blue(),
+    0.2,
+    new Vector3(0, 0, 1)
+  );
+
+  scene.addChildren(pointLight);
 
   return { scene, ambientLight, directionalLight };
 }

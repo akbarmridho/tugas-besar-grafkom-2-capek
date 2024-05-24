@@ -25,6 +25,7 @@ import { PhongMaterial } from '../material/phong-material';
 import { Light } from '../base/light';
 import { AmbientLight } from '../light/ambient-light';
 import { DirectionalLight } from '../light/directional-light';
+import { PointLight } from '../light/point-light';
 import { CylinderGeometry } from '../geometry/cylinder-geometry';
 import { SphereGeometry } from '../geometry/sphere-geometry';
 
@@ -159,6 +160,14 @@ export function serializeScene(
             color: node.color,
             intensity: node.intensity,
             direction: node._direction
+          }
+        });
+      } else if (node instanceof PointLight) {
+        rawLights.push({
+          type: 'PointLight',
+          primitives: {
+            color: node.color,
+            intensity: node.intensity
           }
         });
       }
