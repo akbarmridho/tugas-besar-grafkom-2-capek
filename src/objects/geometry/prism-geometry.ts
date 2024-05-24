@@ -81,8 +81,8 @@ export class PrismGeometry extends BufferGeometry<PrismGeometrySerialized> {
         //    ...faceTexCoord
         //]);
 
-        const texcoord = new Float32Array(polygonVert.length * faceTexCoord.length);
-        for (let i = 0; i < polygonVert.length + 2; i++) {
+        const texcoord = new Float32Array((numVert + 2) * faceTexCoord.length);
+        for (let i = 0; i < numVert + 2; i++) {
             texcoord.set(faceTexCoord, i * faceTexCoord.length);
         }
 
