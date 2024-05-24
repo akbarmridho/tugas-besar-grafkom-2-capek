@@ -3,7 +3,7 @@ import {
     BufferGeometrySerialized
 } from '@/objects/base/buffer-geometry.ts';
 import { BufferAttribute } from '@/objects/base/buffer-attribute.ts';
-import { quadFromPoints } from '@/utils/coordinates.ts';
+import { quadFromCoord } from '@/utils/coordinates.ts';
 
 export interface PrismGeometryProps {
     polygonVert: number[][];
@@ -59,7 +59,37 @@ export class PrismGeometry extends BufferGeometry<PrismGeometrySerialized> {
             polygonVert[(i+1) % numVert][1] = hh;
             verts.push(...polygonVert[(i + 1) % numVert]); // The other top vertex
         }
-        super({position: new BufferAttribute(new Float32Array(verts), 3)});
+
+        const tTopLeft = [0, 0];
+        const tBottomLeft = [0, 1];
+        const tTopRight = [1, 0];
+        const tBottomRight = [1, 1];
+
+        const faceTexCoord = quadFromCoord(
+            tTopLeft,
+            tBottomLeft,
+            tBottomRight,
+            tTopRight
+        );
+
+        //const texcoord = new Float32Array([
+        //    ...faceTexCoord,
+        //    ...faceTexCoord,
+        //    ...faceTexCoord,
+        //    ...faceTexCoord,
+        //    ...faceTexCoord,
+        //    ...faceTexCoord
+        //]);
+
+        const texcoord = new Float32Array(polygonVert.length * faceTexCoord.length);
+        for (let i = 0; i < polygonVert.length + 2; i++) {
+            texcoord.set(faceTexCoord, i * faceTexCoord.length);
+        }
+
+        super({
+            position: new BufferAttribute(new Float32Array(verts), 3),
+            texcoord: new BufferAttribute(texcoord, 2)
+        });
 
         this.polygonVert = polygonVert;
         this.height = height;

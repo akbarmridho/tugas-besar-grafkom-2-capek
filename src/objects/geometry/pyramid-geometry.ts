@@ -4,7 +4,7 @@ import {
 } from '@/objects/base/buffer-geometry.ts';
 import { BufferAttribute } from '@/objects/base/buffer-attribute.ts';
 import { triangleFromPoints } from '@/utils/coordinates.ts';
-import { quadFromPoints } from '@/utils/coordinates.ts';
+import { quadFromCoord, quadFromPoints } from '@/utils/coordinates.ts';
 
 export interface PyramidGeometryProps {
     width: number;
@@ -57,9 +57,32 @@ export class PyramidGeometry extends BufferGeometry<PyramidGeometrySerialized> {
             ...triangleFromPoints(a, b, e),
             ...triangleFromPoints(a, e, d),
             ...triangleFromPoints(a, d, c)
-        ])
+        ]);
 
-        super({position: new BufferAttribute(vertices, 3)});
+        const tTopLeft = [0, 0];
+        const tBottomLeft = [0, 1];
+        const tTopRight = [1, 0];
+        const tBottomRight = [1, 1];
+
+        const faceTexCoord = quadFromCoord(
+          tTopLeft,
+          tBottomLeft,
+          tBottomRight,
+          tTopRight
+        );
+
+        const texcoord = new Float32Array([
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord
+        ]);
+
+        super({
+          position: new BufferAttribute(vertices, 3),
+          texcoord: new BufferAttribute(texcoord, 2)
+        });
 
         this.width = width;
         this.height = height;

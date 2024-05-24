@@ -16,11 +16,11 @@ import { generateBaseScene } from '@/factory/base.ts';
 import { PyramidGeometry } from '@/objects/geometry/pyramid-geometry';
 import { PrismGeometry } from '@/objects/geometry/prism-geometry';
 
-export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
+export function test(): PModel {
   /**
    * Define scenes
    */
-  const { scene } = generateBaseScene('neo-amstrong', Color.fromHex(0x36a0de));
+  const { scene } = generateBaseScene('test', Color.fromHex(0x36a0de));
 
   /**
    * Define materials
