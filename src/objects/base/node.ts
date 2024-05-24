@@ -296,6 +296,10 @@ export abstract class Node<
     return node || null;
   }
 
+  public getChildrenByName(name: string): Node[] {
+    return this.children.filter((c) => c.name === name);
+  }
+
   public setPosition(value: Vector3) {
     this.position.copyFrom(value);
     this.updateWorldMatrix(false, true);

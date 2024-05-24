@@ -29,7 +29,7 @@ export class OrthographicCamera extends Camera<OrthographicCameraSerialized> {
       bottom: -1,
       left: -1,
       right: 1,
-      near: 0.1,
+      near: -2000,
       far: 2000
     },
     position?: Vector3,

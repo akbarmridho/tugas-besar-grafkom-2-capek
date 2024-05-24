@@ -236,14 +236,19 @@ export class WebGLRenderer {
   private updateSceneGraph() {
     // Update scene graph with current frame
     // Use root as the parent and traverse according to the frame
-    const toUpdate: { node: Node; path: AnimationPath }[] = [
-      {
-        node: this.model!.scene.getChildByName(
-          this.model!.animationClip!.rootName
-        )!,
-        path: this.animationFrame
+    const toUpdate: { node: Node; path: AnimationPath }[] = [];
+
+    const frame = this.animationFrame!;
+
+    this.model!.scene.children.forEach((c) => {
+      if (frame.children && Object.hasOwn(frame.children, c.name)) {
+        const path = frame.children[c.name];
+        toUpdate.push({
+          node: c,
+          path: path
+        });
       }
-    ];
+    });
 
     while (toUpdate.length !== 0) {
       const { node, path } = toUpdate.shift()!;
@@ -281,14 +286,12 @@ export class WebGLRenderer {
 
       if (path.children) {
         for (const key of Object.keys(path.children)) {
-          const childNode = node.getChildByName(key);
-
-          if (childNode !== null) {
+          node.getChildrenByName(key).forEach((c) => {
             toUpdate.push({
-              node: childNode,
-              path: path.children[key]
+              node: c,
+              path: path.children![key]
             });
-          }
+          });
         }
       }
     }
@@ -451,7 +454,11 @@ export class WebGLRenderer {
         globalUniforms['pointLights[' + numPointLights + '].color'] =
           child.color;
         globalUniforms['pointLights[' + numPointLights + '].position'] =
-          child.position.clone().applyQuaternion(scene.quaternion);
+          new Vector3(
+            child.worldMatrix.elements[3],
+            child.worldMatrix.elements[7],
+            child.worldMatrix.elements[11]
+          );
         globalUniforms['pointLights[' + numPointLights + '].intensity'] =
           child.intensity;
 

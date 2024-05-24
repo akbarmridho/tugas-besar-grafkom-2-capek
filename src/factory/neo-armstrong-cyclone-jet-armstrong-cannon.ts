@@ -57,80 +57,80 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
   canonMesh.addChildren(leftBallMesh);
   canonMesh.addChildren(rightBallMesh);
 
-  const clip: AnimationClip = {
-    name: 'flip',
-    rootName: 'canon',
-    frames: [
-      {
-        keyframe: {
-          rotation: [0, 0, 0]
-          // scale: [1, 1, 1]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [30, 0, 0]
-          // scale: [1.1, 1, 1]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [60, 0, 0]
-          // scale: [1.2, 1, 1]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [90, 0, 0]
-          // scale: [1.3, 1, 1]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [120, 0, 0]
-          // scale: [1.4, 1, 1]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [150, 0, 0]
-          // scale: [1.5, 1, 1]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [180, 0, 0]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [210, 0, 0]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [240, 0, 0]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [270, 0, 0]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [300, 0, 0]
-          // scale: [1.3, 1, 1]
-        }
-      },
-      {
-        keyframe: {
-          rotation: [330, 0, 0]
-          // scale: [1, 1, 1]
-        }
-      }
-    ]
-  };
+  // const clip: AnimationClip = {
+  //   name: 'flip',
+  //   rootName: 'canon',
+  //   frames: [
+  //     {
+  //       keyframe: {
+  //         rotation: [0, 0, 0]
+  //         // scale: [1, 1, 1]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [30, 0, 0]
+  //         // scale: [1.1, 1, 1]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [60, 0, 0]
+  //         // scale: [1.2, 1, 1]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [90, 0, 0]
+  //         // scale: [1.3, 1, 1]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [120, 0, 0]
+  //         // scale: [1.4, 1, 1]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [150, 0, 0]
+  //         // scale: [1.5, 1, 1]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [180, 0, 0]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [210, 0, 0]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [240, 0, 0]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [270, 0, 0]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [300, 0, 0]
+  //         // scale: [1.3, 1, 1]
+  //       }
+  //     },
+  //     {
+  //       keyframe: {
+  //         rotation: [330, 0, 0]
+  //         // scale: [1, 1, 1]
+  //       }
+  //     }
+  //   ]
+  // };
 
-  return serializeScene(scene, clip);
+  return serializeScene(scene);
 }
