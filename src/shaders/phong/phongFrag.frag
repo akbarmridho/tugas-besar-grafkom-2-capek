@@ -55,12 +55,12 @@ vec3 calculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 
     // Diffuse component
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diffuseStrength * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
+    vec3 diffuse = light.color.rgb * diffuseStrength * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
 
     // Specular component
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float specularStrength = pow(max(dot(normal, halfwayDir), 0.0), u_shininess);
-    vec3 specular = specularStrength * light.intensity * texture2D(u_specularMap, v_texcoord).rgb;
+    vec3 specular = light.color.rgb * specularStrength * light.intensity * texture2D(u_specularMap, v_texcoord).rgb;
 
     return (ambient + diffuse + specular);
 }
@@ -81,12 +81,12 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 
         // Diffuse component
         float diffuseStrength = max(dot(normal, lightDir), 0.0);
-        vec3 diffuse = diffuseStrength * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
+        vec3 diffuse = light.color.rgb * diffuseStrength * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
 
         // Specular component
         vec3 halfwayDir = normalize(lightDir + viewDir);
         float specularStrength = pow(max(dot(normal, halfwayDir), 0.0), u_shininess);
-        vec3 specular = specularStrength * light.intensity * texture2D(u_specularMap, v_texcoord).rgb.rgb;
+        vec3 specular = light.color.rgb * specularStrength * light.intensity * texture2D(u_specularMap, v_texcoord).rgb.rgb;
 
         return ((ambient) + (diffuse * attenuation) + (specular * attenuation));
     }

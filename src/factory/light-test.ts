@@ -18,6 +18,7 @@ import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { AnimationClip, AnimationPath } from '@/interfaces/animation.ts';
 import { Spherical } from '@/utils/math/spherical.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
+import { Texture } from '@/objects/base/texture.ts';
 
 export function lightTest(): PModel {
   const rootName = 'light-test';
@@ -41,18 +42,20 @@ export function lightTest(): PModel {
 
   const directionalLight = new DirectionalLight(
     'sun',
-    Color.White(),
+    Color.Red(),
     new Vector3(-1, -1, -1),
     1
   );
 
   scene.addChildren(directionalLight);
 
+  const pointLightRadius = 1;
+
   const pointLight = new PointLight(
     'p1',
     Color.fromHex(0x16b516),
-    1,
-    new Vector3(0, 0, -0.5)
+    0.5,
+    new Vector3(0, 0, -pointLightRadius)
   );
 
   scene.addChildren(pointLight);
@@ -64,18 +67,19 @@ export function lightTest(): PModel {
     'p1',
     pointLightShape,
     pointLightMaterial,
-    new Vector3(0, 0, -0.5)
+    new Vector3(0, 0, -pointLightRadius)
   );
 
   scene.addChildren(pointLightMesh);
 
+  const diffuseMap = new Texture({ data: '/textures/wood.png' });
+  const specularMap = new Texture({ data: '/textures/wood-specular.png' });
+
   const floorMaterial = new PhongMaterial(
-    Color.fromHex(0x7a4606),
-    // Color.Black(),
-    Color.fromHex(0xdb9032),
-    // Color.Blue(),
-    Color.Blue(),
-    1
+    Color.Black(),
+    diffuseMap,
+    specularMap,
+    16
   );
 
   const floorGeometry = new BoxGeometry(4, 0.1, 4);
@@ -88,13 +92,29 @@ export function lightTest(): PModel {
   );
 
   const sphereMaterial = new PhongMaterial(
-    Color.fromHex(0x201575),
-    // Color.Black(),
-    Color.fromHex(0x2d19c2),
-    // Color.Blue(),
-    Color.Red(),
-    4
+    Color.Black(),
+    new Texture({ data: '/textures/metal.png' }),
+    new Texture({ data: '/textures/metal-specular.png' }),
+    8
   );
+
+  // const sphereMaterial = new PhongMaterial(
+  //   Color.fromHex(0x201575),
+  //   // Color.Black(),
+  //   Color.fromHex(0x2d19c2),
+  //   // Color.Blue(),
+  //   Color.Red(),
+  //   4
+  // );
+
+  // const sphereMaterial = new PhongMaterial(
+  //   Color.fromHex(0x4f4f4f),
+  //   // Color.fromHex(0x2d19c2),
+  //   // Color.Blue(),
+  //   Color.fromHex(0x0f0f0f),
+  //   Color.fromHex(0x1f0000),
+  //   32
+  // );
 
   const sphere = new SphereGeometry(0.1);
 
@@ -104,9 +124,9 @@ export function lightTest(): PModel {
   scene.addChildren(sphereMesh);
 
   const frames: AnimationPath[] = [];
-  const spherical = new Spherical(0.5);
+  const spherical = new Spherical(pointLightRadius);
   const posResult = new Vector3();
-  spherical.setFromCartesianCoordinates(0, 0, -0.5);
+  spherical.setFromCartesianCoordinates(0, 0, -pointLightRadius);
 
   for (let i = 0; i < 360; i++) {
     spherical.theta += degreeToRadian(1);
