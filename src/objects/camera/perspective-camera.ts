@@ -4,8 +4,6 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Transformation } from '@/utils/math/transformation.ts';
 import { degreeToRadian, radianToDegree } from '@/utils/math/angle.ts';
-import { ObliqueProjection } from '@/objects/camera/oblique-camera.ts';
-
 export interface PerspectiveProjection {
   fov: number;
   aspect: number;
@@ -26,7 +24,7 @@ export class PerspectiveCamera extends Camera<PerspectiveCameraSerialized> {
     projection: PerspectiveProjection = {
       fov: 90,
       aspect: 1,
-      near: 0.1, // in perspective camera, near should be more than 0
+      near: 0.0001, // in perspective camera, near should be more than 0
       far: 2000
     },
     position?: Vector3,

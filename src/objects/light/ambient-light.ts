@@ -15,15 +15,8 @@ export interface AmbientLightSerialized extends NodeSerialized {
 }
 
 export class AmbientLight extends Light<AmbientLightSerialized> {
-  constructor(
-    name: string,
-    color?: Color,
-    intensity?: number,
-    position?: Vector3,
-    rotation?: Euler,
-    scale?: Vector3
-  ) {
-    super(name, color, intensity, position, rotation, scale);
+  constructor(name: string, color?: Color, intensity?: number) {
+    super(name, color, intensity);
   }
 
   public toJSON(): AmbientLightSerialized {

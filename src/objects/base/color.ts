@@ -80,6 +80,10 @@ export class Color extends Serializable<ColorSerialized> {
     return new Color(r, g, b);
   }
 
+  public toHex() {
+    return (this._r << 16) | (this.g << 8) | this.b;
+  }
+
   /**
    * Iterator for WebGL
    * WebGL receive color in normalized so we need to divide by 255

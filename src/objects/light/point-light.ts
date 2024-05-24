@@ -21,9 +21,9 @@ export interface PointLightSerialized extends NodeSerialized {
 }
 
 export class PointLight extends Light<PointLightSerialized> {
-  constant: number;
-  linear: number;
-  quadratic: number;
+  public constant: number;
+  public linear: number;
+  public quadratic: number;
 
   constructor(
     name: string,

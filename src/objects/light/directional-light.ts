@@ -25,12 +25,9 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
     name: string,
     color?: Color,
     direction?: Vector3,
-    intensity?: number,
-    position?: Vector3,
-    rotation?: Euler,
-    scale?: Vector3
+    intensity?: number
   ) {
-    super(name, color, intensity, position, rotation, scale);
+    super(name, color, intensity);
 
     if (direction) {
       this._direction = direction.clone();
@@ -43,6 +40,15 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
 
   get direction() {
     return this._adjustedDirection;
+  }
+
+  get rawDirection() {
+    return this._direction;
+  }
+
+  set rawDirection(val: Vector3) {
+    this._direction.copyFrom(val);
+    this.updateWorldMatrix(false, false);
   }
 
   public toJSON(): DirectionalLightSerialized {

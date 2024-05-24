@@ -25,6 +25,9 @@ export abstract class Node<
   private _quaternion: Quaternion;
   private _scale: Vector3;
 
+  static #idCounter = 0;
+  private readonly _nodeId: string = `N${Node.#idCounter++}`;
+
   // Matrices
   private _localMatrix: Matrix4 = Matrix4.identity();
   private _worldMatrix: Matrix4 = Matrix4.identity();
@@ -40,6 +43,10 @@ export abstract class Node<
   // Other
   name: string = 'node';
   visible: boolean = true;
+
+  get nodeId() {
+    return this._nodeId;
+  }
 
   /* Constructor */
   // Initialize Node object

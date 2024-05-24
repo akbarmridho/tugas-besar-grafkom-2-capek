@@ -17,7 +17,7 @@ interface NodeGraphProps {
   setActiveNode: (id: string | null) => void;
 }
 
-interface XYZ {
+export interface XYZ {
   x: string;
   y: string;
   z: string;
@@ -141,18 +141,18 @@ export const NodeGraph = ({
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
-        className={`w-full p-1 cursor-pointer select-none border border-black  ${activeNode === data.node.name ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
+        className={`w-full p-1 cursor-pointer select-none border border-black  ${activeNode === data.node.nodeId ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
         onClick={() => {
-          if (activeNode === data.node.name) {
+          if (activeNode === data.node.nodeId) {
             setActiveNode(null);
           } else {
-            setActiveNode(data.node.name);
+            setActiveNode(data.node.nodeId);
           }
         }}
       >
         {nodeName}
       </div>
-      <div className={`${activeNode !== data.node.name && 'hidden'}`}>
+      <div className={`${activeNode !== data.node.nodeId && 'hidden'}`}>
         <div className={'flex flex-col'}>
           <div className={'flex items-center gap-x-2'}>
             <p className={'font-medium text-sm'}>Name</p>

@@ -2,6 +2,7 @@ import { NodeGraph } from '@/components/node-graph.tsx';
 import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '@/components/context.ts';
 import { Mesh } from '@/objects/mesh.ts';
+import { LightSettings } from '@/components/light-setting/light-settings.tsx';
 
 export const SceneGraph = () => {
   const [activeNode, setActiveNode] = useState<string | null>(null);
@@ -42,13 +43,18 @@ export const SceneGraph = () => {
           .map((node) => {
             return (
               <NodeGraph
-                key={node.name}
+                key={node.nodeId}
                 data={{ node }}
                 activeNode={activeNode}
                 setActiveNode={setActiveNode}
               />
             );
           })}
+        <LightSettings
+          scene={scene}
+          activeNode={activeNode}
+          setActiveNode={setActiveNode}
+        />
       </div>
     </div>
   );
