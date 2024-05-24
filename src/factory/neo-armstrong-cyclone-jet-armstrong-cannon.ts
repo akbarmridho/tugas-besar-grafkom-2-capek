@@ -25,8 +25,8 @@ export function neoArmstrongCycloneJetArmstrongCannon(): PModel {
    */
   const canonMaterial = new BasicMaterial(Color.fromHex(0x63716e));
   const ballMaterial = new PhongMaterial(
-    Color.Red(),
-    Color.White(),
+    Color.fromHex(0x991b1b),
+    Color.fromHex(0xdc2626),
     Color.White(),
     0.5
   );

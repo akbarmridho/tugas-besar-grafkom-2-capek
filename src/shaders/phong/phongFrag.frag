@@ -6,8 +6,8 @@ struct AmbientLight {
 };
 
 struct DirectionalLight {
-    vec4 color;
-    vec3 direction;
+    vec4 color; // ambient color
+    vec3 direction; // direction
     float intensity;
 };
 
@@ -19,8 +19,8 @@ struct PointLight {
 
 // Material Attribute
 uniform vec4 u_color;
-uniform vec4 u_diffuseColor;
-uniform vec4 u_specularColor;
+uniform vec4 u_diffuseColor; // diffuse
+uniform vec4 u_specularColor; // specular
 uniform float u_shininess;
 
 // View Position
@@ -43,7 +43,7 @@ varying vec3 v_fragPos;
 
 // Calculate the impact of light from directional light
 vec3 calculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
-    vec3 lightDir = normalize(light.direction);
+    vec3 lightDir = normalize(-light.direction);
 
     // Ambient component
     vec3 ambient = light.color.rgb * light.intensity * u_color.rgb;

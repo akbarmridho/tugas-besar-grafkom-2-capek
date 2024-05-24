@@ -447,11 +447,7 @@ export class WebGLRenderer {
         globalUniforms['pointLights[' + numPointLights + '].color'] =
           child.color;
         globalUniforms['pointLights[' + numPointLights + '].position'] =
-          new Vector3(
-            child.worldMatrix.elements[3],
-            child.worldMatrix.elements[7],
-            child.worldMatrix.elements[11]
-          );
+          child.position.clone().applyQuaternion(scene.quaternion);
         globalUniforms['pointLights[' + numPointLights + '].intensity'] =
           child.intensity;
 
@@ -491,7 +487,7 @@ export class WebGLRenderer {
         WebGLUtils.setUniforms(this.currentProgram, child.material.uniforms);
         WebGLUtils.setUniforms(this.currentProgram, {
           worldMatrix: child.worldMatrix,
-          viewPos: camera.position.clone(),
+          viewPos: camera.position.clone().applyQuaternion(scene.quaternion),
           normalMatrix: child.worldMatrix.copy().inverse().transpose()
         });
 
