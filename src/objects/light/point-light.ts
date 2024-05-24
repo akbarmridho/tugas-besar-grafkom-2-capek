@@ -7,19 +7,32 @@ import { Euler } from '@/utils/math/euler';
 export interface PointLightProps {
   color: Color;
   intensity: number;
+  constant: number;
+  linear: number;
+  quadratic: number;
 }
 
 export interface PointLightSerialized extends NodeSerialized {
   color: Color;
   intensity: number;
+  constant: number;
+  linear: number;
+  quadratic: number;
 }
 
 export class PointLight extends Light<PointLightSerialized> {
+  constant: number;
+  linear: number;
+  quadratic: number;
+
   constructor(
     name: string,
     color?: Color,
     intensity?: number,
     position?: Vector3,
+    constant?: number,
+    linear?: number,
+    quadratic?: number,
     rotation?: Euler,
     scale?: Vector3
   ) {
@@ -31,12 +44,33 @@ export class PointLight extends Light<PointLightSerialized> {
       rotation,
       scale
     );
+
+    if (constant) {
+      this.constant = constant;
+    } else {
+      this.constant = 0.07;
+    }
+
+    if (linear) {
+      this.linear = linear;
+    } else {
+      this.linear = 0.05;
+    }
+
+    if (quadratic) {
+      this.quadratic = quadratic;
+    } else {
+      this.quadratic = 0.03;
+    }
   }
 
   public toJSON(): PointLightSerialized {
     return {
       color: this._color,
       intensity: this._intensity,
+      constant: this.constant,
+      linear: this.linear,
+      quadratic: this.quadratic,
       ...this.toNodeSerialized()
     };
   }

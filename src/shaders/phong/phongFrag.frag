@@ -15,6 +15,10 @@ struct PointLight {
     vec4 color;
     vec3 position;
     float intensity;
+
+    float constant;
+    float linear;
+    float quadratic;
 };
 
 // Material Attribute
@@ -67,13 +71,13 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 
     float lambertTerm = dot(normal, lightDir);
 
-    if (lambertTerm > 0.0) {
+    if(lambertTerm > 0.0) {
         // Attenuation
         float distance = length(light.position - fragPos);
-        float attenuation = 1.0 / ((distance * distance) + 1.0);
+        float attenuation = 1.0 / (light.constant + (light.linear * distance) + (light.quadratic * distance * distance));
 
         // Ambient component
-        vec3 ambient = light.color.rgb * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
+        vec3 ambient = light.color.rgb * light.intensity * u_color.rgb;
 
         // Diffuse component
         float diffuseStrength = max(dot(normal, lightDir), 0.0);

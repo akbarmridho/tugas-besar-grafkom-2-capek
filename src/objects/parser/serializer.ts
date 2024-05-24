@@ -167,7 +167,10 @@ export function serializeScene(
           type: 'PointLight',
           primitives: {
             color: node.color,
-            intensity: node.intensity
+            intensity: node.intensity,
+            constant: node.constant,
+            linear: node.linear,
+            quadratic: node.quadratic
           }
         });
       }

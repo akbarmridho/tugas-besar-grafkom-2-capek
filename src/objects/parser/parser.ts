@@ -195,6 +195,9 @@ export function parseModel(data: PModel): ParseModelResult {
           rawLightData.primitives.color,
           rawLightData.primitives.intensity,
           position,
+          rawLightData.primitives.constant,
+          rawLightData.primitives.linear,
+          rawLightData.primitives.quadratic,
           rotation,
           scale
         );
