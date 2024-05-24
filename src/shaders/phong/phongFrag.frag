@@ -69,7 +69,7 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     float attenuation = 1.0 / ((distance * distance) + 1.0);
 
     // Ambient component
-    vec3 ambient = light.color.rgb * light.intensity * u_color.rgb;
+    vec3 ambient = light.color.rgb * light.intensity * u_diffuseColor.rgb;
 
     // Diffuse component
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
