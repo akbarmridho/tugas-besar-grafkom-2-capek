@@ -6,6 +6,8 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip.tsx';
 import { neoArmstrongCycloneJetArmstrongCannon } from '@/factory/neo-armstrong-cyclone-jet-armstrong-cannon.ts';
+import { test } from '@/factory/test.ts';
+import { spongebobWithTexture } from '@/factory/spongebob-phong.ts';
 import { parseModel } from '@/objects/parser/parser.ts';
 import { useApp } from '@/components/context.ts';
 import { PModel } from '@/interfaces/parser.ts';
@@ -14,7 +16,7 @@ import { phongCubeWithTexture } from '@/factory/cube-phong.ts';
 
 type seederFunc = () => PModel;
 const PRE_SEED_MODEL = true;
-const seeder: seederFunc | null = phongCubeWithTexture;
+const seeder: seederFunc | null = spongebobWithTexture;
 
 export const SaveAndLoad = () => {
   const app = useApp();

@@ -25,22 +25,41 @@ export class PrismGeometry extends BufferGeometry<PrismGeometrySerialized> {
         const hh = height/2;
         const verts = [] // Store every vertex coordinates
 
+        type Vertex = [number, number, number];
+        function centroid(ver: Vertex[]): Vertex {
+            let sX = 0,
+                sY = 0,
+                sZ = 0;
+
+            for (const i of ver) {
+                sX += i[0];
+                sY += i[1];
+                sZ += i[2];
+            }
+
+            const   cX = sX/numVert,
+                    cY = sY/numVert,
+                    cZ = sZ/numVert;
+
+            return [cX, cY, cZ];
+        } 
+        const bottomCentroid: Vertex = centroid(polygonVert.map(v => [v[0], -hh, v[2]] as Vertex));
+        const topCentroid: Vertex = centroid(polygonVert.map(v => [v[0], hh, v[2]] as Vertex));
+
         for (let i = 0; i < numVert; i++) {
             // Bottom face
             polygonVert[i][1] = -hh;
             polygonVert[(i+1) % numVert][1] = -hh;
-            polygonVert[(i+2) % numVert][1] = -hh;
             verts.push(...polygonVert[i]);
             verts.push(...polygonVert[(i + 1) % numVert]);
-            verts.push(...polygonVert[(i + 2) % numVert]);
+            verts.push(bottomCentroid[0], bottomCentroid[1], bottomCentroid[2]);
 
             // Top face
             polygonVert[i][1] = hh;
             polygonVert[(i+1) % numVert][1] = hh;
-            polygonVert[(i+2) % numVert][1] = hh;
             verts.push(...polygonVert[i]);
             verts.push(...polygonVert[(i + 1) % numVert]);
-            verts.push(...polygonVert[(i + 2) % numVert]);
+            verts.push(topCentroid[0], topCentroid[1], topCentroid[2]);
         }
 
         for (let i = 0; i < numVert; i++) {
@@ -81,8 +100,8 @@ export class PrismGeometry extends BufferGeometry<PrismGeometrySerialized> {
         //    ...faceTexCoord
         //]);
 
-        const texcoord = new Float32Array((numVert + 2) * faceTexCoord.length);
-        for (let i = 0; i < numVert + 2; i++) {
+        const texcoord = new Float32Array((2 * numVert) * faceTexCoord.length);
+        for (let i = 0; i < 2 * numVert; i++) {
             texcoord.set(faceTexCoord, i * faceTexCoord.length);
         }
 
