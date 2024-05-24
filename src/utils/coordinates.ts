@@ -24,21 +24,21 @@ export function quadFromFlatPoints(data: number[]): number[] {
   const d = 9;
 
   /**
-   * a b
-   * d c
+   * a d
+   * b c
    *
    * Two triangles:
-   * triangle abc, bdc
+   * triangle abc, cda
    */
 
   // prettier-ignore
   return [
-      data[a], data[a+1], data[a+2], // a -> drawing triangle abc
-      data[b], data[b+1], data[b+2], // b
-      data[d], data[d+1], data[d+2], // d
-      data[b], data[b+1], data[b+2], // b -> drawing triangle bdc
-      data[c], data[c+1], data[c+2], // c
-      data[d], data[d+1], data[d+2], // d
+    data[a], data[a+1], data[a+2], // a -> drawing triangle abc
+    data[b], data[b+1], data[b+2], // b
+    data[c], data[c+1], data[c+2], // c
+    data[c], data[c+1], data[c+2], // c -> drawing triangle bdc
+    data[d], data[d+1], data[d+2], // d
+    data[a], data[a+1], data[a+2], // a
   ]
 }
 
@@ -53,7 +53,7 @@ export function quadFromCoord(
    * b c
    *
    * Two triangles:
-   * triangle abc, bdc
+   * triangle abc, cda
    */
   // prettier-ignore
   return [

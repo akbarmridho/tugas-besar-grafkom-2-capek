@@ -171,6 +171,8 @@ export class Texture extends Serializable<TextureSerialized> {
     } else if (data instanceof Color) {
       this._defaultColor = data;
       this._plainColor = true;
+      this._height = 2;
+      this._height = 2;
     } else {
       this._image.src = '';
       this._data = data || null;

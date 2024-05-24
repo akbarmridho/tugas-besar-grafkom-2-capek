@@ -291,7 +291,7 @@ export class WebGLUtils {
                 v.defaultColor.r,
                 v.defaultColor.g,
                 v.defaultColor.b,
-                1
+                255
               ];
 
               // data not loaded

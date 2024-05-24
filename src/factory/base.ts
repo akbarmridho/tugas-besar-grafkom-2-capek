@@ -26,9 +26,9 @@ export function generateBaseScene(name: string, color: Color = Color.White()) {
   scene.addChildren(perspectiveCamera);
   scene.addChildren(obliqueCamera);
 
-  const ambientLight = new AmbientLight('ambient', undefined, 0.25);
+  const ambientLight = new AmbientLight('ambient', undefined, 0.5);
 
-  // scene.addChildren(ambientLight);
+  scene.addChildren(ambientLight);
 
   const directionalLight = new DirectionalLight(
     'sun',
