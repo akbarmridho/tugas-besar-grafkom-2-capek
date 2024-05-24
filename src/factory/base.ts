@@ -26,27 +26,27 @@ export function generateBaseScene(name: string, color: Color = Color.White()) {
   scene.addChildren(perspectiveCamera);
   scene.addChildren(obliqueCamera);
 
-  const ambientLight = new AmbientLight('ambient');
+  const ambientLight = new AmbientLight('ambient', undefined, 0.25);
 
-  scene.addChildren(ambientLight);
+  // scene.addChildren(ambientLight);
 
   const directionalLight = new DirectionalLight(
     'sun',
-    undefined,
-    undefined,
-    0.5
+    Color.White(),
+    new Vector3(-1, -1, -1),
+    1
   );
 
   scene.addChildren(directionalLight);
 
   const pointLight = new PointLight(
     'whatever',
-    Color.Blue(),
-    0.2,
+    Color.Red(),
+    1,
     new Vector3(0, 0, 1)
   );
 
-  scene.addChildren(pointLight);
+  // scene.addChildren(pointLight);
 
   return { scene, ambientLight, directionalLight };
 }

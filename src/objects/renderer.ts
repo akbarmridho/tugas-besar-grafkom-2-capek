@@ -476,8 +476,9 @@ export class WebGLRenderer {
           // console.log(`changing to mat id ${child.material.id}`);
           this.currentProgram = this.shaderCache[child.material.id];
           this.gl.useProgram(this.currentProgram.program);
-          WebGLUtils.setUniforms(this.currentProgram, globalUniforms);
         }
+
+        WebGLUtils.setUniforms(this.currentProgram, globalUniforms);
 
         // render the mesh
         WebGLUtils.setAttributes(

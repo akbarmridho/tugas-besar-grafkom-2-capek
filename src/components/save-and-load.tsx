@@ -10,10 +10,11 @@ import { parseModel } from '@/objects/parser/parser.ts';
 import { useApp } from '@/components/context.ts';
 import { PModel } from '@/interfaces/parser.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
+import { phongCubeWithTexture } from '@/factory/cube-phong.ts';
 
 type seederFunc = () => PModel;
 const PRE_SEED_MODEL = true;
-const seeder: seederFunc | null = neoArmstrongCycloneJetArmstrongCannon;
+const seeder: seederFunc | null = phongCubeWithTexture;
 
 export const SaveAndLoad = () => {
   const app = useApp();

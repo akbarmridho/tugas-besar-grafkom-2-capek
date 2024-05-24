@@ -19,8 +19,8 @@ struct PointLight {
 
 // Material Attribute
 uniform vec4 u_color;
-uniform vec4 u_diffuseColor; // diffuse
-uniform vec4 u_specularColor; // specular
+uniform sampler2D u_diffuseMap;
+uniform sampler2D u_specularMap;
 uniform float u_shininess;
 
 // View Position
@@ -33,29 +33,30 @@ uniform AmbientLight u_ambientLight;
 uniform DirectionalLight u_directionalLight;
 
 // Point Light
-const int MAX_LIGHTS = 100;
+const int MAX_LIGHTS = 5;
 uniform PointLight u_pointLights[MAX_LIGHTS];
 uniform int u_num_lights;
 
 // Variable from vertex shader
 varying vec3 v_normal;
 varying vec3 v_fragPos;
+varying vec2 v_texcoord;
 
 // Calculate the impact of light from directional light
 vec3 calculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
     vec3 lightDir = normalize(-light.direction);
 
     // Ambient component
-    vec3 ambient = light.color.rgb * light.intensity * u_color.rgb;
+    vec3 ambient = light.color.rgb * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
 
     // Diffuse component
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diffuseStrength * light.intensity * u_diffuseColor.rgb;
+    vec3 diffuse = diffuseStrength * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
 
     // Specular component
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float specularStrength = pow(max(dot(normal, halfwayDir), 0.0), u_shininess);
-    vec3 specular = specularStrength * light.intensity * u_specularColor.rgb;
+    vec3 specular = specularStrength * light.intensity * texture2D(u_specularMap, v_texcoord).rgb.rgb;
 
     return (ambient + diffuse + specular);
 }
@@ -64,23 +65,29 @@ vec3 calculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     vec3 lightDir = normalize(light.position - fragPos);
 
-    // Attenuation
-    float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / ((distance * distance) + 1.0);
+    float lambertTerm = dot(normal, lightDir);
 
-    // Ambient component
-    vec3 ambient = light.color.rgb * light.intensity * u_diffuseColor.rgb;
+    if (lambertTerm > 0.0) {
+        // Attenuation
+        float distance = length(light.position - fragPos);
+        float attenuation = 1.0 / ((distance * distance) + 1.0);
 
-    // Diffuse component
-    float diffuseStrength = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diffuseStrength * light.intensity * u_diffuseColor.rgb;
+        // Ambient component
+        vec3 ambient = light.color.rgb * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
 
-    // Specular component
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float specularStrength = pow(max(dot(normal, halfwayDir), 0.0), u_shininess);
-    vec3 specular = specularStrength * light.intensity * u_specularColor.rgb;
+        // Diffuse component
+        float diffuseStrength = max(dot(normal, lightDir), 0.0);
+        vec3 diffuse = diffuseStrength * light.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
 
-    return ((ambient * attenuation) + (diffuse * attenuation) + (specular * attenuation));
+        // Specular component
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        float specularStrength = pow(max(dot(normal, halfwayDir), 0.0), u_shininess);
+        vec3 specular = specularStrength * light.intensity * texture2D(u_specularMap, v_texcoord).rgb.rgb;
+
+        return ((ambient * attenuation) + (diffuse * attenuation) + (specular * attenuation));
+    }
+
+    return vec3(0.0, 0.0, 0.0);
 }
 
 void main() {
@@ -89,7 +96,7 @@ void main() {
     vec3 norm = normalize(v_normal);
 
     // Impact of light from ambient light
-    vec3 result = u_ambientLight.color.rgb * u_ambientLight.intensity * u_color.rgb;
+    vec3 result = u_ambientLight.color.rgb * u_ambientLight.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
 
     // Impact of light from directional light
     result += calculateDirLight(u_directionalLight, norm, viewDir);
