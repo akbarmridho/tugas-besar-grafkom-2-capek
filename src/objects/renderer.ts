@@ -191,6 +191,9 @@ export class WebGLRenderer {
       } else if (material instanceof PhongMaterial) {
         material.diffuseMap.onLoad(loadCb);
         material.specularMap.onLoad(loadCb);
+        if (material.normalMap) {
+          material.normalMap.onLoad(loadCb);
+        }
       }
     });
 

@@ -174,20 +174,14 @@ export function parseModel(data: PModel): ParseModelResult {
         node = new AmbientLight(
           rawNode.name,
           rawLightData.primitives.color,
-          rawLightData.primitives.intensity,
-          position,
-          rotation,
-          scale
+          rawLightData.primitives.intensity
         );
       } else if (rawLightData.type === 'DirectionalLight') {
         node = new DirectionalLight(
           rawNode.name,
           rawLightData.primitives.color,
           rawLightData.primitives.direction,
-          rawLightData.primitives.intensity,
-          position,
-          rotation,
-          scale
+          rawLightData.primitives.intensity
         );
       } else if (rawLightData.type === 'PointLight') {
         node = new PointLight(

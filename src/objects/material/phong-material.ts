@@ -11,6 +11,7 @@ export interface PhongMaterialSerialized {
     diffuseMap: TextureSerialized;
     specularMap: TextureSerialized;
     shininess: number;
+    normalMap?: TextureSerialized;
   };
 }
 
@@ -19,12 +20,14 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
   private _diffuseMap: Texture;
   private _specularMap: Texture;
   private _shininess: number;
+  private _normalMap?: Texture;
 
   constructor(
     color: Color = Color.fromHex(0x0f0f0f),
     diffuse: Color | Texture = Color.Red(),
     specular: Color | Texture = Color.Red(),
-    shininess: number
+    shininess: number,
+    normalMap?: Texture
   ) {
     let diffuseMap: Texture;
     if (diffuse instanceof Color) {
@@ -40,17 +43,22 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
       specularMap = specular;
     }
 
+    const hasNormalMap = normalMap ? 1.0 : 0.0;
+
     super(phongVert, phongFrag, {
       color,
       diffuseMap,
       specularMap,
-      shininess
+      shininess,
+      normalMap,
+      hasNormalMap
     });
 
     this._ambient = color;
     this._diffuseMap = diffuseMap;
     this._specularMap = specularMap;
     this._shininess = shininess;
+    this._normalMap = normalMap;
   }
 
   get diffuseMap() {
@@ -61,13 +69,18 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
     return this._specularMap;
   }
 
+  get normalMap() {
+    return this._normalMap;
+  }
+
   toJSON(): PhongMaterialSerialized {
     return {
       uniforms: {
         color: this._ambient.toJSON(),
         diffuseMap: this._diffuseMap.toJSON(),
         specularMap: this._specularMap.toJSON(),
-        shininess: this._shininess
+        shininess: this._shininess,
+        normalMap: this._normalMap ? this._normalMap.toJSON() : undefined
       }
     };
   }
@@ -77,7 +90,10 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
       Color.fromJSON(data.uniforms.color),
       Texture.fromJSON(data.uniforms.diffuseMap),
       Texture.fromJSON(data.uniforms.specularMap),
-      data.uniforms.shininess
+      data.uniforms.shininess,
+      data.uniforms.normalMap
+        ? Texture.fromJSON(data.uniforms.normalMap)
+        : undefined
     );
   }
 }
