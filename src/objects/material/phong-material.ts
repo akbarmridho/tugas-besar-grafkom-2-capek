@@ -12,6 +12,9 @@ export interface PhongMaterialSerialized {
     specularMap: TextureSerialized;
     shininess: number;
     normalMap?: TextureSerialized;
+    displacementMap?: TextureSerialized;
+    displacementScale?: number;
+    displacementBias?: number;
   };
 }
 
@@ -21,13 +24,23 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
   private _specularMap: Texture;
   private _shininess: number;
   private _normalMap?: Texture;
+  private _displacementMap?: Texture;
+  private _displacementScale?: number;
+  private _displacementBias?: number;
 
   constructor(
     color: Color = Color.fromHex(0x0f0f0f),
     diffuse: Color | Texture = Color.Red(),
     specular: Color | Texture = Color.Red(),
     shininess: number,
-    normalMap?: Texture
+    additionalTexture?: {
+      normalMap?: Texture;
+      displacement?: {
+        displacementMap: Texture;
+        displacementScale: number;
+        displacementBias: number;
+      };
+    }
   ) {
     let diffuseMap: Texture;
     if (diffuse instanceof Color) {
@@ -43,7 +56,16 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
       specularMap = specular;
     }
 
-    const hasNormalMap = normalMap ? 1.0 : 0.0;
+    const hasNormalMap =
+      additionalTexture && additionalTexture.normalMap ? 1.0 : 0.0;
+    const normalMap = additionalTexture?.normalMap;
+
+    const hasDisplacementMap =
+      additionalTexture && additionalTexture.displacement ? 1.0 : 0.0;
+    const displacementMap = additionalTexture?.displacement?.displacementMap;
+    const displacementScale =
+      additionalTexture?.displacement?.displacementScale;
+    const displacementBias = additionalTexture?.displacement?.displacementBias;
 
     super(phongVert, phongFrag, {
       color,
@@ -51,7 +73,11 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
       specularMap,
       shininess,
       normalMap,
-      hasNormalMap
+      hasNormalMap,
+      displacementMap,
+      displacementScale,
+      displacementBias,
+      hasDisplacementMap
     });
 
     this._ambient = color;
@@ -59,6 +85,9 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
     this._specularMap = specularMap;
     this._shininess = shininess;
     this._normalMap = normalMap;
+    this._displacementMap = displacementMap;
+    this._displacementScale = displacementScale;
+    this._displacementBias = displacementBias;
   }
 
   get diffuseMap() {
@@ -73,6 +102,10 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
     return this._normalMap;
   }
 
+  get displacementMap() {
+    return this._displacementMap;
+  }
+
   toJSON(): PhongMaterialSerialized {
     return {
       uniforms: {
@@ -80,20 +113,50 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
         diffuseMap: this._diffuseMap.toJSON(),
         specularMap: this._specularMap.toJSON(),
         shininess: this._shininess,
-        normalMap: this._normalMap ? this._normalMap.toJSON() : undefined
+        normalMap: this._normalMap ? this._normalMap.toJSON() : undefined,
+        displacementMap: this._displacementMap
+          ? this._displacementMap.toJSON()
+          : undefined,
+        displacementScale: this._displacementScale
+          ? this._displacementScale
+          : undefined,
+        displacementBias: this._displacementBias
+          ? this._displacementBias
+          : undefined
       }
     };
   }
 
   public static fromJSON(data: PhongMaterialSerialized) {
+    let displacement:
+      | {
+          displacementMap: Texture;
+          displacementScale: number;
+          displacementBias: number;
+        }
+      | undefined;
+
+    if (data.uniforms.displacementMap) {
+      displacement = {
+        displacementMap: Texture.fromJSON(data.uniforms.displacementMap),
+        displacementScale: data.uniforms.displacementScale!,
+        displacementBias: data.uniforms.displacementBias!
+      };
+    } else {
+      displacement = undefined;
+    }
+
     return new PhongMaterial(
       Color.fromJSON(data.uniforms.color),
       Texture.fromJSON(data.uniforms.diffuseMap),
       Texture.fromJSON(data.uniforms.specularMap),
       data.uniforms.shininess,
-      data.uniforms.normalMap
-        ? Texture.fromJSON(data.uniforms.normalMap)
-        : undefined
+      {
+        normalMap: data.uniforms.normalMap
+          ? Texture.fromJSON(data.uniforms.normalMap)
+          : undefined,
+        displacement
+      }
     );
   }
 }

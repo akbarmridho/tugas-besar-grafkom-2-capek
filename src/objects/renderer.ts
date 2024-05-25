@@ -194,6 +194,9 @@ export class WebGLRenderer {
         if (material.normalMap) {
           material.normalMap.onLoad(loadCb);
         }
+        if (material.displacementMap) {
+          material.displacementMap.onLoad(loadCb);
+        }
       }
     });
 
