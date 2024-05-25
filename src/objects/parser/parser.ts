@@ -188,6 +188,7 @@ export function parseModel(data: PModel): ParseModelResult {
           rawNode.name,
           Color.fromJSON(rawLightData.primitives.color),
           rawLightData.primitives.intensity,
+          rawLightData.primitives.radius,
           position,
           rawLightData.primitives.constant,
           rawLightData.primitives.linear,

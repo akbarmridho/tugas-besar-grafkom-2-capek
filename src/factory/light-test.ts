@@ -55,6 +55,7 @@ export function lightTest(): PModel {
     'p1',
     Color.fromHex(0x16b516),
     0.5,
+    undefined,
     new Vector3(0, 0, -pointLightRadius)
   );
 
@@ -76,6 +77,7 @@ export function lightTest(): PModel {
     'p2',
     Color.fromHex(0x735ed1),
     0.5,
+    undefined,
     new Vector3(0, 0, pointLightRadius)
   );
 
@@ -113,10 +115,20 @@ export function lightTest(): PModel {
   );
 
   const sphereMaterial = new PhongMaterial(
-    Color.Black(),
-    new Texture({ data: '/textures/metal.png' }),
-    new Texture({ data: '/textures/metal-specular.png' }),
-    8
+    Color.fromHex(0x0f0f0f),
+    new Texture({ data: '../textures/rock/diffuse.png' }),
+    Color.White(),
+    32,
+    {
+      normalMap: new Texture({ data: '../textures/rock/normal.png' }),
+      displacement: {
+        displacementMap: new Texture({
+          data: '../textures/rock/displacement.png'
+        }),
+        displacementScale: 0.5,
+        displacementBias: 0.2
+      }
+    }
   );
 
   const sphere = new SphereGeometry(0.1);

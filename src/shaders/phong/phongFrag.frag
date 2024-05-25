@@ -15,6 +15,7 @@ struct PointLight {
     vec4 color;
     vec3 position;
     float intensity;
+    float radius;
 
     float constant;
     float linear;
@@ -77,6 +78,9 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     if(lambertTerm > 0.0) {
         // Attenuation
         float distance = length(light.position - fragPos);
+        if(light.radius > 0.0) {
+            distance = distance / light.radius;
+        }
         float attenuation = 1.0 / (light.constant + (light.linear * distance) + (light.quadratic * distance * distance));
 
         // Ambient component

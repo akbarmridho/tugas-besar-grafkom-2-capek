@@ -473,6 +473,8 @@ export class WebGLRenderer {
           );
         globalUniforms['pointLights[' + numPointLights + '].intensity'] =
           child.intensity;
+        globalUniforms['pointLights[' + numPointLights + '].radius'] =
+          child.radius;
         globalUniforms['pointLights[' + numPointLights + '].constant'] =
           child.constant;
         globalUniforms['pointLights[' + numPointLights + '].linear'] =

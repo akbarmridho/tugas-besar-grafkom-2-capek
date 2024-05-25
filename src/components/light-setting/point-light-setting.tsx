@@ -22,6 +22,7 @@ export interface PointLightSettingProps {
 }
 
 interface PointLightConfig {
+  radius: string;
   constant: string;
   linear: string;
   quadratic: string;
@@ -50,6 +51,7 @@ export function PointLightSetting({
   );
   const [intensity, setIntensity] = useState<string>(`${light.intensity}`);
   const [config, setConfig] = useState<PointLightConfig>({
+    radius: light.radius.toString(),
     constant: light.constant.toString(),
     linear: light.constant.toString(),
     quadratic: light.quadratic.toString()
@@ -91,15 +93,17 @@ export function PointLightSetting({
   }, [appContext.renderer, light, debouncedPosition]);
 
   useEffect(() => {
+    const r = +debouncedConfig.radius;
     const c = +debouncedConfig.constant;
     const l = +debouncedConfig.linear;
     const q = +debouncedConfig.quadratic;
 
-    if (isNaN(c) || isNaN(l) || isNaN(q)) {
+    if (isNaN(r) || isNaN(c) || isNaN(l) || isNaN(q)) {
       return;
     }
     if (
       initialConfig.current &&
+      r === +initialConfig.current.radius &&
       c === +initialConfig.current.constant &&
       l === +initialConfig.current.linear &&
       q === +initialConfig.current.quadratic
@@ -107,6 +111,7 @@ export function PointLightSetting({
       return;
     }
 
+    light.radius = r;
     light.constant = c;
     light.quadratic = q;
     light.linear = l;
@@ -248,6 +253,19 @@ export function PointLightSetting({
           </div>
         </div>
         <div className={'flex flex-col gap-y-2 mt-2'}>
+          <div className={'flex items-center gap-x-2'}>
+            <p>radius</p>
+            <input
+              className={'w-12'}
+              type={'number'}
+              value={config.radius}
+              onChange={(e) => {
+                const val = e.target.value;
+                setConfig((prev) => ({ ...prev, radius: val }));
+                initialConfig.current = null;
+              }}
+            />
+          </div>
           <div className={'flex items-center gap-x-2'}>
             <p>constant</p>
             <input
