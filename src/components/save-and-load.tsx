@@ -14,7 +14,7 @@ import { phongCubeWithTexture } from '@/factory/cube-phong.ts';
 import { lightTest } from '@/factory/light-test.ts';
 
 type seederFunc = () => PModel;
-const PRE_SEED_MODEL = true;
+const PRE_SEED_MODEL = false;
 const seeder: seederFunc | null = lightTest;
 
 export const SaveAndLoad = () => {

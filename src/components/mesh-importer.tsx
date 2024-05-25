@@ -45,6 +45,11 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
 import { createBaseExportScene } from '@/factory/exporter.ts';
 import { parseModel } from '@/objects/parser/parser.ts';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip.tsx';
 
 export interface MeshImporterProps {
   node: Node;
@@ -55,51 +60,58 @@ export function MeshImporter({ node, triggerRender }: MeshImporterProps) {
   const appContext = useApp();
 
   return (
-    <Button
-      variant="ghost"
-      size={'xs'}
-      onClick={() => {
-        showOpenFilePicker({
-          multiple: false,
-          types: [
-            {
-              description: 'Saved scene data',
-              accept: {
-                'model/gltf+json': ['.gltf'],
-                'application/json': ['.json']
-              }
-            }
-          ]
-        })
-          .then((handlers) => {
-            const handle = handlers[0];
-
-            handle.getFile().then((file) => {
-              file.text().then((rawResult) => {
-                const renderer = appContext.renderer.current!;
-                const parsed = parseModel(JSON.parse(rawResult));
-
-                parsed.materials.forEach((material) => {
-                  renderer.programFromMaterial(material);
-                });
-
-                parsed.scene.children.forEach((child) => {
-                  if (child instanceof Mesh) {
-                    node.addChildren(child);
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size={'xs'}
+          onClick={() => {
+            showOpenFilePicker({
+              multiple: false,
+              types: [
+                {
+                  description: 'Saved scene data',
+                  accept: {
+                    'model/gltf+json': ['.gltf'],
+                    'application/json': ['.json']
                   }
-                });
+                }
+              ]
+            })
+              .then((handlers) => {
+                const handle = handlers[0];
 
-                triggerRender();
-                renderer.render();
+                handle.getFile().then((file) => {
+                  file.text().then((rawResult) => {
+                    const renderer = appContext.renderer.current!;
+                    const parsed = parseModel(JSON.parse(rawResult));
+
+                    parsed.materials.forEach((material) => {
+                      renderer.programFromMaterial(material);
+                    });
+
+                    parsed.scene.children.forEach((child) => {
+                      if (child instanceof Mesh) {
+                        node.addChildren(child);
+                      }
+                    });
+
+                    triggerRender();
+                    renderer.render();
+                  });
+                });
+              })
+              .catch((e) => {
+                // ignore
               });
-            });
-          })
-          .catch((e) => {
-            // ignore
-          });
-      }}
-    >
-      <ArrowLeftFromLine className={'w-4 h-4'} />
-    </Button>
+          }}
+        >
+          <ArrowLeftFromLine className={'w-4 h-4'} />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Import component</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }

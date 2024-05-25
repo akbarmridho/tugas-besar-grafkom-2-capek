@@ -5,6 +5,7 @@ import { Mesh } from '@/objects/mesh.ts';
 import { LightSettings } from '@/components/light-setting/light-settings.tsx';
 import { ComponentCreator } from '@/components/component-creator.tsx';
 import { MeshImporter } from '@/components/mesh-importer.tsx';
+import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 
 export const SceneGraph = () => {
   const [activeNode, setActiveNode] = useState<string | null>(null);
@@ -37,7 +38,7 @@ export const SceneGraph = () => {
   const scene = appContext.renderer.current!.model!.scene;
 
   return (
-    <div className={'flex-grow flex flex-col'}>
+    <div className={'flex-grow flex flex-col overflow-y-auto'}>
       <div className={'flex flex-row justify-between'}>
         <h3 className={'text-md font-bold'}>{scene.name} Graph</h3>
         <div className={'flex flex-row gap-x-2'}>
@@ -45,27 +46,29 @@ export const SceneGraph = () => {
           <MeshImporter node={scene} triggerRender={cb} />
         </div>
       </div>
-      <div className={'flex flex-col gap-y-1 flex-grow h-full'}>
-        {scene.children
-          .filter((child) => child instanceof Mesh)
-          .map((node) => {
-            return (
-              <NodeGraph
-                key={node.nodeId}
-                data={{ node }}
-                activeNode={activeNode}
-                setActiveNode={setActiveNode}
-                triggerRender={cb}
-              />
-            );
-          })}
-        <LightSettings
-          scene={scene}
-          activeNode={activeNode}
-          setActiveNode={setActiveNode}
-          triggerRender={cb}
-        />
-      </div>
+      <ScrollArea className={'px-4'}>
+        <div className={'flex flex-col gap-y-2'}>
+          {scene.children
+            .filter((child) => child instanceof Mesh)
+            .map((node) => {
+              return (
+                <NodeGraph
+                  key={node.nodeId}
+                  data={{ node }}
+                  activeNode={activeNode}
+                  setActiveNode={setActiveNode}
+                  triggerRender={cb}
+                />
+              );
+            })}
+          <LightSettings
+            scene={scene}
+            activeNode={activeNode}
+            setActiveNode={setActiveNode}
+            triggerRender={cb}
+          />
+        </div>
+      </ScrollArea>
     </div>
   );
 };

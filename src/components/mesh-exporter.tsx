@@ -39,6 +39,11 @@ import { PointLight } from '@/objects/light/point-light.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
 import { createBaseExportScene } from '@/factory/exporter.ts';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip.tsx';
 
 export interface MeshExporterProps {
   node: Node;
@@ -46,47 +51,54 @@ export interface MeshExporterProps {
 
 export function MeshExporter({ node }: MeshExporterProps) {
   return (
-    <Button
-      variant="ghost"
-      size={'xs'}
-      onClick={() => {
-        showSaveFilePicker({
-          types: [
-            {
-              description: 'Saved mesh data',
-              accept: {
-                'model/gltf+json': ['.gltf'],
-                'application/json': ['.json']
-              }
-            }
-          ]
-        })
-          .then((handle) => {
-            handle.createWritable().then((writeable) => {
-              const { scene: baseScene } = createBaseExportScene(node.name);
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size={'xs'}
+          onClick={() => {
+            showSaveFilePicker({
+              types: [
+                {
+                  description: 'Saved mesh data',
+                  accept: {
+                    'model/gltf+json': ['.gltf'],
+                    'application/json': ['.json']
+                  }
+                }
+              ]
+            })
+              .then((handle) => {
+                handle.createWritable().then((writeable) => {
+                  const { scene: baseScene } = createBaseExportScene(node.name);
 
-              const parent = node.parent;
-              const idx = parent?.children.findIndex((c) => c === node);
+                  const parent = node.parent;
+                  const idx = parent?.children.findIndex((c) => c === node);
 
-              node.removeFromParent();
+                  node.removeFromParent();
 
-              baseScene.addChildren(node);
+                  baseScene.addChildren(node);
 
-              const serialized = serializeScene(baseScene);
+                  const serialized = serializeScene(baseScene);
 
-              parent?.addChildren(node, idx);
+                  parent?.addChildren(node, idx);
 
-              writeable.write(JSON.stringify(serialized)).then(() => {
-                void writeable.close();
+                  writeable.write(JSON.stringify(serialized)).then(() => {
+                    void writeable.close();
+                  });
+                });
+              })
+              .catch((e) => {
+                // ignore
               });
-            });
-          })
-          .catch((e) => {
-            // ignore
-          });
-      }}
-    >
-      <ArrowRightFromLine className={'w-4 h-4'} />
-    </Button>
+          }}
+        >
+          <ArrowRightFromLine className={'w-4 h-4'} />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Export component</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
