@@ -90,6 +90,10 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
     this._displacementBias = displacementBias;
   }
 
+  get shininess() {
+    return this._shininess;
+  }
+
   get diffuseMap() {
     return this._diffuseMap;
   }
@@ -106,6 +110,41 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
     return this._displacementMap;
   }
 
+  get displacementScale(): number | undefined {
+    return this._displacementScale;
+  }
+
+  get displacementBias(): number | undefined {
+    return this._displacementBias;
+  }
+
+  set shininess(val: number) {
+    this._shininess = val;
+    this.uniforms.shininess = val;
+  }
+
+  set normalMap(normalMap: Texture | undefined) {
+    this._normalMap = normalMap;
+    this.uniforms.normalMap = normalMap;
+    this.uniforms.hasNormalMap = normalMap ? 1.0 : 0.0;
+  }
+
+  set displacementMap(displacementMap: Texture | undefined) {
+    this._displacementMap = displacementMap;
+    this.uniforms.displacementMap = displacementMap;
+    this.uniforms.hasDisplacementMap = displacementMap ? 1.0 : 0.0;
+  }
+
+  set displacementScale(val: number) {
+    this._displacementScale = val;
+    this.uniforms.displacementScale = val;
+  }
+
+  set displacementBias(val: number) {
+    this._displacementBias = val;
+    this.uniforms.displacementBias = val;
+  }
+
   toJSON(): PhongMaterialSerialized {
     return {
       uniforms: {
@@ -117,12 +156,14 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
         displacementMap: this._displacementMap
           ? this._displacementMap.toJSON()
           : undefined,
-        displacementScale: this._displacementScale
-          ? this._displacementScale
-          : undefined,
-        displacementBias: this._displacementBias
-          ? this._displacementBias
-          : undefined
+        displacementScale:
+          typeof this._displacementScale === 'number'
+            ? this._displacementScale
+            : undefined,
+        displacementBias:
+          typeof this._displacementBias === 'number'
+            ? this._displacementBias
+            : undefined
       }
     };
   }

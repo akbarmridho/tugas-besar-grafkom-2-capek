@@ -13,6 +13,7 @@ import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { PhongMaterial } from '@/objects/material/phong-material.ts';
 import { Color } from '@/objects/base/color.ts';
+import { Texture } from '@/objects/base/texture';
 import {
   Tooltip,
   TooltipContent,
@@ -101,10 +102,14 @@ const updateMaterialTexture = (
           material.specularMap.setData(Color.fromHex(0xcfcfcf));
         }
       }
+
+      material.normalMap = undefined;
+      material.displacementMap = undefined;
     } else {
       material.diffuseMap.setData(value.diffuse);
       material.specularMap.setData(value.specular);
-      // todo set normal and height here
+      material.normalMap = new Texture({ data: value.normal });
+      material.displacementMap = new Texture({ data: value.displacement });
     }
   }
 };
@@ -150,11 +155,34 @@ export const NodeGraph = ({
   );
   const [specularColor, setSpecularColor] = useState<string>(`#cfcfcf`);
 
+  const phongShininess =
+    material instanceof PhongMaterial ? material.shininess : 0;
+  const [shininess, setShininess] = useState<string>(String(phongShininess));
+
+  const phongDisplacementScale =
+    material instanceof PhongMaterial && material.uniforms.hasDisplacementMap
+      ? material.displacementScale
+      : 0.0;
+  const [displacementScale, setDisplacementScale] = useState<string>(
+    String(phongDisplacementScale)
+  );
+
+  const phongDisplacementBias =
+    material instanceof PhongMaterial && material.uniforms.hasDisplacementMap
+      ? material.displacementBias
+      : 0.0;
+  const [displacementBias, setDisplacementBias] = useState<string>(
+    String(phongDisplacementBias)
+  );
+
   const initialColor = useRef<string | null>(color);
   const initialSpecularColor = useRef<string | null>(specularColor);
   const initialPosition = useRef<XYZ | null>({ ...position });
   const initialRotation = useRef<XYZ | null>({ ...rotation });
   const initialScale = useRef<XYZ | null>({ ...scale });
+  const initialShininess = useRef<String | null>(shininess);
+  const initialDisplacementScale = useRef<String | null>(displacementScale);
+  const initialDisplacementBias = useRef<String | null>(displacementBias);
 
   const [debouncedColor] = useDebounce(color, 200);
   const [debouncedSpecularColor] = useDebounce(specularColor, 200);
@@ -162,6 +190,9 @@ export const NodeGraph = ({
   const [debouncedPosition] = useDebounce(position, 200);
   const [debouncedRotation] = useDebounce(rotation, 200);
   const [debouncedScale] = useDebounce(scale, 200);
+  const [debouncedShininess] = useDebounce(shininess, 200);
+  const [debouncedDisplacementScale] = useDebounce(displacementScale, 200);
+  const [debouncedDisplacementBias] = useDebounce(displacementBias, 200);
 
   useEffect(() => {
     data.node.name = debouncedNode;
@@ -275,6 +306,72 @@ export const NodeGraph = ({
     appContext.renderer.current?.render();
   }, [appContext.renderer, debouncedSpecularColor, material]);
 
+  useEffect(() => {
+    const shininess = +debouncedShininess;
+
+    if (isNaN(shininess)) {
+      return;
+    }
+
+    if (initialShininess.current) {
+      return;
+    }
+
+    if (material) {
+      (material as PhongMaterial).shininess = shininess;
+    }
+
+    appContext.renderer.current?.render();
+  }, [appContext.renderer, debouncedShininess, material]);
+
+  useEffect(() => {
+    const displacementScale = +debouncedDisplacementScale;
+
+    if (isNaN(displacementScale)) {
+      return;
+    }
+
+    if (initialDisplacementScale.current) {
+      return;
+    }
+
+    if (material) {
+      (material as PhongMaterial).displacementScale = displacementScale;
+    }
+
+    appContext.renderer.current?.render();
+  }, [appContext.renderer, debouncedDisplacementScale, material]);
+
+  useEffect(() => {
+    const displacementBias = +debouncedDisplacementBias;
+
+    if (isNaN(displacementBias)) {
+      return;
+    }
+
+    if (initialDisplacementBias.current) {
+      return;
+    }
+
+    if (material) {
+      (material as PhongMaterial).displacementBias = displacementBias;
+    }
+
+    appContext.renderer.current?.render();
+  }, [appContext.renderer, debouncedDisplacementBias, material]);
+
+  /** todo component
+   * Component Editor
+   * Menambahkan komponen baru sebagai anak dari existing component yang sedang dipilih. Objek default berupa kubus
+   * dengan transformasi default. Jangan lupa memperbarui Scene Graph.
+   * Menghapus komponen yang sedang dipilih.
+   * Melakukan ekspor komponen (tunggal/subtree) dari komponen yang sedang terpilih.
+   * Melakukan impor komponen (tunggal/subtree) untuk ditambahkan menjadi anak dari komponen yang sedang terpilih atau
+   * mengubah komponen yang sedang terpilih.
+   *
+   * Material
+   * Tampilkan antarmuka untuk mengubah material setiap mesh.
+   */
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
@@ -386,6 +483,55 @@ export const NodeGraph = ({
               )}
             </div>
           )}
+          {material instanceof PhongMaterial && (
+            <div className={'flex items-center gap-x-2'}>
+              <p>shininess</p>
+              <input
+                className={'w-12'}
+                type={'number'}
+                value={shininess}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setShininess(val);
+                  initialShininess.current = null;
+                }}
+              />
+            </div>
+          )}
+          {material instanceof PhongMaterial &&
+            texname !== 'color' &&
+            texname !== 'unknown' && (
+              <div className={'flex items-center gap-x-2'}>
+                <p>displacement scale</p>
+                <input
+                  className={'w-12'}
+                  type={'number'}
+                  value={displacementScale}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setDisplacementScale(val);
+                    initialDisplacementScale.current = null;
+                  }}
+                />
+              </div>
+            )}
+          {material instanceof PhongMaterial &&
+            texname !== 'color' &&
+            texname !== 'unknown' && (
+              <div className={'flex items-center gap-x-2'}>
+                <p>displacement bias</p>
+                <input
+                  className={'w-12'}
+                  type={'number'}
+                  value={displacementBias}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setDisplacementBias(val);
+                    initialDisplacementBias.current = null;
+                  }}
+                />
+              </div>
+            )}
         </div>
         <div className={'flex flex-col'}>
           <h4 className={'font-medium text-sm'}>Position</h4>
