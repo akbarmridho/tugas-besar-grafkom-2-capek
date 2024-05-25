@@ -35,19 +35,8 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
     thetaStart: number = 0,
     thetaLength: number = Math.PI
   ) {
-    super({
-      position: new BufferAttribute(new Float32Array(0), 3),
-      normal: new BufferAttribute(new Float32Array(0), 3),
-      texcoord: new BufferAttribute(new Float32Array(0), 2)
-    });
-
-    this.radius = radius;
-    this.widthSegments = Math.max(3, Math.floor(widthSegments));
-    this.heightSegments = Math.max(2, Math.floor(heightSegments));
-    this.phiStart = phiStart;
-    this.phiLength = phiLength;
-    this.thetaStart = thetaStart;
-    this.thetaLength = thetaLength;
+    widthSegments = Math.max(3, Math.floor(widthSegments));
+    heightSegments = Math.max(2, Math.floor(heightSegments));
 
     const thetaEnd = Math.min(thetaStart + thetaLength, Math.PI);
     const grid: number[][] = [];
@@ -59,29 +48,28 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
     let index = 0;
 
     // Generate vertices, normals, and uvs
-    for (let iy = 0; iy <= this.heightSegments; iy++) {
+    for (let iy = 0; iy <= heightSegments; iy++) {
       const verticesRow: number[] = [];
-      const v = iy / this.heightSegments;
+      const v = iy / heightSegments;
 
-      for (let ix = 0; ix <= this.widthSegments; ix++) {
-        const u = ix / this.widthSegments;
+      for (let ix = 0; ix <= widthSegments; ix++) {
+        const u = ix / widthSegments;
 
         const x =
-          -this.radius *
-          Math.cos(this.phiStart + u * this.phiLength) *
-          Math.sin(this.thetaStart + v * this.thetaLength);
-        const y =
-          this.radius * Math.cos(this.thetaStart + v * this.thetaLength);
+          -radius *
+          Math.cos(phiStart + u * phiLength) *
+          Math.sin(thetaStart + v * thetaLength);
+        const y = radius * Math.cos(thetaStart + v * thetaLength);
         const z =
-          this.radius *
-          Math.sin(this.phiStart + u * this.phiLength) *
-          Math.sin(this.thetaStart + v * this.thetaLength);
+          radius *
+          Math.sin(phiStart + u * phiLength) *
+          Math.sin(thetaStart + v * thetaLength);
 
         vertices.push(x, y, z);
 
-        const nx = x / this.radius;
-        const ny = y / this.radius;
-        const nz = z / this.radius;
+        const nx = x / radius;
+        const ny = y / radius;
+        const nz = z / radius;
 
         normals.push(nx, ny, nz);
 
@@ -93,18 +81,18 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
       grid.push(verticesRow);
     }
 
-    // Generate triangles
+    // Generate 0
     const triangles: number[] = [];
     const triangleNormals: number[] = [];
     const triangleUVs: number[] = [];
-    for (let iy = 0; iy < this.heightSegments; iy++) {
-      for (let ix = 0; ix < this.widthSegments; ix++) {
+    for (let iy = 0; iy < heightSegments; iy++) {
+      for (let ix = 0; ix < widthSegments; ix++) {
         const a = grid[iy][ix + 1];
         const b = grid[iy][ix];
         const c = grid[iy + 1][ix];
         const d = grid[iy + 1][ix + 1];
 
-        if (iy !== 0 || this.thetaStart > 0) {
+        if (iy !== 0 || thetaStart > 0) {
           triangles.push(
             vertices[a * 3],
             vertices[a * 3 + 1],
@@ -136,7 +124,7 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
             uvs[d * 2 + 1]
           );
         }
-        if (iy !== this.heightSegments - 1 || thetaEnd < Math.PI) {
+        if (iy !== heightSegments - 1 || thetaEnd < Math.PI) {
           triangles.push(
             vertices[b * 3],
             vertices[b * 3 + 1],
@@ -171,18 +159,34 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
       }
     }
 
-    this.setAttribute(
-      'position',
-      new BufferAttribute(new Float32Array(triangles), 3)
-    );
-    this.setAttribute(
-      'normal',
-      new BufferAttribute(new Float32Array(triangleNormals), 3)
-    );
-    this.setAttribute(
-      'texcoord',
-      new BufferAttribute(new Float32Array(triangleUVs), 2)
-    );
+    const a = new BufferAttribute(new Float32Array(triangles), 3);
+    const b = new BufferAttribute(new Float32Array(triangleUVs), 2);
+    for (let i = 0; i < a.count; i++) {
+      const tes = a.get(i);
+
+      if (
+        tes[0] == 0.01802399568259716 &&
+        tes[1] == 0.09807852655649185 &&
+        tes[2] == -0.007465783506631851
+      ) {
+        console.log(a.get(i));
+        console.log(b.get(i));
+      }
+    }
+
+    super({
+      position: new BufferAttribute(new Float32Array(triangles), 3),
+      normal: new BufferAttribute(new Float32Array(triangleNormals), 3),
+      texcoord: new BufferAttribute(new Float32Array(triangleUVs), 2)
+    });
+
+    this.radius = radius;
+    this.widthSegments = widthSegments;
+    this.heightSegments = heightSegments;
+    this.phiStart = phiStart;
+    this.phiLength = phiLength;
+    this.thetaStart = thetaStart;
+    this.thetaLength = thetaLength;
   }
 
   toJSON(withNodeAttributes: boolean = true): SphereGeometrySerialized {

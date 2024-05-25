@@ -39,20 +39,19 @@ export abstract class BufferGeometry<
   }) {
     super();
 
-    let normal: BufferAttribute;
+    let tempNormal: BufferAttribute;
 
     if (attributes.normal) {
       this.hasDefaultNormal = true;
-      normal = attributes.normal;
+      tempNormal = attributes.normal;
     } else {
       this.hasDefaultNormal = false;
-      normal = new BufferAttribute(
+      tempNormal = new BufferAttribute(
         new Float32Array(attributes.position.length),
         attributes.position.size
       );
+      this._computeNormal(attributes.position, tempNormal);
     }
-
-    this._computeNormal(attributes.position, normal);
 
     let tangent = new BufferAttribute(
       new Float32Array(attributes.position.length),
@@ -75,7 +74,7 @@ export abstract class BufferGeometry<
     this._attributes = {
       position: attributes.position,
       texcoord: attributes.texcoord,
-      normal: normal,
+      normal: tempNormal,
       tangent: tangent,
       bitangent: bitangent
     };
@@ -121,7 +120,7 @@ export abstract class BufferGeometry<
     this.attributes.normal = normal;
   }
 
-  _computeNormal(position: BufferAttribute, normal: BufferAttribute) {
+  _computeNormal(position: BufferAttribute, tempNormal: BufferAttribute) {
     const vA = new Vector3();
     const vB = new Vector3();
 
@@ -135,9 +134,9 @@ export abstract class BufferGeometry<
 
       const n = vB.cross(vA);
 
-      normal.set(i, n.toArray());
-      normal.set(i + 1, n.toArray());
-      normal.set(i + 2, n.toArray());
+      tempNormal.set(i, n.toArray());
+      tempNormal.set(i + 1, n.toArray());
+      tempNormal.set(i + 2, n.toArray());
     }
   }
 

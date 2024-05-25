@@ -177,7 +177,6 @@ export function parseModel(data: PModel): ParseModelResult {
           rawLightData.primitives.intensity
         );
       } else if (rawLightData.type === 'DirectionalLight') {
-        console.log(rawLightData);
         node = new DirectionalLight(
           rawNode.name,
           Color.fromJSON(rawLightData.primitives.color),
