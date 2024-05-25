@@ -173,20 +173,21 @@ export function parseModel(data: PModel): ParseModelResult {
       if (rawLightData.type === 'AmbientLight') {
         node = new AmbientLight(
           rawNode.name,
-          rawLightData.primitives.color,
+          Color.fromJSON(rawLightData.primitives.color),
           rawLightData.primitives.intensity
         );
       } else if (rawLightData.type === 'DirectionalLight') {
+        console.log(rawLightData);
         node = new DirectionalLight(
           rawNode.name,
-          rawLightData.primitives.color,
-          rawLightData.primitives.direction,
+          Color.fromJSON(rawLightData.primitives.color),
+          Vector3.fromJSON(rawLightData.primitives.direction),
           rawLightData.primitives.intensity
         );
       } else if (rawLightData.type === 'PointLight') {
         node = new PointLight(
           rawNode.name,
-          rawLightData.primitives.color,
+          Color.fromJSON(rawLightData.primitives.color),
           rawLightData.primitives.intensity,
           position,
           rawLightData.primitives.constant,

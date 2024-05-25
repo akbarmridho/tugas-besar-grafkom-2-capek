@@ -124,10 +124,15 @@ export abstract class Node<
   // Add a new children for this node
   // If the children already have parent, replace parent with this node
   // @ts-ignore
-  addChildren(node: Node<unknown>): Node<T> {
+  addChildren(node: Node<unknown>, idx?: number): Node<T> {
     node.removeFromParent();
     node.parent = this;
-    this._children.push(node);
+
+    if (idx !== undefined && idx !== -1) {
+      this._children.splice(idx, 0, node);
+    } else {
+      this._children.push(node);
+    }
 
     return this;
   }

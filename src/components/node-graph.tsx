@@ -7,7 +7,7 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { useApp } from '@/components/context.ts';
 import { Button } from '@/components/ui/button.tsx';
-import { Eye, EyeOff, Trash } from 'lucide-react';
+import { Box, Eye, EyeOff, Sun, Trash } from 'lucide-react';
 import { TextureOption, TextureOptions } from '@/factory/texture-selector.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/tooltip.tsx';
 import { useConfirm } from '@/components/alert-dialog.tsx';
 import { ComponentCreator } from '@/components/component-creator.tsx';
+import { MeshExporter } from '@/components/mesh-exporter.tsx';
+import { MeshImporter } from '@/components/mesh-importer.tsx';
 
 export interface NodeGraphData {
   node: Node;
@@ -273,18 +275,6 @@ export const NodeGraph = ({
     appContext.renderer.current?.render();
   }, [appContext.renderer, debouncedSpecularColor, material]);
 
-  /** todo component
-   * Component Editor
-   * Menambahkan komponen baru sebagai anak dari existing component yang sedang dipilih. Objek default berupa kubus
-   * dengan transformasi default. Jangan lupa memperbarui Scene Graph.
-   * Menghapus komponen yang sedang dipilih.
-   * Melakukan ekspor komponen (tunggal/subtree) dari komponen yang sedang terpilih.
-   * Melakukan impor komponen (tunggal/subtree) untuk ditambahkan menjadi anak dari komponen yang sedang terpilih atau
-   * mengubah komponen yang sedang terpilih.
-   *
-   * Material
-   * Tampilkan antarmuka untuk mengubah material setiap mesh.
-   */
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
@@ -297,7 +287,10 @@ export const NodeGraph = ({
           }
         }}
       >
-        <h4>{nodeName}</h4>
+        <div className={'flex flex-row items-center gap-x-2'}>
+          <Box className={'w-4 h-4'} />
+          <h4>{nodeName}</h4>
+        </div>
         <Button
           variant={'ghost'}
           size={'xs'}
@@ -512,6 +505,8 @@ export const NodeGraph = ({
           <h4 className={'font-medium text-sm'}>Actions</h4>
           <div className={'flex flex-row items-center gap-x-2'}>
             <ComponentCreator node={data.node} triggerRender={triggerRender} />
+            <MeshImporter node={data.node} triggerRender={triggerRender} />
+            <MeshExporter node={data.node} />
             <Button
               size={'xs'}
               variant={'destructive'}

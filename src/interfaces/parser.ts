@@ -7,7 +7,10 @@ import { PlaneGeometryProps } from '@/objects/geometry/plane-geometry.ts';
 import { BoxGeometryProps } from '@/objects/geometry/box-geometry.ts';
 import { PyramidGeometryProps } from '@/objects/geometry/pyramid-geometry';
 import { PrismGeometryProps } from '@/objects/geometry/prism-geometry';
-import { CylinderGeometry, CylinderGeometryProps } from '@/objects/geometry/cylinder-geometry';
+import {
+  CylinderGeometry,
+  CylinderGeometryProps
+} from '@/objects/geometry/cylinder-geometry';
 import { SphereGeometryProps } from '@/objects/geometry/sphere-geometry';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { Scene } from '@/objects/scene.ts';
@@ -24,7 +27,10 @@ import {
   DirectionalLightProps,
   DirectionalLightSerialized
 } from '@/objects/light/directional-light';
-import { PointLightProps } from '@/objects/light/point-light';
+import {
+  PointLightProps,
+  PointLightSerialized
+} from '@/objects/light/point-light';
 
 export interface PNode {
   name: string;
@@ -66,17 +72,17 @@ export interface PPhongMaterial {
 
 export interface PAmbientLight {
   type: 'AmbientLight';
-  primitives: AmbientLightProps;
+  primitives: AmbientLightSerialized;
 }
 
 export interface PDirectionalLight {
   type: 'DirectionalLight';
-  primitives: DirectionalLightProps;
+  primitives: DirectionalLightSerialized;
 }
 
 export interface PPointLight {
   type: 'PointLight';
-  primitives: PointLightProps
+  primitives: PointLightSerialized;
 }
 
 export type PCamera = POrthographicCamera | PPerspectiveCamera | PObliqueCamera;
@@ -86,7 +92,13 @@ export type PMaterial = PBasicMaterial | PPhongMaterial;
 export type PLight = PAmbientLight | PDirectionalLight | PPointLight;
 
 export interface PMesh {
-  type: 'PlaneGeometry' | 'BoxGeometry' | 'PyramidGeometry' | 'PrismGeometry' | 'CylinderGeometry' | 'SphereGeometry' ;
+  type:
+    | 'PlaneGeometry'
+    | 'BoxGeometry'
+    | 'PyramidGeometry'
+    | 'PrismGeometry'
+    | 'CylinderGeometry'
+    | 'SphereGeometry';
   primitives:
     | PlaneGeometryProps
     | BoxGeometryProps

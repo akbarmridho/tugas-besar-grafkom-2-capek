@@ -1,9 +1,9 @@
-import { Vector3 } from '@/utils/math/vector3';
+import { Vector3, Vector3Serialized } from '@/utils/math/vector3';
 import { Light } from '../base/light';
 import { Node, NodeSerialized } from '../base/node';
 import { MeshSerialized } from '../mesh';
 import { Euler } from '@/utils/math/euler';
-import { Color } from '../base/color';
+import { Color, ColorSerialized } from '../base/color';
 
 export interface DirectionalLightProps {
   color: Color;
@@ -12,9 +12,9 @@ export interface DirectionalLightProps {
 }
 
 export interface DirectionalLightSerialized extends NodeSerialized {
-  color: Color;
+  color: ColorSerialized;
   intensity: number;
-  direction: Vector3;
+  direction: Vector3Serialized;
 }
 
 export class DirectionalLight extends Light<DirectionalLightSerialized> {
@@ -55,7 +55,7 @@ export class DirectionalLight extends Light<DirectionalLightSerialized> {
     return {
       color: this._color,
       intensity: this._intensity,
-      direction: this._direction,
+      direction: this._direction.toJSON(),
       ...this.toNodeSerialized()
     };
   }

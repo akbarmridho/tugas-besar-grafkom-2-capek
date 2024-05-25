@@ -1,7 +1,7 @@
 import { Vector3 } from '@/utils/math/vector3';
 import { Light } from '../base/light';
 import { Euler } from '@/utils/math/euler';
-import { Color } from '../base/color';
+import { Color, ColorSerialized } from '../base/color';
 import { NodeSerialized } from '../base/node';
 
 export interface AmbientLightProps {
@@ -10,7 +10,7 @@ export interface AmbientLightProps {
 }
 
 export interface AmbientLightSerialized extends NodeSerialized {
-  color: Color;
+  color: ColorSerialized;
   intensity: number;
 }
 
@@ -21,7 +21,7 @@ export class AmbientLight extends Light<AmbientLightSerialized> {
 
   public toJSON(): AmbientLightSerialized {
     return {
-      color: this._color,
+      color: this._color.toJSON(),
       intensity: this._intensity,
       ...this.toNodeSerialized()
     };

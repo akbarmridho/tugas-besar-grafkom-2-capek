@@ -4,6 +4,7 @@ import { useApp } from '@/components/context.ts';
 import { Mesh } from '@/objects/mesh.ts';
 import { LightSettings } from '@/components/light-setting/light-settings.tsx';
 import { ComponentCreator } from '@/components/component-creator.tsx';
+import { MeshImporter } from '@/components/mesh-importer.tsx';
 
 export const SceneGraph = () => {
   const [activeNode, setActiveNode] = useState<string | null>(null);
@@ -39,7 +40,10 @@ export const SceneGraph = () => {
     <div className={'flex-grow flex flex-col'}>
       <div className={'flex flex-row justify-between'}>
         <h3 className={'text-md font-bold'}>{scene.name} Graph</h3>
-        <ComponentCreator node={scene} triggerRender={cb} withLight={true} />
+        <div className={'flex flex-row gap-x-2'}>
+          <ComponentCreator node={scene} triggerRender={cb} withLight={true} />
+          <MeshImporter node={scene} triggerRender={cb} />
+        </div>
       </div>
       <div className={'flex flex-col gap-y-1 flex-grow h-full'}>
         {scene.children

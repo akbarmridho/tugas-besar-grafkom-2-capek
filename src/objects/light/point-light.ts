@@ -1,5 +1,5 @@
 import { Vector3 } from '@/utils/math/vector3';
-import { Color } from '../base/color';
+import { Color, ColorSerialized } from '../base/color';
 import { Light } from '../base/light';
 import { NodeSerialized } from '../base/node';
 import { Euler } from '@/utils/math/euler';
@@ -13,7 +13,7 @@ export interface PointLightProps {
 }
 
 export interface PointLightSerialized extends NodeSerialized {
-  color: Color;
+  color: ColorSerialized;
   intensity: number;
   constant: number;
   linear: number;
@@ -66,7 +66,7 @@ export class PointLight extends Light<PointLightSerialized> {
 
   public toJSON(): PointLightSerialized {
     return {
-      color: this._color,
+      color: this._color.toJSON(),
       intensity: this._intensity,
       constant: this.constant,
       linear: this.linear,

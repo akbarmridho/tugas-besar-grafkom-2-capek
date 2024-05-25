@@ -148,30 +148,17 @@ export function serializeScene(
       if (node instanceof AmbientLight) {
         rawLights.push({
           type: 'AmbientLight',
-          primitives: {
-            color: node.color,
-            intensity: node.intensity
-          }
+          primitives: node.toJSON()
         });
       } else if (node instanceof DirectionalLight) {
         rawLights.push({
           type: 'DirectionalLight',
-          primitives: {
-            color: node.color,
-            intensity: node.intensity,
-            direction: node._direction
-          }
+          primitives: node.toJSON()
         });
       } else if (node instanceof PointLight) {
         rawLights.push({
           type: 'PointLight',
-          primitives: {
-            color: node.color,
-            intensity: node.intensity,
-            constant: node.constant,
-            linear: node.linear,
-            quadratic: node.quadratic
-          }
+          primitives: node.toJSON()
         });
       }
     } else {
