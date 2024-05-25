@@ -37,6 +37,11 @@ import { SphereGeometry } from '@/objects/geometry/sphere-geometry.ts';
 import { Mesh } from '@/objects/mesh.ts';
 import { PointLight } from '@/objects/light/point-light.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip.tsx';
 
 export interface ComponentCreatorProps {
   node: Node;
@@ -121,11 +126,19 @@ export function ComponentCreator({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size={'xs'}>
-          <Plus className={'w-4 h-4'} />
-        </Button>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size={'xs'}>
+              <Plus className={'w-4 h-4'} />
+            </Button>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Add Component</p>
+        </TooltipContent>
+      </Tooltip>
+
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add Component</DialogTitle>

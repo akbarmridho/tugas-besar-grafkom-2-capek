@@ -180,9 +180,9 @@ export const NodeGraph = ({
   const initialPosition = useRef<XYZ | null>({ ...position });
   const initialRotation = useRef<XYZ | null>({ ...rotation });
   const initialScale = useRef<XYZ | null>({ ...scale });
-  const initialShininess = useRef<String | null>(shininess);
-  const initialDisplacementScale = useRef<String | null>(displacementScale);
-  const initialDisplacementBias = useRef<String | null>(displacementBias);
+  const initialShininess = useRef<string | null>(shininess);
+  const initialDisplacementScale = useRef<string | null>(displacementScale);
+  const initialDisplacementBias = useRef<string | null>(displacementBias);
 
   const [debouncedColor] = useDebounce(color, 200);
   const [debouncedSpecularColor] = useDebounce(specularColor, 200);
@@ -406,7 +406,7 @@ export const NodeGraph = ({
           <div className={'flex items-center gap-x-2'}>
             <p className={'font-medium text-sm'}>Name</p>
             <input
-              className={'w-full'}
+              className={'w-full max-w-[200px]'}
               type={'text'}
               value={nodeName}
               onChange={(e) => setNodeName(e.target.value)}
@@ -653,24 +653,31 @@ export const NodeGraph = ({
             <ComponentCreator node={data.node} triggerRender={triggerRender} />
             <MeshImporter node={data.node} triggerRender={triggerRender} />
             <MeshExporter node={data.node} />
-            <Button
-              size={'xs'}
-              variant={'destructive'}
-              onClick={() => {
-                confirm({
-                  title: 'Are you sure?',
-                  body: 'Are you sure want to delete this component?'
-                }).then((r) => {
-                  if (r) {
-                    data.node.removeFromParent();
-                    triggerRender();
-                    appContext.renderer.current?.render();
-                  }
-                });
-              }}
-            >
-              <Trash className={'w-4 h-4'} />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  size={'xs'}
+                  variant={'destructive'}
+                  onClick={() => {
+                    confirm({
+                      title: 'Are you sure?',
+                      body: 'Are you sure want to delete this component?'
+                    }).then((r) => {
+                      if (r) {
+                        data.node.removeFromParent();
+                        triggerRender();
+                        appContext.renderer.current?.render();
+                      }
+                    });
+                  }}
+                >
+                  <Trash className={'w-4 h-4'} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Delete Component</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>

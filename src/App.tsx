@@ -62,18 +62,16 @@ function App() {
           }}
         >
           <div
-            className={
-              'w-full h-screen flex flex-row justify-center bg-slate-100 overflow-x-auto'
-            }
+            className={'w-full h-screen flex flex-row bg-black overflow-x-auto'}
           >
             <div
               className={
-                'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[250px] h-full flex flex-col p-2'
+                'border-l-2 border-r-2 border-gray-400 bg-slate-200 min-w-[250px] flex-1 h-full flex flex-col p-2'
               }
             >
               <SceneGraph />
             </div>
-            <div className={'h-full aspect-square'}>
+            <div className={'min-h-screen aspect-square'}>
               <canvas
                 ref={canvasRef}
                 className={'w-full h-full'}
@@ -110,7 +108,7 @@ function App() {
             </div>
             <div
               className={
-                'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[250px] h-full flex flex-col p-2'
+                'border-l-2 border-r-2 border-gray-400 bg-slate-200 min-w-[250px] flex-1 h-full flex flex-col p-2'
               }
             >
               <SaveAndLoad />
