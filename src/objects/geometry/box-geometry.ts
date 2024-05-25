@@ -6,7 +6,12 @@ import {
   BufferAttribute,
   BufferAttributeSerialized
 } from '@/objects/base/buffer-attribute.ts';
-import { quadFromCoord, quadFromPoints } from '@/utils/coordinates.ts';
+import {
+  quadFromCoord,
+  quadFromCoordExtrapolated,
+  quadFromPoints,
+  quadFromPointsExtrapolated
+} from '@/utils/coordinates.ts';
 
 export interface BoxGeometryProps {
   width: number;
@@ -58,14 +63,16 @@ export class BoxGeometry extends BufferGeometry<BoxGeometrySerialized> {
     const g = [hw, -hh, -hl];
     const h = [-hw, -hh, -hl];
 
+    const extrapolationFactor = 100;
+
     // prettier-ignore
     const vertices = new Float32Array([
-        ...quadFromPoints(a,d,c,b), // front
-        ...quadFromPoints(b,c,g,f), // right
-        ...quadFromPoints(e,h,d,a), // left
-        ...quadFromPoints(e,a,b,f), // top
-        ...quadFromPoints(g,c,d,h), // bottom
-        ...quadFromPoints(f,g,h,e)  // back
+        ...quadFromPointsExtrapolated(a,d,c,b, extrapolationFactor), // front
+        ...quadFromPointsExtrapolated(b,c,g,f, extrapolationFactor), // right
+        ...quadFromPointsExtrapolated(e,h,d,a, extrapolationFactor), // left
+        ...quadFromPointsExtrapolated(e,a,b,f, extrapolationFactor), // top
+        ...quadFromPointsExtrapolated(g,c,d,h, extrapolationFactor), // bottom
+        ...quadFromPointsExtrapolated(f,g,h,e,extrapolationFactor)  // back
     ]);
 
     const tTopLeft = [0, 0];
@@ -73,11 +80,12 @@ export class BoxGeometry extends BufferGeometry<BoxGeometrySerialized> {
     const tTopRight = [1, 0];
     const tBottomRight = [1, 1];
 
-    const faceTexCoord = quadFromCoord(
+    const faceTexCoord = quadFromCoordExtrapolated(
       tTopLeft,
       tBottomLeft,
       tBottomRight,
-      tTopRight
+      tTopRight,
+      extrapolationFactor
     );
 
     const texcoord = new Float32Array([

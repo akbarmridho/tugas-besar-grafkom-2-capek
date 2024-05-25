@@ -17,6 +17,65 @@ export function getCoordinate<T, U>(
   return { x, y };
 }
 
+export function quadFromPointsExtrapolated(
+  a: number[],
+  b: number[],
+  c: number[],
+  d: number[],
+  factor: number // number of additional region per row and col
+): number[] {
+  /**
+   * a d
+   * b c
+   *
+   * Two triangles:
+   * triangle abc, cda
+   */
+
+  const xDistance = [
+    (d[0] - a[0]) / factor,
+    (d[1] - a[1]) / factor,
+    (d[2] - a[2]) / factor
+  ];
+
+  const yDistance = [
+    (b[0] - a[0]) / factor,
+    (b[1] - a[1]) / factor,
+    (b[2] - a[2]) / factor
+  ];
+
+  const result: number[] = [];
+
+  for (let i = 0; i < factor; i++) {
+    for (let j = 0; j < factor; j++) {
+      const ax = [
+        a[0] + xDistance[0] * i + yDistance[0] * j,
+        a[1] + xDistance[1] * i + yDistance[1] * j,
+        a[2] + xDistance[2] * i + yDistance[2] * j
+      ];
+      const bx = [
+        a[0] + xDistance[0] * i + yDistance[0] * (j + 1),
+        a[1] + xDistance[1] * i + yDistance[1] * (j + 1),
+        a[2] + xDistance[2] * i + yDistance[2] * (j + 1)
+      ];
+      const cx = [
+        a[0] + xDistance[0] * (i + 1) + yDistance[0] * (j + 1),
+        a[1] + xDistance[1] * (i + 1) + yDistance[1] * (j + 1),
+        a[2] + xDistance[2] * (i + 1) + yDistance[2] * (j + 1)
+      ];
+      const dx = [
+        a[0] + xDistance[0] * (i + 1) + yDistance[0] * j,
+        a[1] + xDistance[1] * (i + 1) + yDistance[1] * j,
+        a[2] + xDistance[2] * (i + 1) + yDistance[2] * j
+      ];
+
+      result.push(...quadFromPoints(ax, bx, cx, dx));
+    }
+  }
+
+  return result;
+}
+
 export function quadFromFlatPoints(data: number[]): number[] {
   const a = 0;
   const b = 3;
@@ -64,6 +123,53 @@ export function quadFromCoord(
     d[0], d[1], // d
     a[0], a[1], // a
   ]
+}
+
+export function quadFromCoordExtrapolated(
+  a: number[],
+  b: number[],
+  c: number[],
+  d: number[],
+  factor: number // number of additional region per row and col
+): number[] {
+  /**
+   * a d
+   * b c
+   *
+   * Two triangles:
+   * triangle abc, cda
+   */
+
+  const xDistance = [(d[0] - a[0]) / factor, (d[1] - a[1]) / factor];
+
+  const yDistance = [(b[0] - a[0]) / factor, (b[1] - a[1]) / factor];
+
+  const result: number[] = [];
+
+  for (let i = 0; i < factor; i++) {
+    for (let j = 0; j < factor; j++) {
+      const ax = [
+        a[0] + xDistance[0] * i + yDistance[0] * j,
+        a[1] + xDistance[1] * i + yDistance[1] * j
+      ];
+      const bx = [
+        a[0] + xDistance[0] * i + yDistance[0] * (j + 1),
+        a[1] + xDistance[1] * i + yDistance[1] * (j + 1)
+      ];
+      const cx = [
+        a[0] + xDistance[0] * (i + 1) + yDistance[0] * (j + 1),
+        a[1] + xDistance[1] * (i + 1) + yDistance[1] * (j + 1)
+      ];
+      const dx = [
+        a[0] + xDistance[0] * (i + 1) + yDistance[0] * j,
+        a[1] + xDistance[1] * (i + 1) + yDistance[1] * j
+      ];
+
+      result.push(...quadFromCoord(ax, bx, cx, dx));
+    }
+  }
+
+  return result;
 }
 
 export function quadFromPoints(
