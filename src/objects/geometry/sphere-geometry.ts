@@ -159,21 +159,6 @@ export class SphereGeometry extends BufferGeometry<SphereGeometrySerialized> {
       }
     }
 
-    const a = new BufferAttribute(new Float32Array(triangles), 3);
-    const b = new BufferAttribute(new Float32Array(triangleUVs), 2);
-    for (let i = 0; i < a.count; i++) {
-      const tes = a.get(i);
-
-      if (
-        tes[0] == 0.01802399568259716 &&
-        tes[1] == 0.09807852655649185 &&
-        tes[2] == -0.007465783506631851
-      ) {
-        console.log(a.get(i));
-        console.log(b.get(i));
-      }
-    }
-
     super({
       position: new BufferAttribute(new Float32Array(triangles), 3),
       normal: new BufferAttribute(new Float32Array(triangleNormals), 3),

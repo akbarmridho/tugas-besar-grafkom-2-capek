@@ -49,7 +49,10 @@ export const SaveAndLoad = () => {
                 })
                   .then((handle) => {
                     handle.createWritable().then((writeable) => {
-                      const serialized = serializeScene(renderer.model!.scene);
+                      const serialized = serializeScene(
+                        renderer.model!.scene,
+                        renderer.model!.animationClip
+                      );
 
                       writeable.write(JSON.stringify(serialized)).then(() => {
                         void writeable.close();
