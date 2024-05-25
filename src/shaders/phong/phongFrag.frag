@@ -26,6 +26,8 @@ uniform vec4 u_color;
 uniform sampler2D u_diffuseMap;
 uniform sampler2D u_specularMap;
 uniform float u_shininess;
+uniform sampler2D u_normalMap;
+uniform float u_hasNormalMap;
 
 // View Position
 uniform vec3 u_viewPos;
@@ -45,6 +47,7 @@ uniform int u_num_lights;
 varying vec3 v_normal;
 varying vec3 v_fragPos;
 varying vec2 v_texcoord;
+varying mat3 v_tbnMatrix;
 
 // Calculate the impact of light from directional light
 vec3 calculateDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
@@ -95,9 +98,18 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 }
 
 void main() {
-    // Initalize needed value
+    // Initalize needed 
+    vec3 norm;
+
+    if(u_hasNormalMap == 1.0) {
+        norm = texture2D(u_normalMap, v_texcoord).rgb;
+        norm = norm * 2.0 - 1.0;
+        norm = normalize(v_tbnMatrix * norm);
+    } else {
+        norm = v_normal;
+    }
+
     vec3 viewDir = normalize(u_viewPos - v_fragPos);
-    vec3 norm = normalize(v_normal);
 
     // Impact of light from ambient light
     vec3 result = u_ambientLight.color.rgb * u_ambientLight.intensity * texture2D(u_diffuseMap, v_texcoord).rgb;
