@@ -4,7 +4,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  Pause,
+  Option,
   Play,
   Repeat,
   Square
@@ -20,6 +20,14 @@ import { Input } from '@/components/ui/input.tsx';
 import { useApp } from '@/components/context.ts';
 import { useCallback, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select.tsx';
+import { TweenOptions } from '@/utils/math/tweener.ts';
 
 export const AnimationControl = () => {
   const appContext = useApp();
@@ -30,6 +38,17 @@ export const AnimationControl = () => {
   const [rawFps, setRawFps] = useState<string>('30');
   const [debouncedFps] = useDebounce(rawFps, 200);
   const [shouldRender, setShouldRender] = useState<boolean>(false);
+  const [tween, setTween] = useState<string>('none');
+
+  useEffect(() => {
+    if (tween !== '' && tween !== 'none') {
+      const fn = TweenOptions.find((t) => t.name === tween);
+
+      if (fn) {
+        appContext.renderer.current?.tweenClip(fn);
+      }
+    }
+  }, [appContext.renderer, tween]);
 
   const cb = useCallback(() => {
     setShouldRender(!shouldRender);
@@ -65,6 +84,14 @@ export const AnimationControl = () => {
   }
 
   const renderer = appContext.renderer.current!;
+
+  if (!renderer.model!.animationClip) {
+    return (
+      <div>
+        <p>Animation Control disabled. No Animation data.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -232,6 +259,26 @@ export const AnimationControl = () => {
             }}
           />
         </div>
+      </div>
+      <div className={'flex mt-2 items-center'}>
+        <Label>Tweening Function</Label>
+        <Select value={tween} onValueChange={setTween}>
+          <SelectTrigger>
+            <SelectValue placeholder={'Tweening function'} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={'none'} key={'none'}>
+              None
+            </SelectItem>
+            {TweenOptions.map((option) => {
+              return (
+                <SelectItem value={option.name} key={option.name}>
+                  {option.name}
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

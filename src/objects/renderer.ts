@@ -15,7 +15,7 @@ import { ObliqueCamera } from './camera/oblique-camera';
 import { CameraSelection } from '@/interfaces/camera.ts';
 import { CameraAvailability } from '@/components/context.ts';
 import { mod } from '@/utils/math/mod.ts';
-import { AnimationPath } from '@/interfaces/animation.ts';
+import { AnimationClip, AnimationPath } from '@/interfaces/animation.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
 import { OrbitControl } from '@/objects/base/orbit-control.ts';
 import { AmbientLight } from './light/ambient-light';
@@ -25,6 +25,8 @@ import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PointLight } from './light/point-light';
 import { PhongMaterial } from '@/objects/material/phong-material.ts';
 import { Color } from '@/objects/base/color.ts';
+import { TweenOption } from '@/utils/math/tweener.ts';
+import { Tweener } from '@/objects/tweener.ts';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -58,6 +60,7 @@ export class WebGLRenderer {
   } = { oblique: null, perspective: null, orthogonal: null };
 
   model: ParseModelResult | null = null;
+  animationClip: AnimationClip | null = null;
 
   private isPlaying: boolean = false;
   private isBackward: boolean = false;
@@ -68,11 +71,16 @@ export class WebGLRenderer {
   private _lastFrameTime?: number;
 
   get animationLength() {
-    return this.model!.animationClip!.frames.length;
+    return this.animationClip!.frames.length;
   }
 
   private get animationFrame() {
-    return this.model!.animationClip!.frames[this.currentFrame];
+    return this.animationClip!.frames[this.currentFrame];
+  }
+
+  public tweenClip(fn: TweenOption) {
+    const tweener = new Tweener(this.model!.animationClip!, fn);
+    this.animationClip = tweener.tweenClip();
   }
 
   constructor(canvas: HTMLCanvasElement, gl: WebGLRenderingContext) {
@@ -150,6 +158,11 @@ export class WebGLRenderer {
 
   public updateFromParsedModel(model: ParseModelResult) {
     this.model = model;
+
+    if (model.animationClip) {
+      this.animationClip = structuredClone(model.animationClip);
+    }
+
     this.shaderCache = {};
     this.currentProgram = null;
     this.camera = { oblique: null, orthogonal: null, perspective: null };

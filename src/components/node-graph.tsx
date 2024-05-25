@@ -654,7 +654,7 @@ export const NodeGraph = ({
             <MeshImporter node={data.node} triggerRender={triggerRender} />
             <MeshExporter node={data.node} />
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Button
                   size={'xs'}
                   variant={'destructive'}
