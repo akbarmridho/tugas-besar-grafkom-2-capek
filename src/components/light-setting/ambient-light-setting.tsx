@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { Color } from '@/objects/base/color.ts';
 import { useApp } from '@/components/context.ts';
-import { Lamp } from 'lucide-react';
+import { Eye, EyeOff, Lamp } from 'lucide-react';
+import { Button } from '@/components/ui/button.tsx';
 
 export interface AmbientLightSettingProps {
   light: AmbientLight;
@@ -17,6 +18,7 @@ export function AmbientLightSetting({
   setActiveNode
 }: AmbientLightSettingProps) {
   const appContext = useApp();
+  const [isVisible, setIsVisible] = useState<boolean>(light.visible);
 
   const [nodeName, setNodeName] = useState<string>(light.name);
   const [debouncedNode] = useDebounce(nodeName, 200);
@@ -67,7 +69,7 @@ export function AmbientLightSetting({
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
-        className={`w-full p-1 cursor-pointer select-none border border-black  ${activeNode === light.nodeId ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
+        className={`w-full flex justify-between p-1 cursor-pointer select-none border border-black  ${activeNode === light.nodeId ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
         onClick={() => {
           if (activeNode === light.nodeId) {
             setActiveNode(null);
@@ -78,8 +80,20 @@ export function AmbientLightSetting({
       >
         <div className={'flex flex-row items-center gap-x-2'}>
           <Lamp className={'w-4 h-4'} />
-          {`${nodeName}`}
+          <h4>{nodeName}</h4>
         </div>
+        <Button
+          variant={'ghost'}
+          size={'xs'}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsVisible((prev) => !prev);
+            light.visible = !light.visible;
+            appContext.renderer.current?.render();
+          }}
+        >
+          {isVisible ? <Eye /> : <EyeOff />}
+        </Button>
       </div>
       <div className={`${activeNode !== light.nodeId && 'hidden'}`}>
         <div className={'flex flex-col'}>

@@ -72,6 +72,27 @@ export function lightTest(): PModel {
 
   scene.addChildren(pointLightMesh);
 
+  const pointLightTwo = new PointLight(
+    'p2',
+    Color.fromHex(0x735ed1),
+    0.5,
+    new Vector3(0, 0, pointLightRadius)
+  );
+
+  scene.addChildren(pointLightTwo);
+
+  const pointLightTwoMaterial = new BasicMaterial(Color.fromHex(0x735ed1));
+  const pointLightTwoShape = new BoxGeometry(0.025, 0.025, 0.025);
+
+  const pointLightTwoMesh = new Mesh(
+    'p2',
+    pointLightTwoShape,
+    pointLightTwoMaterial,
+    new Vector3(0, 0, pointLightRadius)
+  );
+
+  scene.addChildren(pointLightTwoMesh);
+
   const diffuseMap = new Texture({ data: '/textures/wood.png' });
   const specularMap = new Texture({ data: '/textures/wood-specular.png' });
 
@@ -98,24 +119,6 @@ export function lightTest(): PModel {
     8
   );
 
-  // const sphereMaterial = new PhongMaterial(
-  //   Color.fromHex(0x201575),
-  //   // Color.Black(),
-  //   Color.fromHex(0x2d19c2),
-  //   // Color.Blue(),
-  //   Color.Red(),
-  //   4
-  // );
-
-  // const sphereMaterial = new PhongMaterial(
-  //   Color.fromHex(0x4f4f4f),
-  //   // Color.fromHex(0x2d19c2),
-  //   // Color.Blue(),
-  //   Color.fromHex(0x0f0f0f),
-  //   Color.fromHex(0x1f0000),
-  //   32
-  // );
-
   const sphere = new SphereGeometry(0.1);
 
   const sphereMesh = new Mesh('sphere', sphere, sphereMaterial);
@@ -128,18 +131,29 @@ export function lightTest(): PModel {
   const posResult = new Vector3();
   spherical.setFromCartesianCoordinates(0, 0, -pointLightRadius);
 
+  const sphericalTwo = new Spherical(pointLightRadius);
+  const posResultTwo = new Vector3();
+  sphericalTwo.setFromCartesianCoordinates(0, 0, pointLightRadius);
+
   for (let i = 0; i < 360; i++) {
-    spherical.theta += degreeToRadian(1);
     posResult.setFromSpherical(spherical);
+    posResultTwo.setFromSpherical(sphericalTwo);
     frames.push({
       children: {
         p1: {
           keyframe: {
             translation: [posResult.x, posResult.y, posResult.z]
           }
+        },
+        p2: {
+          keyframe: {
+            translation: [posResultTwo.x, posResultTwo.y, posResultTwo.z]
+          }
         }
       }
     });
+    spherical.theta += degreeToRadian(1);
+    sphericalTwo.theta += degreeToRadian(1);
   }
 
   const clip: AnimationClip = {

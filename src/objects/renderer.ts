@@ -24,6 +24,7 @@ import { UniformDataType } from '@/interfaces/uniform-properties.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PointLight } from './light/point-light';
 import { PhongMaterial } from '@/objects/material/phong-material.ts';
+import { Color } from '@/objects/base/color.ts';
 
 type SceneChangedCallback = (
   scene: Scene,
@@ -215,6 +216,7 @@ export class WebGLRenderer {
 
       this._deltaFrame += deltaSecond * this.fps;
       if (this._deltaFrame >= 1) {
+        console.log(`delta frame ${this._deltaFrame}`);
         // 1 frame
         if (this.isBackward) {
           this.currentFrame = mod(
@@ -322,8 +324,7 @@ export class WebGLRenderer {
     this.isBackward = false;
     this.currentFrame = 0;
     this._deltaFrame = 0;
-    this._lastFrameTime = 0;
-
+    this._lastFrameTime = undefined;
     this.beginRenderCycle();
   }
 
@@ -332,7 +333,7 @@ export class WebGLRenderer {
     this.isBackward = true;
     this.currentFrame = this.animationLength - 1;
     this._deltaFrame = 0;
-    this._lastFrameTime = 0;
+    this._lastFrameTime = undefined;
 
     this.beginRenderCycle();
   }
@@ -385,6 +386,8 @@ export class WebGLRenderer {
 
   public stop() {
     this.isPlaying = false;
+    this._deltaFrame = 0;
+    this._lastFrameTime = undefined;
   }
 
   get currentOrbitControl() {
@@ -440,19 +443,23 @@ export class WebGLRenderer {
       const child = lightToRender.shift()!;
 
       if (child instanceof AmbientLight) {
-        globalUniforms['ambientLight.color'] = child.color;
+        globalUniforms['ambientLight.color'] = child.visible
+          ? child.color
+          : Color.Black();
         globalUniforms['ambientLight.intensity'] = child.intensity;
       }
 
       if (child instanceof DirectionalLight) {
-        globalUniforms['directionalLight.color'] = child.color;
+        globalUniforms['directionalLight.color'] = child.visible
+          ? child.color
+          : Color.Black();
         globalUniforms['directionalLight.direction'] = child.direction;
         globalUniforms['directionalLight.intensity'] = child.intensity;
       }
 
       if (child instanceof PointLight) {
         globalUniforms['pointLights[' + numPointLights + '].color'] =
-          child.color;
+          child.visible ? child.color : Color.Black();
         globalUniforms['pointLights[' + numPointLights + '].position'] =
           new Vector3(
             child.worldMatrix.elements[3],

@@ -4,8 +4,9 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Color } from '@/objects/base/color.ts';
 import { useApp } from '@/components/context.ts';
 import { XYZ } from '@/components/node-graph.tsx';
-import { Eclipse, Sun } from 'lucide-react';
+import { Eclipse, Eye, EyeOff, Lamp, Sun } from 'lucide-react';
 import { PointLight } from '@/objects/light/point-light.ts';
+import { Button } from '@/components/ui/button.tsx';
 
 export interface PointLightSettingProps {
   light: PointLight;
@@ -25,6 +26,7 @@ export function PointLightSetting({
   setActiveNode
 }: PointLightSettingProps) {
   const appContext = useApp();
+  const [isVisible, setIsVisible] = useState<boolean>(light.visible);
 
   const [nodeName, setNodeName] = useState<string>(light.name);
   const [debouncedNode] = useDebounce(nodeName, 200);
@@ -133,7 +135,7 @@ export function PointLightSetting({
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
-        className={`w-full p-1 cursor-pointer select-none border border-black  ${activeNode === light.nodeId ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
+        className={`w-full flex justify-between p-1 cursor-pointer select-none border border-black  ${activeNode === light.nodeId ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
         onClick={() => {
           if (activeNode === light.nodeId) {
             setActiveNode(null);
@@ -144,8 +146,20 @@ export function PointLightSetting({
       >
         <div className={'flex flex-row items-center gap-x-2'}>
           <Eclipse className={'w-4 h-4'} />
-          {`${nodeName}`}
+          <h4>{nodeName}</h4>
         </div>
+        <Button
+          variant={'ghost'}
+          size={'xs'}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsVisible((prev) => !prev);
+            light.visible = !light.visible;
+            appContext.renderer.current?.render();
+          }}
+        >
+          {isVisible ? <Eye /> : <EyeOff />}
+        </Button>
       </div>
       <div className={`${activeNode !== light.nodeId && 'hidden'}`}>
         <div className={'flex flex-col'}>

@@ -25,6 +25,7 @@ export function LightSettings({
         if (light instanceof AmbientLight) {
           return (
             <AmbientLightSetting
+              key={light.nodeId}
               light={light}
               activeNode={activeNode}
               setActiveNode={setActiveNode}
@@ -33,6 +34,7 @@ export function LightSettings({
         } else if (light instanceof DirectionalLight) {
           return (
             <DirectionalLightSetting
+              key={light.nodeId}
               light={light}
               activeNode={activeNode}
               setActiveNode={setActiveNode}
@@ -41,6 +43,7 @@ export function LightSettings({
         } else if (light instanceof PointLight) {
           return (
             <PointLightSetting
+              key={light.nodeId}
               light={light}
               activeNode={activeNode}
               setActiveNode={setActiveNode}

@@ -6,6 +6,8 @@ import { degreeToRadian, radianToDegree } from '@/utils/math/angle.ts';
 import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { useApp } from '@/components/context.ts';
+import { Button } from '@/components/ui/button.tsx';
+import { Eye, EyeOff } from 'lucide-react';
 
 export interface NodeGraphData {
   node: Node;
@@ -31,6 +33,7 @@ export const NodeGraph = ({
   const appContext = useApp();
   const filtered = data.node.children.filter((child) => child instanceof Mesh);
   const [nodeName, setNodeName] = useState<string>(data.node.name);
+  const [isVisible, setIsVisible] = useState<boolean>(data.node.visible);
   const [position, setPosition] = useState<XYZ>({
     x: String(data.node.position.getComponent(0)),
     y: String(data.node.position.getComponent(1)),
@@ -141,7 +144,7 @@ export const NodeGraph = ({
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
-        className={`w-full p-1 cursor-pointer select-none border border-black  ${activeNode === data.node.nodeId ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
+        className={`w-full flex flex-row justify-between p-1 cursor-pointer select-none border border-black  ${activeNode === data.node.nodeId ? 'bg-yellow-200 hover:bg-yellow-400' : 'hover:bg-gray-300'}`}
         onClick={() => {
           if (activeNode === data.node.nodeId) {
             setActiveNode(null);
@@ -150,7 +153,19 @@ export const NodeGraph = ({
           }
         }}
       >
-        {nodeName}
+        <h4>{nodeName}</h4>
+        <Button
+          variant={'ghost'}
+          size={'xs'}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsVisible((prev) => !prev);
+            data.node.visible = !data.node.visible;
+            appContext.renderer.current?.render();
+          }}
+        >
+          {isVisible ? <Eye /> : <EyeOff />}
+        </Button>
       </div>
       <div className={`${activeNode !== data.node.nodeId && 'hidden'}`}>
         <div className={'flex flex-col'}>
