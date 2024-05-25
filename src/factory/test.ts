@@ -33,8 +33,16 @@ export function test(): PModel {
     0.5
   );
 
-  const prismShape = new PrismGeometry([[0.1,0,0], [0.3,0,0], [0.3,0,0.5], [0.1,0,0.5]], 0.5);
-  const pyrShape = new PyramidGeometry(0.2,0.5,0.5);
+  const prismShape = new PrismGeometry(
+    [
+      [0.1, 0, 0],
+      [0.3, 0, 0],
+      [0.3, 0, 0.5],
+      [0.1, 0, 0.5]
+    ],
+    0.5
+  );
+  const pyrShape = new PyramidGeometry(0.2, 0.5, 0.5);
   const ballShape = new BoxGeometry(0.1, 0.1, 0.1);
 
   const canonMesh = new Mesh('canon', prismShape, ballMaterial);
@@ -49,28 +57,28 @@ export function test(): PModel {
     pyrShape,
     ballMaterial,
     new Vector3(0.2, 0.1, 0.5)
-  )
+  );
 
   const piramida2 = new Mesh(
     'Pyramid2',
     pyrShape,
     ballMaterial,
     new Vector3(0.2, 0.1, 0.5)
-  )
+  );
 
   const piramida3 = new Mesh(
     'Pyramid3',
     pyrShape,
     ballMaterial,
     new Vector3(0.2, 0.1, 0.5)
-  )
+  );
 
   const piramida4 = new Mesh(
     'Pyramid4',
     pyrShape,
     ballMaterial,
     new Vector3(0.2, 0.1, 0.5)
-  )
+  );
 
   canonMesh.addChildren(piramida1);
   canonMesh.addChildren(piramida2);
@@ -89,13 +97,12 @@ export function test(): PModel {
   //  canonMaterial,
   //  new Vector3(0.3, -0.325, 0)
   //);
-//
+  //
   //canonMesh.addChildren(leftBallMesh);
   //canonMesh.addChildren(rightBallMesh);
 
   const clip: AnimationClip = {
     name: 'flip',
-    rootName: 'canon',
     frames: [
       {
         keyframe: {

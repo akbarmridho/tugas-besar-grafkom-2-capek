@@ -11,12 +11,14 @@ export interface LightSettingsProps {
   scene: Scene;
   activeNode: string | null;
   setActiveNode: (val: string | null) => void;
+  triggerRender: () => void;
 }
 
 export function LightSettings({
   scene,
   activeNode,
-  setActiveNode
+  setActiveNode,
+  triggerRender
 }: LightSettingsProps) {
   const lights = scene.children.filter((c) => c instanceof Light) as Light[];
   return (
@@ -47,6 +49,7 @@ export function LightSettings({
               light={light}
               activeNode={activeNode}
               setActiveNode={setActiveNode}
+              triggerRender={triggerRender}
             />
           );
         }

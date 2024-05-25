@@ -4,14 +4,21 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Color } from '@/objects/base/color.ts';
 import { useApp } from '@/components/context.ts';
 import { XYZ } from '@/components/node-graph.tsx';
-import { Eclipse, Eye, EyeOff, Lamp, Sun } from 'lucide-react';
+import { Eclipse, Eye, EyeOff, Lamp, Sun, Trash } from 'lucide-react';
 import { PointLight } from '@/objects/light/point-light.ts';
 import { Button } from '@/components/ui/button.tsx';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip.tsx';
+import { useConfirm } from '@/components/alert-dialog.tsx';
 
 export interface PointLightSettingProps {
   light: PointLight;
   activeNode: string | null;
   setActiveNode: (val: string | null) => void;
+  triggerRender: () => void;
 }
 
 interface PointLightConfig {
@@ -23,9 +30,11 @@ interface PointLightConfig {
 export function PointLightSetting({
   light,
   activeNode,
-  setActiveNode
+  setActiveNode,
+  triggerRender
 }: PointLightSettingProps) {
   const appContext = useApp();
+  const confirm = useConfirm();
   const [isVisible, setIsVisible] = useState<boolean>(light.visible);
 
   const [nodeName, setNodeName] = useState<string>(light.name);
@@ -277,6 +286,36 @@ export function PointLightSetting({
                 initialConfig.current = null;
               }}
             />
+          </div>
+        </div>
+        <div className={'flex flex-col'}>
+          <h4 className={'font-medium text-sm'}>Actions</h4>
+          <div className={'flex flex-row items-center gap-x-2'}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size={'xs'}
+                  variant={'destructive'}
+                  onClick={() => {
+                    confirm({
+                      title: 'Are you sure?',
+                      body: 'Are you sure want to delete this component?'
+                    }).then((r) => {
+                      if (r) {
+                        light.removeFromParent();
+                        triggerRender();
+                        appContext.renderer.current?.render();
+                      }
+                    });
+                  }}
+                >
+                  <Trash className={'w-4 h-4'} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Delete Component</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>

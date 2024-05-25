@@ -339,4 +339,20 @@ export abstract class Node<
       }
     };
   }
+
+  public findNestedById(id: string): Node | null {
+    if (this.nodeId === id) {
+      return this;
+    }
+
+    for (const child of this.children) {
+      const res = child.findNestedById(id);
+
+      if (res !== null) {
+        return res;
+      }
+    }
+
+    return null;
+  }
 }

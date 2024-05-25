@@ -7,12 +7,19 @@ import { Vector3 } from '@/utils/math/vector3.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { useApp } from '@/components/context.ts';
 import { Button } from '@/components/ui/button.tsx';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Trash } from 'lucide-react';
 import { TextureOption, TextureOptions } from '@/factory/texture-selector.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
 import { PhongMaterial } from '@/objects/material/phong-material.ts';
 import { Color } from '@/objects/base/color.ts';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip.tsx';
+import { useConfirm } from '@/components/alert-dialog.tsx';
+import { ComponentCreator } from '@/components/component-creator.tsx';
 
 export interface NodeGraphData {
   node: Node;
@@ -22,6 +29,7 @@ interface NodeGraphProps {
   data: NodeGraphData;
   activeNode: string | null;
   setActiveNode: (id: string | null) => void;
+  triggerRender: () => void;
 }
 
 export interface XYZ {
@@ -102,9 +110,11 @@ const updateMaterialTexture = (
 export const NodeGraph = ({
   data,
   activeNode,
-  setActiveNode
+  setActiveNode,
+  triggerRender
 }: NodeGraphProps) => {
   const appContext = useApp();
+  const confirm = useConfirm();
 
   const filtered = data.node.children.filter((child) => child instanceof Mesh);
   const [nodeName, setNodeName] = useState<string>(data.node.name);
@@ -498,6 +508,30 @@ export const NodeGraph = ({
             />
           </div>
         </div>
+        <div className={'flex flex-col'}>
+          <h4 className={'font-medium text-sm'}>Actions</h4>
+          <div className={'flex flex-row items-center gap-x-2'}>
+            <ComponentCreator node={data.node} triggerRender={triggerRender} />
+            <Button
+              size={'xs'}
+              variant={'destructive'}
+              onClick={() => {
+                confirm({
+                  title: 'Are you sure?',
+                  body: 'Are you sure want to delete this component?'
+                }).then((r) => {
+                  if (r) {
+                    data.node.removeFromParent();
+                    triggerRender();
+                    appContext.renderer.current?.render();
+                  }
+                });
+              }}
+            >
+              <Trash className={'w-4 h-4'} />
+            </Button>
+          </div>
+        </div>
       </div>
       {filtered.length !== 0 && (
         <div className={'flex flex-col gap-y-1 pl-2'}>
@@ -508,6 +542,7 @@ export const NodeGraph = ({
                 data={{ node }}
                 activeNode={activeNode}
                 setActiveNode={setActiveNode}
+                triggerRender={triggerRender}
               />
             );
           })}

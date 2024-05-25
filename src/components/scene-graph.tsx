@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '@/components/context.ts';
 import { Mesh } from '@/objects/mesh.ts';
 import { LightSettings } from '@/components/light-setting/light-settings.tsx';
+import { ComponentCreator } from '@/components/component-creator.tsx';
 
 export const SceneGraph = () => {
   const [activeNode, setActiveNode] = useState<string | null>(null);
@@ -36,8 +37,11 @@ export const SceneGraph = () => {
 
   return (
     <div className={'flex-grow flex flex-col'}>
-      <h3 className={'text-md font-bold'}>{scene.name} Graph</h3>
-      <div className={'flex flex-col gap-y-1 flex-grow overflow-y-auto'}>
+      <div className={'flex flex-row justify-between'}>
+        <h3 className={'text-md font-bold'}>{scene.name} Graph</h3>
+        <ComponentCreator node={scene} triggerRender={cb} withLight={true} />
+      </div>
+      <div className={'flex flex-col gap-y-1 flex-grow h-full'}>
         {scene.children
           .filter((child) => child instanceof Mesh)
           .map((node) => {
@@ -47,6 +51,7 @@ export const SceneGraph = () => {
                 data={{ node }}
                 activeNode={activeNode}
                 setActiveNode={setActiveNode}
+                triggerRender={cb}
               />
             );
           })}
@@ -54,6 +59,7 @@ export const SceneGraph = () => {
           scene={scene}
           activeNode={activeNode}
           setActiveNode={setActiveNode}
+          triggerRender={cb}
         />
       </div>
     </div>
