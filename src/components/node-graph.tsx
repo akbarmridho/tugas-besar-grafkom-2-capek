@@ -8,6 +8,11 @@ import { Euler } from '@/utils/math/euler.ts';
 import { useApp } from '@/components/context.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { Eye, EyeOff } from 'lucide-react';
+import { TextureOption, TextureOptions } from '@/factory/texture-selector.ts';
+import { BasicMaterial } from '@/objects/material/basic-material.ts';
+import { ShaderMaterial } from '@/objects/base/shader-material.ts';
+import { PhongMaterial } from '@/objects/material/phong-material.ts';
+import { Color } from '@/objects/base/color.ts';
 
 export interface NodeGraphData {
   node: Node;
@@ -25,12 +30,82 @@ export interface XYZ {
   z: string;
 }
 
+const findNameBySource = (src: string) => {
+  const result = TextureOptions.find((t) => t.diffuse && t.diffuse === src);
+
+  if (result) {
+    return result.name;
+  }
+
+  return null;
+};
+
+const getTextureName = (
+  material: ShaderMaterial | null
+): string | null | Color => {
+  if (material instanceof BasicMaterial) {
+    const texture = material.texture;
+
+    if (texture.isPlainColor) {
+      return texture.defaultColor;
+    }
+
+    if (texture.textureSrc === null) return null;
+
+    return findNameBySource(texture.textureSrc);
+  } else if (material instanceof PhongMaterial) {
+    const texture = material.diffuseMap;
+
+    if (texture.isPlainColor) {
+      return texture.defaultColor;
+    }
+
+    if (texture.textureSrc === null) return null;
+
+    return findNameBySource(texture.textureSrc);
+  }
+
+  return null;
+};
+
+const updateMaterialTexture = (
+  material: ShaderMaterial,
+  value: TextureOption | Color,
+  isSpecular?: boolean,
+  setDefaultSpecular?: boolean
+) => {
+  if (material instanceof BasicMaterial) {
+    if (value instanceof Color) {
+      material.texture.setData(value);
+    } else if (value.diffuse) {
+      material.texture.setData(value.diffuse);
+    }
+  } else if (material instanceof PhongMaterial) {
+    if (value instanceof Color) {
+      if (isSpecular) {
+        material.specularMap.setData(value);
+      } else {
+        material.diffuseMap.setData(value);
+
+        if (setDefaultSpecular) {
+          material.specularMap.setData(Color.fromHex(0xcfcfcf));
+        }
+      }
+    } else {
+      material.diffuseMap.setData(value.diffuse);
+      material.specularMap.setData(value.specular);
+      // todo set normal and height here
+    }
+  }
+};
+
 export const NodeGraph = ({
   data,
   activeNode,
   setActiveNode
 }: NodeGraphProps) => {
   const appContext = useApp();
+
   const filtered = data.node.children.filter((child) => child instanceof Mesh);
   const [nodeName, setNodeName] = useState<string>(data.node.name);
   const [isVisible, setIsVisible] = useState<boolean>(data.node.visible);
@@ -49,10 +124,28 @@ export const NodeGraph = ({
     y: String(radianToDegree(data.node.rotation.y)),
     z: String(radianToDegree(data.node.rotation.z))
   });
+
+  const material = data.node instanceof Mesh ? data.node.material : null;
+
+  const texname = getTextureName(material);
+
+  const [texture, setTexture] = useState<string | null>(
+    texname instanceof Color ? 'color' : texname
+  );
+
+  const [color, setColor] = useState<string>(
+    texname instanceof Color ? `#${texname.toHex().toString(16)}` : '#ff0000'
+  );
+  const [specularColor, setSpecularColor] = useState<string>(`#cfcfcf`);
+
+  const initialColor = useRef<string | null>(color);
+  const initialSpecularColor = useRef<string | null>(specularColor);
   const initialPosition = useRef<XYZ | null>({ ...position });
   const initialRotation = useRef<XYZ | null>({ ...rotation });
   const initialScale = useRef<XYZ | null>({ ...scale });
 
+  const [debouncedColor] = useDebounce(color, 200);
+  const [debouncedSpecularColor] = useDebounce(specularColor, 200);
   const [debouncedNode] = useDebounce(nodeName, 200);
   const [debouncedPosition] = useDebounce(position, 200);
   const [debouncedRotation] = useDebounce(rotation, 200);
@@ -129,6 +222,47 @@ export const NodeGraph = ({
     appContext.renderer.current?.render();
   }, [appContext.renderer, data.node, debouncedRotation]);
 
+  useEffect(() => {
+    const colorHex = parseInt(`0x${debouncedColor.substring(1)}`, 16);
+
+    if (isNaN(colorHex)) {
+      return;
+    }
+    if (
+      initialColor.current &&
+      colorHex === parseInt(`0x${initialColor.current.substring(1)}`, 16)
+    ) {
+      return;
+    }
+
+    if (material) {
+      updateMaterialTexture(material, Color.fromHex(colorHex));
+    }
+
+    appContext.renderer.current?.render();
+  }, [appContext.renderer, debouncedColor, material]);
+
+  useEffect(() => {
+    const colorHex = parseInt(`0x${debouncedSpecularColor.substring(1)}`, 16);
+
+    if (isNaN(colorHex)) {
+      return;
+    }
+    if (
+      initialSpecularColor.current &&
+      colorHex ===
+        parseInt(`0x${initialSpecularColor.current.substring(1)}`, 16)
+    ) {
+      return;
+    }
+
+    if (material) {
+      updateMaterialTexture(material, Color.fromHex(colorHex), true);
+    }
+
+    appContext.renderer.current?.render();
+  }, [appContext.renderer, debouncedSpecularColor, material]);
+
   /** todo component
    * Component Editor
    * Menambahkan komponen baru sebagai anak dari existing component yang sedang dipilih. Objek default berupa kubus
@@ -178,6 +312,77 @@ export const NodeGraph = ({
               onChange={(e) => setNodeName(e.target.value)}
             />
           </div>
+        </div>
+        <div className={'flex flex-col gap-y-2'}>
+          <h4 className={'font-medium text-sm'}>Material</h4>
+          <div className={'flex items-center gap-x-2'}>
+            <p>type</p>
+            <select
+              onChange={(e) => {
+                const value = e.target.value;
+                setTexture(value);
+
+                const texOption = TextureOptions.find((o) => o.name === value);
+
+                if (!texOption || material === null) return;
+
+                if (texOption.name === 'color') {
+                  updateMaterialTexture(
+                    material,
+                    Color.fromHex(parseInt(`0x${color.substring(1)}`, 16)),
+                    false,
+                    true
+                  );
+                } else {
+                  updateMaterialTexture(material, texOption);
+                }
+
+                appContext.renderer?.current?.render();
+              }}
+              value={texture || 'unknown'}
+            >
+              <option key={'unknown'} value={'unknown'} disabled>
+                unknown
+              </option>
+              {TextureOptions.map((tex) => {
+                return (
+                  <option key={tex.name} value={tex.name}>
+                    {tex.name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          {texture === 'color' && (
+            <div className={'flex items-center gap-x-2'}>
+              <p>color</p>
+              <input
+                className={'w-12'}
+                type={'color'}
+                value={color}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setColor(val);
+                  initialColor.current = null;
+                }}
+              />
+              {material instanceof PhongMaterial && (
+                <>
+                  <p>specular</p>
+                  <input
+                    className={'w-12'}
+                    type={'color'}
+                    value={specularColor}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSpecularColor(val);
+                      initialSpecularColor.current = null;
+                    }}
+                  />
+                </>
+              )}
+            </div>
+          )}
         </div>
         <div className={'flex flex-col'}>
           <h4 className={'font-medium text-sm'}>Position</h4>

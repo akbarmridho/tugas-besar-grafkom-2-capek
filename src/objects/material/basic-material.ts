@@ -1,50 +1,31 @@
 import { ShaderMaterial } from '@/objects/base/shader-material.ts';
-import { Color, ColorSerialized } from '@/objects/base/color.ts';
+import { Color } from '@/objects/base/color.ts';
 import basicFrag from '../../shaders/basic/basicFrag.frag';
 import basicVert from '../../shaders/basic/basicVert.glsl';
 import { Texture, TextureSerialized } from '@/objects/base/texture.ts';
-import { addDefineToShader } from '@/utils/other.ts';
 
 export interface BasicMaterialSerialized {
   uniforms: {
-    color: ColorSerialized | null;
-    texture: TextureSerialized | null;
+    texture: TextureSerialized;
   };
 }
 
 export class BasicMaterial extends ShaderMaterial<BasicMaterialSerialized> {
-  private color: Color | null;
-  private _texture: Texture | null;
+  private _texture: Texture;
 
-  constructor(color: Color | null = null, texture: Texture | null = null) {
-    if (
-      (color === null && texture === null) ||
-      (color !== null && texture !== null)
-    ) {
-      throw new Error('Only color or texture can be set at a given time');
-    }
+  constructor(data: Color | Texture = Color.Red()) {
+    const texture = data instanceof Color ? new Texture({ data: data }) : data;
+    super(basicVert, basicFrag, {
+      texture
+    });
 
-    const hasTexture = texture !== null;
-
-    super(
-      hasTexture ? addDefineToShader(basicVert, 'WITH_TEXTURE') : basicVert,
-      hasTexture ? addDefineToShader(basicFrag, 'WITH_TEXTURE') : basicFrag,
-      {
-        color,
-        texture
-      }
-    );
-
-    this.color = color;
     this._texture = texture;
-    this._hasTexture = hasTexture;
   }
 
   toJSON(): BasicMaterialSerialized {
     return {
       uniforms: {
-        color: this.color === null ? null : this.color.toJSON(),
-        texture: this._texture === null ? null : this._texture.toJSON()
+        texture: this._texture.toJSON()
       }
     };
   }
@@ -54,11 +35,6 @@ export class BasicMaterial extends ShaderMaterial<BasicMaterialSerialized> {
   }
 
   public static fromJSON(data: BasicMaterialSerialized) {
-    return new BasicMaterial(
-      data.uniforms.color !== null ? Color.fromJSON(data.uniforms.color) : null,
-      data.uniforms.texture !== null
-        ? Texture.fromJSON(data.uniforms.texture)
-        : null
-    );
+    return new BasicMaterial(Texture.fromJSON(data.uniforms.texture));
   }
 }

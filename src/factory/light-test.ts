@@ -42,7 +42,7 @@ export function lightTest(): PModel {
 
   const directionalLight = new DirectionalLight(
     'sun',
-    Color.Red(),
+    Color.White(),
     new Vector3(-1, -1, -1),
     1
   );

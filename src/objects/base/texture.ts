@@ -58,6 +58,14 @@ export class Texture extends Serializable<TextureSerialized> {
     return this._wrapS;
   }
 
+  get isPlainColor() {
+    return this._plainColor;
+  }
+
+  get textureSrc() {
+    return this._textureSrc;
+  }
+
   set wrapS(value: ValueOf<typeof WrapMode>) {
     this._wrapS = value;
   }
@@ -171,6 +179,7 @@ export class Texture extends Serializable<TextureSerialized> {
     } else if (data instanceof Color) {
       this._defaultColor = data;
       this._plainColor = true;
+      this._data = null;
       this._height = 2;
       this._height = 2;
     } else {

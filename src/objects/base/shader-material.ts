@@ -9,8 +9,6 @@ export abstract class ShaderMaterial<T = unknown> extends Serializable<T> {
   private _fragmentShader: string;
   private _uniforms: UniformObject;
 
-  protected _hasTexture: boolean = false;
-
   /* Constructor */
   protected constructor(
     vertexShader: string = '',
@@ -37,10 +35,6 @@ export abstract class ShaderMaterial<T = unknown> extends Serializable<T> {
 
   get uniforms() {
     return this._uniforms;
-  }
-
-  get hasTexture() {
-    return this._hasTexture;
   }
 
   equals(material: ShaderMaterial<never>) {

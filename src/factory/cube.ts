@@ -12,10 +12,7 @@ export function basicCubeWithTexture(): PModel {
    */
   const { scene } = generateBaseScene('neo-amstrong');
 
-  const material = new BasicMaterial(
-    null,
-    new Texture({ data: '/textures/f.png' })
-  );
+  const material = new BasicMaterial(new Texture({ data: '/textures/f.png' }));
 
   const cubeShape = new BoxGeometry(0.5, 0.5, 0.5);
 
