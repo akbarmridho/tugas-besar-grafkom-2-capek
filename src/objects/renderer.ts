@@ -216,7 +216,6 @@ export class WebGLRenderer {
 
       this._deltaFrame += deltaSecond * this.fps;
       if (this._deltaFrame >= 1) {
-        console.log(`delta frame ${this._deltaFrame}`);
         // 1 frame
         if (this.isBackward) {
           this.currentFrame = mod(

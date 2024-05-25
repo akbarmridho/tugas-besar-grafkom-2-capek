@@ -70,7 +70,6 @@ function App() {
               'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[250px] h-full flex flex-col p-2'
             }
           >
-            <AnimationControl />
             <SceneGraph />
           </div>
           <div className={'h-full aspect-square'}>
@@ -113,12 +112,8 @@ function App() {
               'border-l-2 border-r-2 border-gray-400 bg-slate-200 w-[250px] h-full flex flex-col p-2'
             }
           >
-            {/** todo component
-             * Untuk objek global yang mempunyai satu instance seperti kamera dan cahaya, antarmuka untuk mengatur
-             * propertinya dapat ditampilkan selalu tanpa perlu di-klik pada struktur pohon tersebut
-             * (dapat juga dihilangkan pada struktur pohon).
-             */}
             <SaveAndLoad />
+            <AnimationControl />
             <PerspectiveSelector />
           </div>
         </div>
