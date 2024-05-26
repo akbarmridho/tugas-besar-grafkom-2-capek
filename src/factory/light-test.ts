@@ -159,20 +159,31 @@ export function lightTest(): PModel {
   for (let i = 0; i < 360; i++) {
     posResult.setFromSpherical(spherical);
     posResultTwo.setFromSpherical(sphericalTwo);
-    frames.push({
-      children: {
-        p1: {
-          keyframe: {
-            translation: [posResult.x, posResult.y, posResult.z]
-          }
-        },
-        p2: {
-          keyframe: {
-            translation: [posResultTwo.x, posResultTwo.y, posResultTwo.z]
+
+    if (i % 10 === 0) {
+      frames.push({
+        children: {
+          p1: {
+            keyframe: {
+              translation: [posResult.x, posResult.y, posResult.z]
+            }
+          },
+          p2: {
+            keyframe: {
+              translation: [posResultTwo.x, posResultTwo.y, posResultTwo.z]
+            }
           }
         }
-      }
-    });
+      });
+    } else {
+      frames.push({
+        children: {
+          p1: {},
+          p2: {}
+        }
+      });
+    }
+
     spherical.theta += degreeToRadian(1);
     sphericalTwo.theta += degreeToRadian(1);
   }

@@ -15,7 +15,11 @@ import { ObliqueCamera } from './camera/oblique-camera';
 import { CameraSelection } from '@/interfaces/camera.ts';
 import { CameraAvailability } from '@/components/context.ts';
 import { mod } from '@/utils/math/mod.ts';
-import { AnimationClip, AnimationPath } from '@/interfaces/animation.ts';
+import {
+  AnimationClip,
+  AnimationPath,
+  AnimationTRS
+} from '@/interfaces/animation.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
 import { OrbitControl } from '@/objects/base/orbit-control.ts';
 import { AmbientLight } from './light/ambient-light';
@@ -70,17 +74,18 @@ export class WebGLRenderer {
   private _deltaFrame: number = 0;
   private _lastFrameTime?: number;
 
+  private _tweenFn: TweenOption | null = null;
+
+  set tweenFn(val: TweenOption | null) {
+    this._tweenFn = val;
+  }
+
   get animationLength() {
     return this.animationClip!.frames.length;
   }
 
   private get animationFrame() {
     return this.animationClip!.frames[this.currentFrame];
-  }
-
-  public tweenClip(fn: TweenOption) {
-    const tweener = new Tweener(this.model!.animationClip!, fn);
-    this.animationClip = tweener.tweenClip();
   }
 
   constructor(canvas: HTMLCanvasElement, gl: WebGLRenderingContext) {
@@ -248,9 +253,139 @@ export class WebGLRenderer {
         }
 
         this._deltaFrame %= 1;
-        this.updateSceneGraph();
+
+        if (this._tweenFn === null) {
+          this.updateSceneGraph();
+        } else {
+          this.updateSceneGraphTweening(
+            this.model!.scene,
+            this._deltaFrame,
+            []
+          );
+        }
       }
     }
+  }
+
+  private updateSceneGraphTweening(
+    node: Node,
+    delta: number,
+    names: string[] = []
+  ) {
+    let prevFrame: AnimationPath | undefined = undefined;
+    let frameNum = this.currentFrame;
+    let prevCount = 0;
+
+    while (
+      !prevFrame?.keyframe &&
+      frameNum >= 0 &&
+      frameNum < this.animationLength
+    ) {
+      prevFrame = this.animationClip!.frames[frameNum];
+      names.forEach((name) => {
+        prevFrame = prevFrame?.children?.[name];
+      });
+      prevCount++;
+
+      if (this.isBackward) {
+        frameNum++;
+      } else {
+        frameNum--;
+      }
+    }
+
+    let nextFrame: AnimationPath | undefined = undefined;
+    let nextCount = 0;
+    frameNum = this.getFrameNumberDelta(this.isBackward ? -1 : 1);
+
+    while (
+      !nextFrame?.keyframe &&
+      frameNum >= 0 &&
+      frameNum < this.animationLength
+    ) {
+      nextFrame = this.animationClip!.frames[frameNum];
+      names.forEach((name) => {
+        nextFrame = nextFrame?.children?.[name];
+      });
+      nextCount++;
+
+      if (this.isBackward) {
+        frameNum--;
+      } else {
+        frameNum++;
+      }
+    }
+
+    console.log('prev frame', prevFrame, 'nexxt frame', nextFrame);
+
+    if (nextFrame?.keyframe && prevFrame?.keyframe) {
+      const result = Tweener.tweenFrame(
+        prevFrame.keyframe,
+        nextFrame.keyframe,
+        (prevCount - 1 + delta) / (prevCount + nextCount - 1),
+        this._tweenFn!
+      );
+
+      console.log(
+        'prev frame',
+        prevFrame.keyframe,
+        'next frame',
+        nextFrame.keyframe,
+        'result',
+        result
+      );
+
+      this.updateNode(node, result);
+    } else if (prevFrame?.keyframe) {
+      this.updateNode(node, prevFrame.keyframe);
+    }
+
+    node.children.forEach((child) => {
+      names.push(child.name);
+      this.updateSceneGraphTweening(child, delta, names);
+      names.pop();
+    });
+  }
+
+  private updateNode(node: Node, keyframe?: AnimationTRS) {
+    if (!keyframe) {
+      return;
+    }
+
+    if (keyframe.rotation) {
+      node.setFromEulerRotation(
+        // assume value in degree, not radian
+        new Euler(
+          degreeToRadian(keyframe.rotation[0]),
+          degreeToRadian(keyframe.rotation[1]),
+          degreeToRadian(keyframe.rotation[2])
+        )
+      );
+    }
+
+    if (keyframe.scale) {
+      node.setScale(
+        new Vector3(keyframe.scale[0], keyframe.scale[1], keyframe.scale[2])
+      );
+    }
+
+    if (keyframe.translation) {
+      node.setPosition(
+        new Vector3(
+          keyframe.translation[0],
+          keyframe.translation[1],
+          keyframe.translation[2]
+        )
+      );
+    }
+  }
+
+  getFrameNumberDelta(delta: number) {
+    return (
+      (((this.currentFrame + delta) % this.animationLength) +
+        this.animationLength) %
+      this.animationLength
+    );
   }
 
   private updateSceneGraph() {

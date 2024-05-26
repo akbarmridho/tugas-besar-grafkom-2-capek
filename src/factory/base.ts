@@ -43,6 +43,7 @@ export function generateBaseScene(name: string, color: Color = Color.White()) {
     'whatever',
     Color.Red(),
     1,
+    undefined,
     new Vector3(0, 0, 1)
   );
 

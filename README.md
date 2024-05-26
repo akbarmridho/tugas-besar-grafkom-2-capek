@@ -10,8 +10,24 @@ Tugas besar ini merupakan lanjutan dari tugas besar sebelumnya terkait implement
 Pada tugas besar ini, mahasiswa ditugaskan menggunakan WebGL murni, tanpa framework/library apapun untuk mengimplementasikan sebuah 3D engine yang dapat menampilkan objek tiga dimensi melalui kamera, beserta tekstur dan cahaya.
 
 ## Cara Menjalankan Program <a name="run"></a>
+1) _Clone_ repository tugas ini.
+
+2) Bukalah _file_ repository pada aplikasi editor yang Anda gunakan.
+
+3) Jalankan perintah berikut pada terminal:
+```
+- npm i run
+- npm run dev
+```
+4) Setelah melakukan perintah diatas, terminal akan menampilkan tautan local berupa ``http://localhost:5173/``. Klik tautan tersebut, tautan akan mengirimkan pengguna ke tampilan awal _web_.
+
+5) Untuk menampilkan model, tekan tombol _folder_ yang terletak pada sisi tengah bagian "Project". Web akan menampilkan daftar model yang dapat dipilih oleh pengguna. Pilih salah satu model untuk ditampilkan pada layar.
 
 ## Screenshot Tampilan Program <a name="ss-program"></a>
+![alt text](image.png)
+<br>
+<br>
+![alt text](image-1.png)
 
 ## Anggota Kelompok <a name="member"></a>
 <table>

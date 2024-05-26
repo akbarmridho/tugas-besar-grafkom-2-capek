@@ -45,8 +45,13 @@ export const AnimationControl = () => {
       const fn = TweenOptions.find((t) => t.name === tween);
 
       if (fn) {
-        appContext.renderer.current?.tweenClip(fn);
+        // appContext.renderer.current?.tweenClip(fn);
+        appContext.renderer.current!.tweenFn = fn;
       }
+    }
+
+    if (tween === 'none' && appContext.renderer.current) {
+      appContext.renderer.current!.tweenFn = null;
     }
   }, [appContext.renderer, tween]);
 
