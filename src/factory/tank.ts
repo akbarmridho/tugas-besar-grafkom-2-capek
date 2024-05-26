@@ -16,6 +16,195 @@ import { Euler } from '@/utils/math/euler.ts';
 import { degreeToRadian } from '@/utils/math/angle.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PointLight } from '@/objects/light/point-light.ts';
+import { AnimationClip, AnimationPath } from '@/interfaces/animation.ts';
+import { Spherical } from '@/utils/math/spherical.ts';
+import { Tweener } from '@/objects/tweener.ts';
+import { mod } from '@/utils/math/mod.ts';
+
+const generateClip = (): AnimationClip => {
+  const frames: AnimationPath[] = [];
+
+  // 360 frames
+  // point light 1 move at 120 frames/ revolution
+  // point light 2 move at 180 frames/ revolution
+  // point light 3 move at 360 frames/ revolution
+  const p1Start = new Vector3(2, 0.5, 2);
+  const sphere1 = new Spherical(p1Start.length());
+  sphere1.setFromVector(p1Start);
+  const p1InitialPhi = sphere1.phi;
+
+  const p2Start = new Vector3(2, 0.5, -2);
+  const sphere2 = new Spherical(p2Start.length());
+  sphere2.setFromVector(p2Start);
+  const p2InitialPhi = sphere2.phi;
+
+  const p3Start = new Vector3(-2, 0.5, 0);
+  const sphere3 = new Spherical(p3Start.length());
+  sphere3.setFromVector(p3Start);
+  const p3InitialPhi = sphere3.phi;
+
+  const result1 = new Vector3();
+  const result2 = new Vector3();
+  const result3 = new Vector3();
+
+  for (let i = 0; i < 360; i++) {
+    result1.setFromSpherical(sphere1);
+    result2.setFromSpherical(sphere2);
+    result3.setFromSpherical(sphere3);
+
+    frames.push({
+      children: {
+        p1: {
+          keyframe: {
+            translation: [result1.x, result1.y, result1.z]
+          }
+        },
+        p2: {
+          keyframe: {
+            translation: [result2.x, result2.y, result2.z]
+          }
+        },
+        p3: {
+          keyframe: {
+            translation: [result3.x, result3.y, result3.z]
+          }
+        }
+      }
+    });
+
+    sphere1.phi =
+      p1InitialPhi - degreeToRadian(-30 * Math.cos(degreeToRadian(i)) + 30);
+    sphere1.theta += degreeToRadian(3);
+    sphere2.theta -= degreeToRadian(2);
+    sphere2.phi =
+      p2InitialPhi - degreeToRadian(-15 * Math.cos(degreeToRadian(3 * i)) + 15);
+    sphere3.theta += degreeToRadian(1);
+    sphere3.phi =
+      p3InitialPhi - degreeToRadian(-40 * Math.cos(degreeToRadian(6 * i)) + 40);
+  }
+
+  /**
+   * Tank structure
+   *
+   * - tank
+   *   - tire-l
+   *   - tire-r
+   *   - body
+   *     - head
+   *       - canon
+   */
+
+  // tank anim
+  {
+    const f1xStart = 0;
+    const f1xEnd = -2;
+    const f1dist = f1xEnd - f1xStart;
+    const f1step = f1dist / 120;
+
+    for (let i = 0; i < 120; i++) {
+      const result: AnimationPath = {
+        children: {
+          tank: {
+            keyframe: {
+              translation: [f1xStart + f1step * i, 0, 0]
+            }
+          }
+        }
+      };
+
+      frames[i] = Tweener.mergeAnimationPath(frames[i], result);
+    }
+
+    const f2xStart = -2;
+    const f2xEnd = 2;
+    const f2dist = f2xEnd - f2xStart;
+    const f2step = f2dist / 120;
+
+    for (let i = 120; i < 240; i++) {
+      const result: AnimationPath = {
+        children: {
+          tank: {
+            keyframe: {
+              translation: [f2xStart + f2step * (i - 120), 0, 0]
+            }
+          }
+        }
+      };
+
+      frames[i] = Tweener.mergeAnimationPath(frames[i], result);
+    }
+
+    const f3xStart = 2;
+    const f3xEnd = 0;
+    const f3dist = f3xEnd - f3xStart;
+    const f3step = f3dist / 120;
+    for (let i = 240; i < 360; i++) {
+      const result: AnimationPath = {
+        children: {
+          tank: {
+            keyframe: {
+              translation: [f3xStart + f3step * (i - 240), 0, 0]
+            }
+          }
+        }
+      };
+
+      frames[i] = Tweener.mergeAnimationPath(frames[i], result);
+    }
+
+    {
+      // tire rotation
+      for (let i = 0; i < 360; i++) {
+        frames[i] = Tweener.mergeAnimationPath(frames[i], {
+          children: {
+            tank: {
+              children: {
+                body: {
+                  children: {
+                    head: {
+                      keyframe: {
+                        rotation: [0, i, 0]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    {
+      // head
+      for (let i = 0; i < 360; i++) {
+        frames[i] = Tweener.mergeAnimationPath(frames[i], {
+          children: {
+            tank: {
+              children: {
+                'tire-l': {
+                  keyframe: {
+                    rotation: [-90, mod(-10 * i, 360), 0]
+                  }
+                },
+                'tire-r': {
+                  keyframe: {
+                    rotation: [90, mod(10 * i, 360), 0]
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+  }
+
+  return {
+    name: 'tank-clip',
+    frames
+  };
+};
 
 export function tank(): PModel {
   const scene = new Scene('neo-armstrong-cyclone', Color.fromHex(0x141717));
@@ -313,58 +502,67 @@ export function tank(): PModel {
   }
 
   // setup point lights
-  const p1Material = new BasicMaterial(Color.fromHex(0xf23542));
-  const p1Geometry = new BoxGeometry(0.1, 0.1, 0.1);
-  const p1Mesh = new Mesh('p1', p1Geometry, p1Material, new Vector3(2, 0.5, 2));
-  const p1Light = new PointLight(
-    'p1',
-    Color.fromHex(0xf23542),
-    1,
-    0,
-    new Vector3(2, 0.5, 2)
-  );
+  {
+    const p1Material = new BasicMaterial(Color.fromHex(0xf23542));
+    const p1Geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const p1Mesh = new Mesh(
+      'p1',
+      p1Geometry,
+      p1Material,
+      new Vector3(2, 0.5, 2)
+    );
+    const p1Light = new PointLight(
+      'p1',
+      Color.fromHex(0xf23542),
+      1,
+      0,
+      new Vector3(2, 0.5, 2)
+    );
 
-  scene.addChildren(p1Mesh);
-  scene.addChildren(p1Light);
+    scene.addChildren(p1Mesh);
+    scene.addChildren(p1Light);
 
-  // setup point lights
-  const p2Material = new BasicMaterial(Color.fromHex(0x7b47f5));
-  const p2Geometry = new BoxGeometry(0.1, 0.1, 0.1);
-  const p2Mesh = new Mesh(
-    'p2',
-    p2Geometry,
-    p2Material,
-    new Vector3(2, 0.5, -2)
-  );
-  const p2Light = new PointLight(
-    'p2',
-    Color.fromHex(0x7b47f5),
-    1,
-    0,
-    new Vector3(2, 0.5, -2)
-  );
+    // setup point lights
+    const p2Material = new BasicMaterial(Color.fromHex(0x7b47f5));
+    const p2Geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const p2Mesh = new Mesh(
+      'p2',
+      p2Geometry,
+      p2Material,
+      new Vector3(2, 0.5, -2)
+    );
+    const p2Light = new PointLight(
+      'p2',
+      Color.fromHex(0x7b47f5),
+      1,
+      0,
+      new Vector3(2, 0.5, -2)
+    );
 
-  scene.addChildren(p2Mesh);
-  scene.addChildren(p2Light);
+    scene.addChildren(p2Mesh);
+    scene.addChildren(p2Light);
 
-  const p3Material = new BasicMaterial(Color.fromHex(0xffffff));
-  const p3Geometry = new BoxGeometry(0.1, 0.1, 0.1);
-  const p3Mesh = new Mesh(
-    'p3',
-    p3Geometry,
-    p3Material,
-    new Vector3(-2, 0.5, 0)
-  );
-  const p3Light = new PointLight(
-    'p3',
-    Color.fromHex(0xffffff),
-    1,
-    0,
-    new Vector3(-2, 0.5, 0)
-  );
+    const p3Material = new BasicMaterial(Color.fromHex(0x47c951));
+    const p3Geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const p3Mesh = new Mesh(
+      'p3',
+      p3Geometry,
+      p3Material,
+      new Vector3(-2, 0.5, 0)
+    );
+    const p3Light = new PointLight(
+      'p3',
+      Color.fromHex(0x47c951),
+      1,
+      0,
+      new Vector3(-2, 0.5, 0)
+    );
 
-  scene.addChildren(p3Mesh);
-  scene.addChildren(p3Light);
+    scene.addChildren(p3Mesh);
+    scene.addChildren(p3Light);
+  }
 
-  return serializeScene(scene);
+  const clip = generateClip();
+
+  return serializeScene(scene, clip);
 }

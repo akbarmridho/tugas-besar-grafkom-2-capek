@@ -674,7 +674,7 @@ export const NodeGraph = ({
           {filtered.map((node) => {
             return (
               <NodeGraph
-                key={node.name}
+                key={node.nodeId}
                 data={{ node }}
                 activeNode={activeNode}
                 setActiveNode={setActiveNode}
