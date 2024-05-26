@@ -30,6 +30,7 @@ import { CylinderGeometry } from '../geometry/cylinder-geometry';
 import { SphereGeometry } from '../geometry/sphere-geometry';
 import { GlassGeometry } from '../geometry/glass-geometry';
 import { BottleGeometry } from '../geometry/bottle-geometry';
+import { DoubleRingGeometry } from '@/objects/geometry/double-ring-geometry.ts';
 
 export function serializeScene(
   scene: Scene,
@@ -113,6 +114,11 @@ export function serializeScene(
           rawGeometries.push({
             type: 'CylinderGeometry',
             primitives: node.geometry.toJSON(false)
+          });
+        } else if (node.geometry instanceof DoubleRingGeometry) {
+          rawGeometries.push({
+            type: 'DoubleRingGeometry',
+            primitives: node.geometry.toJSON()
           });
         } else if (node.geometry instanceof SphereGeometry) {
           rawGeometries.push({
