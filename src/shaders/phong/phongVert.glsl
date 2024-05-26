@@ -17,23 +17,23 @@ varying vec3 v_fragPos;
 varying vec2 v_texcoord;
 varying mat3 v_tbnMatrix;
 
+
 void main() {
-    vec3 normal = normalize(a_normal);
+mat3 normalMat = mat3(u_normalMatrix);
 
-    vec4 position;
-    if(u_hasDisplacementMap == 1.0) {
-        position = a_position + vec4(((texture2D(u_displacementMap, a_texcoord).rgb * u_displacementScale + u_displacementBias) * normal), 0.0);
-    } else {
-        position = a_position;
-    }
+vec3 tangent = normalize(vec3(normalMat * a_tangent));
+vec3 bitangent = normalize(vec3(normalMat * a_bitangent));
+vec3 normal = normalize(vec3(normalMat * a_normal));
 
-    vec3 tangent = normalize(vec3(u_normalMatrix * vec4(a_tangent, 0.0)));
-    vec3 bitangent = normalize(vec3(u_normalMatrix * vec4(a_bitangent, 0.0)));
-    v_normal = normalize(vec3(u_normalMatrix * vec4(normal, 0.0)));
-    v_tbnMatrix = mat3(tangent, bitangent, v_normal);
+vec3 position = vec3(u_worldMatrix * a_position);
+if(u_hasDisplacementMap == 1.0) {
+position = position + (((texture2D(u_displacementMap, a_texcoord).r * u_displacementScale) + u_displacementBias) * normal);
+}
 
-    v_fragPos = vec3(u_worldMatrix * position);
-    v_texcoord = a_texcoord;
+v_tbnMatrix = mat3(tangent, bitangent, normal);
+v_fragPos = position;
+v_normal = normal;
+v_texcoord = a_texcoord;
 
-    gl_Position = u_viewProjectionMatrix * u_worldMatrix * position;
+gl_Position = u_viewProjectionMatrix * vec4(position, 1.0);
 }
