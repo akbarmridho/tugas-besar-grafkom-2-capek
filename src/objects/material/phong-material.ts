@@ -4,6 +4,7 @@ import phongFrag from '../../shaders/phong/phongFrag.frag';
 import phongVert from '../../shaders/phong/phongVert.glsl';
 
 import { Texture, TextureSerialized } from '../base/texture';
+import { TextureOption } from '@/factory/texture-selector.ts';
 
 export interface PhongMaterialSerialized {
   uniforms: {
@@ -31,7 +32,7 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
   constructor(
     color: Color = Color.fromHex(0x0f0f0f),
     diffuse: Color | Texture = Color.Red(),
-    specular: Color | Texture = Color.Red(),
+    specular: Color | Texture = Color.Black(),
     shininess: number,
     additionalTexture?: {
       normalMap?: Texture;
@@ -197,6 +198,31 @@ export class PhongMaterial extends ShaderMaterial<PhongMaterialSerialized> {
           ? Texture.fromJSON(data.uniforms.normalMap)
           : undefined,
         displacement
+      }
+    );
+  }
+
+  public static fromTextureOption(
+    textureOption: TextureOption,
+    ambientColor: Color = Color.Black(),
+    shininess: number = 1,
+    displacementScale: number = 0.05,
+    displacementBias: number = -0.05
+  ) {
+    return new PhongMaterial(
+      ambientColor,
+      new Texture({ data: textureOption.diffuse }),
+      new Texture({ data: textureOption.specular }),
+      shininess,
+      {
+        normalMap: new Texture({ data: textureOption.normal }),
+        displacement: {
+          displacementMap: new Texture({
+            data: textureOption.displacement
+          }),
+          displacementScale,
+          displacementBias
+        }
       }
     );
   }

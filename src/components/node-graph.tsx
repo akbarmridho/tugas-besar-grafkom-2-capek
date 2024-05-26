@@ -360,18 +360,6 @@ export const NodeGraph = ({
     appContext.renderer.current?.render();
   }, [appContext.renderer, debouncedDisplacementBias, material]);
 
-  /** todo component
-   * Component Editor
-   * Menambahkan komponen baru sebagai anak dari existing component yang sedang dipilih. Objek default berupa kubus
-   * dengan transformasi default. Jangan lupa memperbarui Scene Graph.
-   * Menghapus komponen yang sedang dipilih.
-   * Melakukan ekspor komponen (tunggal/subtree) dari komponen yang sedang terpilih.
-   * Melakukan impor komponen (tunggal/subtree) untuk ditambahkan menjadi anak dari komponen yang sedang terpilih atau
-   * mengubah komponen yang sedang terpilih.
-   *
-   * Material
-   * Tampilkan antarmuka untuk mengubah material setiap mesh.
-   */
   return (
     <div className={'flex flex-col gap-y-1'}>
       <div
@@ -499,8 +487,8 @@ export const NodeGraph = ({
             </div>
           )}
           {material instanceof PhongMaterial &&
-            texname !== 'color' &&
-            texname !== 'unknown' && (
+            texture !== 'color' &&
+            texture !== 'unknown' && (
               <div className={'flex items-center gap-x-2'}>
                 <p>displacement scale</p>
                 <input
@@ -516,8 +504,8 @@ export const NodeGraph = ({
               </div>
             )}
           {material instanceof PhongMaterial &&
-            texname !== 'color' &&
-            texname !== 'unknown' && (
+            texture !== 'color' &&
+            texture !== 'unknown' && (
               <div className={'flex items-center gap-x-2'}>
                 <p>displacement bias</p>
                 <input

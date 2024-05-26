@@ -25,6 +25,26 @@ export const TextureOptions: TextureOption[] = [
     specular: '/textures/grass/specular.png'
   },
   {
+    name: 'bricks',
+    diffuse: '/textures/bricks/diffuse.png',
+    displacement: '/textures/bricks/displacement.png',
+    normal: '/textures/bricks/normal.png',
+    specular: '/textures/bricks/specular.png'
+  },
+  {
+    name: 'metal-plate',
+    diffuse: '/textures/metal-plate/diffuse.png',
+    displacement: '/textures/metal-plate/displacement.png',
+    normal: '/textures/metal-plate/normal.png',
+    specular: '/textures/metal-plate/specular.png'
+  },
+  {
+    name: 'diamond-plate',
+    diffuse: '/textures/diamond-plate/diffuse.png',
+    displacement: '/textures/diamond-plate/displacement.png',
+    normal: '/textures/diamond-plate/normal.png'
+  },
+  {
     name: 'metal',
     diffuse: '/textures/metal/diffuse.png',
     displacement: '/textures/metal/displacement.png',

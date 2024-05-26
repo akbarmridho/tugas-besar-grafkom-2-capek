@@ -71,6 +71,7 @@ export function ComponentCreator({
         'new-point-light',
         Color.Blue(),
         0.5,
+        undefined,
         new Vector3(0, 1, 0)
       );
       node.addChildren(pointLight);

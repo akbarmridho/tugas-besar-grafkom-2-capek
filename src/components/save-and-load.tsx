@@ -5,12 +5,10 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@/components/ui/tooltip.tsx';
-import { neoArmstrongCycloneJetArmstrongCannon } from '@/factory/neo-armstrong-cyclone-jet-armstrong-cannon.ts';
 import { parseModel } from '@/objects/parser/parser.ts';
 import { useApp } from '@/components/context.ts';
 import { PModel } from '@/interfaces/parser.ts';
 import { serializeScene } from '@/objects/parser/serializer.ts';
-import { phongCubeWithTexture } from '@/factory/cube-phong.ts';
 import { lightTest } from '@/factory/light-test.ts';
 
 type seederFunc = () => PModel;

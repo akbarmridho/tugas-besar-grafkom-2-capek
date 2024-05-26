@@ -95,14 +95,23 @@ export function lightTest(): PModel {
 
   scene.addChildren(pointLightTwoMesh);
 
-  const diffuseMap = new Texture({ data: '/textures/wood.png' });
   const specularMap = new Texture({ data: '/textures/wood-specular.png' });
 
   const floorMaterial = new PhongMaterial(
     Color.Black(),
-    diffuseMap,
-    specularMap,
-    16
+    new Texture({ data: '../textures/rock/diffuse.png' }),
+    new Texture({ data: '../textures/rock/specular.png' }),
+    16,
+    {
+      normalMap: new Texture({ data: '../textures/rock/normal.png' }),
+      displacement: {
+        displacementMap: new Texture({
+          data: '../textures/rock/displacement.png'
+        }),
+        displacementScale: 0.05,
+        displacementBias: 0
+      }
+    }
   );
 
   const floorGeometry = new BoxGeometry(4, 0.1, 4);
@@ -136,7 +145,7 @@ export function lightTest(): PModel {
   const sphereMesh = new Mesh('sphere', sphere, sphereMaterial);
 
   scene.addChildren(planeMesh);
-  scene.addChildren(sphereMesh);
+  // scene.addChildren(sphereMesh);
 
   const frames: AnimationPath[] = [];
   const spherical = new Spherical(pointLightRadius);

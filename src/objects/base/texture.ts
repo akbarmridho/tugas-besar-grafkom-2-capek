@@ -11,6 +11,8 @@ import {
 } from '@/interfaces/texture.ts';
 import { Color, ColorSerialized } from '@/objects/base/color.ts';
 import { fromByteArray, toByteArray } from 'base64-js';
+import { TextureOption } from '@/factory/texture-selector.ts';
+import { PhongMaterial } from '@/objects/material/phong-material.ts';
 
 export interface TextureSerialized {
   data:
