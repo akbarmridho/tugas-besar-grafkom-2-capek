@@ -75,23 +75,47 @@ export class CylinderGeometry extends BufferGeometry<CylinderGeometrySerialized>
         // Generate vertices for triangles
         for (let y = 0; y < heightSegments; y++) {
             for (let x = 0; x < radialSegments; x++) {
-                const a = (x + (radialSegments + 1) * y) * 3;
-                const b = (x + (radialSegments + 1) * (y + 1)) * 3;
-                const c = ((x + 1) + (radialSegments + 1) * (y + 1)) * 3;
-                const d = ((x + 1) + (radialSegments + 1) * y) * 3;
+                const a = x + (radialSegments + 1) * y;
+                const b = x + (radialSegments + 1) * (y + 1);
+                const c = (x + 1) + (radialSegments + 1) * (y + 1);
+                const d = (x + 1) + (radialSegments + 1) * y;
 
                 // First triangle
                 vertices.push(
-                    points[a], points[a + 1], points[a + 2],
-                    points[b], points[b + 1], points[b + 2],
-                    points[d], points[d + 1], points[d + 2]
+                    points[a * 3], points[a * 3 + 1], points[a * 3 + 2],
+                    points[b * 3], points[b * 3 + 1], points[b * 3 + 2],
+                    points[d * 3], points[d * 3 + 1], points[d * 3 + 2]
+                );
+
+                normals.push(
+                    points[a * 3], points[a * 3 + 1], points[a * 3 + 2],
+                    points[b * 3], points[b * 3 + 1], points[b * 3 + 2],
+                    points[d * 3], points[d * 3 + 1], points[d * 3 + 2]
+                );
+
+                uvs.push(
+                    uvs[a * 2], uvs[a * 2 + 1],
+                    uvs[b * 2], uvs[b * 2 + 1],
+                    uvs[d * 2], uvs[d * 2 + 1]
                 );
 
                 // Second triangle
                 vertices.push(
-                    points[b], points[b + 1], points[b + 2],
-                    points[c], points[c + 1], points[c + 2],
-                    points[d], points[d + 1], points[d + 2]
+                    points[b * 3], points[b * 3 + 1], points[b * 3 + 2],
+                    points[c * 3], points[c * 3 + 1], points[c * 3 + 2],
+                    points[d * 3], points[d * 3 + 1], points[d * 3 + 2]
+                );
+
+                normals.push(
+                    points[b * 3], points[b * 3 + 1], points[b * 3 + 2],
+                    points[c * 3], points[c * 3 + 1], points[c * 3 + 2],
+                    points[d * 3], points[d * 3 + 1], points[d * 3 + 2]
+                );
+
+                uvs.push(
+                    uvs[b * 2], uvs[b * 2 + 1],
+                    uvs[c * 2], uvs[c * 2 + 1],
+                    uvs[d * 2], uvs[d * 2 + 1]
                 );
             }
         }
@@ -105,30 +129,16 @@ export class CylinderGeometry extends BufferGeometry<CylinderGeometrySerialized>
     }
 
     generateCap(top: boolean, vertices: number[], normals: number[], uvs: number[], radialSegments: number, radius: number, halfHeight: number, thetaLength: number, thetaStart: number) {
-        const sign = top ? -1 : 1; // Adjust sign for top or bottom cap
+        const sign = top ? 1 : -1; // Adjust sign for top or bottom cap
 
         // Save the index of the first center vertex
         const centerIndexStart = vertices.length / 3;
 
-        const uv = { x: 0, y: 0 };
-        const vertex = { x: 0, y: 0, z: 0 };
+        // Center vertex
+        vertices.push(0, halfHeight * sign, 0);
+        normals.push(0, sign, 0);
+        uvs.push(0.5, 0.5);
 
-        // Generate the center vertex data of the cap
-        for (let x = 0; x <= radialSegments; x++) {
-            // Vertex
-            vertices.push(0, halfHeight * sign, 0);
-
-            // Normal
-            normals.push(0, sign, 0);
-
-            // UV
-            uvs.push(0.5, 0.5);
-        }
-
-        // Save the index of the last center vertex
-        const centerIndexEnd = vertices.length / 3;
-
-        // Generate the surrounding vertices, normals, and UVs
         for (let x = 0; x <= radialSegments; x++) {
             const u = x / radialSegments;
             const theta = u * thetaLength + thetaStart;
@@ -136,56 +146,47 @@ export class CylinderGeometry extends BufferGeometry<CylinderGeometrySerialized>
             const cosTheta = Math.cos(theta);
             const sinTheta = Math.sin(theta);
 
-            // Vertex
-            vertex.x = radius * sinTheta;
-            vertex.y = halfHeight * sign;
-            vertex.z = radius * cosTheta;
-            vertices.push(vertex.x, vertex.y, vertex.z);
+            const vertex = {
+                x: radius * sinTheta,
+                y: halfHeight * sign,
+                z: radius * cosTheta,
+            };
 
-            // Normal
+            vertices.push(vertex.x, vertex.y, vertex.z);
             normals.push(0, sign, 0);
 
-            // UV
-            uv.x = (cosTheta * 0.5) + 0.5;
-            uv.y = (sinTheta * 0.5 * sign) + 0.5;
-            uvs.push(uv.x, uv.y);
+            uvs.push((cosTheta * 0.5) + 0.5, (sinTheta * 0.5 * sign) + 0.5);
         }
 
-        // Generate vertices for triangles
         for (let x = 0; x < radialSegments; x++) {
-            const a = centerIndexStart + x;
-            const b = centerIndexEnd + x;
-            const c = centerIndexEnd + x + 1;
-            const d = centerIndexStart + x + 1;
+            const c = centerIndexStart;
+            const i = centerIndexStart + x + 1;
+            const j = i + 1;
 
-            // First triangle (top or bottom)
             if (top) {
-                vertices.push(
-                    vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2],
-                    vertices[b * 3], vertices[b * 3 + 1], vertices[b * 3 + 2],
-                    vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2]
-                );
-            } else {
-                vertices.push(
-                    vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2],
-                    vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2],
-                    vertices[b * 3], vertices[b * 3 + 1], vertices[b * 3 + 2]
-                );
-            }
+                vertices.push(vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2],
+                              vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2],
+                              vertices[j * 3], vertices[j * 3 + 1], vertices[j * 3 + 2]);
 
-            // Second triangle (top or bottom)
-            if (top) {
-                vertices.push(
-                    vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2],
-                    vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2],
-                    vertices[d * 3], vertices[d * 3 + 1], vertices[d * 3 + 2]
-                );
+                normals.push(normals[c * 3], normals[c * 3 + 1], normals[c * 3 + 2],
+                             normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2],
+                             normals[j * 3], normals[j * 3 + 1], normals[j * 3 + 2]);
+
+                uvs.push(uvs[c * 2], uvs[c * 2 + 1],
+                         uvs[i * 2], uvs[i * 2 + 1],
+                         uvs[j * 2], uvs[j * 2 + 1]);
             } else {
-                vertices.push(
-                    vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2],
-                    vertices[d * 3], vertices[d * 3 + 1], vertices[d * 3 + 2],
-                    vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2]
-                );
+                vertices.push(vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2],
+                              vertices[j * 3], vertices[j * 3 + 1], vertices[j * 3 + 2],
+                              vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
+
+                normals.push(normals[c * 3], normals[c * 3 + 1], normals[c * 3 + 2],
+                             normals[j * 3], normals[j * 3 + 1], normals[j * 3 + 2],
+                             normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
+
+                uvs.push(uvs[c * 2], uvs[c * 2 + 1],
+                         uvs[j * 2], uvs[j * 2 + 1],
+                         uvs[i * 2], uvs[i * 2 + 1]);
             }
         }
     }
