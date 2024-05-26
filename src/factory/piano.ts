@@ -14,6 +14,9 @@ import { PhongMaterial } from '@/objects/material/phong-material.ts';
 import { Mesh } from '@/objects/mesh.ts';
 import { BasicMaterial } from '@/objects/material/basic-material.ts';
 import { PointLight } from '@/objects/light/point-light.ts';
+import { AnimationClip, AnimationPath } from '@/interfaces/animation.ts';
+import { Tweener } from '@/objects/tweener.ts';
+import { degreeToRadian } from '@/utils/math/angle.ts';
 
 export function piano(): PModel {
   const scene = new Scene('piano-scene', Color.fromHex(0x141717));
@@ -160,6 +163,55 @@ export function piano(): PModel {
 
   scene.addChildren(p3Mesh);
   scene.addChildren(p3Light);
+
+   // Animation for piano legs
+   const generateLegsAnimation = (): AnimationClip => {
+    const frames: AnimationPath[] = [];
+
+    // Define the animation path for each leg
+    const legMeshes: Mesh[] = []; // Declare the legMeshes variable
+
+    // Declare and assign the value for pianoLeg1Mesh
+    const pianoLeg1Mesh = new Mesh('piano-leg-1', legGeometry, legMaterial, new Vector3(-7.8, 0.3, 1.2));
+    const pianoLeg2Mesh = new Mesh('piano-leg-2', legGeometry, legMaterial, new Vector3(-7.8, 0.3, 1.2));
+    const pianoLeg3Mesh = new Mesh('piano-leg-3', legGeometry, legMaterial, new Vector3(-7.8, 0.3, 1.2));
+    const pianoLeg4Mesh = new Mesh('piano-leg-4', legGeometry, legMaterial, new Vector3(-7.8, 0.3, 1.2));
+    
+    // Add the legMeshes to the array
+    legMeshes.push(pianoLeg1Mesh);
+    legMeshes.push(pianoLeg2Mesh);
+    legMeshes.push(pianoLeg3Mesh);
+    legMeshes.push(pianoLeg4Mesh);
+
+    legMeshes.forEach((legMesh, index) => {
+    const startRotation = legMesh.rotation.y; // Initial rotation of the leg
+
+      // Define rotation keyframes for a complete revolution (360 degrees)
+      for (let i = 0; i < 360; i++) {
+        const rotationY = startRotation + degreeToRadian(i); // Rotate the leg gradually
+
+        const result: AnimationPath = {
+          children: {
+            [`leg-${index}`]: {
+              keyframe: {
+                rotation: [0, rotationY, 0] // Only rotate around the Y-axis
+              }
+            }
+          }
+        };
+
+        frames.push(result);
+      }
+    });
+
+    return {
+      name: 'legs-animation-clip',
+      frames
+    };
+  };
+
+  const legsAnimationClip = generateLegsAnimation();
+
 
   return serializeScene(scene);
 }
