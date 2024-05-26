@@ -31,6 +31,10 @@ import {
   PointLightProps,
   PointLightSerialized
 } from '@/objects/light/point-light';
+import {
+  GlassGeometry,
+  GlassGeometryProps
+} from '@/objects/geometry/glass-geometry';
 
 export interface PNode {
   name: string;
@@ -98,14 +102,16 @@ export interface PMesh {
     | 'PyramidGeometry'
     | 'PrismGeometry'
     | 'CylinderGeometry'
-    | 'SphereGeometry';
+    | 'SphereGeometry'
+    | 'HypercubeGeometry';
   primitives:
     | PlaneGeometryProps
     | BoxGeometryProps
     | PyramidGeometryProps
     | PrismGeometryProps
     | CylinderGeometryProps
-    | SphereGeometryProps;
+    | SphereGeometryProps
+    | GlassGeometryProps;
 }
 
 export interface PModel {

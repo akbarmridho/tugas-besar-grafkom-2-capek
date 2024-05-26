@@ -41,6 +41,7 @@ import { AmbientLight } from '../light/ambient-light';
 import { Divide } from 'lucide-react';
 import { DirectionalLight } from '../light/directional-light';
 import { PointLight } from '../light/point-light';
+import { GlassGeometry, GlassGeometryProps } from '../geometry/glass-geometry';
 
 export function parseModel(data: PModel): ParseModelResult {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
@@ -101,6 +102,13 @@ export function parseModel(data: PModel): ParseModelResult {
     } else if (rawMesh.type === 'SphereGeometry') {
       const primitives = rawMesh.primitives as SphereGeometryProps;
       const geometry = SphereGeometry.fromJSON(primitives);
+
+      baseMesh.push({
+        geometry
+      });
+    } else if (rawMesh.type === 'HypercubeGeometry') {
+      const primitives = rawMesh.primitives as GlassGeometryProps;
+      const geometry = GlassGeometry.fromJSON(primitives);
 
       baseMesh.push({
         geometry

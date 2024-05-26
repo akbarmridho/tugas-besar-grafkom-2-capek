@@ -28,6 +28,7 @@ import { DirectionalLight } from '../light/directional-light';
 import { PointLight } from '../light/point-light';
 import { CylinderGeometry } from '../geometry/cylinder-geometry';
 import { SphereGeometry } from '../geometry/sphere-geometry';
+import { GlassGeometry } from '../geometry/glass-geometry';
 
 export function serializeScene(
   scene: Scene,
@@ -115,6 +116,11 @@ export function serializeScene(
         } else if (node.geometry instanceof SphereGeometry) {
           rawGeometries.push({
             type: 'SphereGeometry',
+            primitives: node.geometry.toJSON(false)
+          });
+        } else if (node.geometry instanceof GlassGeometry) {
+          rawGeometries.push({
+            type: 'HypercubeGeometry',
             primitives: node.geometry.toJSON(false)
           });
         } else {
