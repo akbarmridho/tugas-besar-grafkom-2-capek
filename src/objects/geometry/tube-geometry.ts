@@ -13,18 +13,16 @@ import {
 import { degreeToRadian } from '@/utils/math/angle.ts';
 import { Euler } from '@/utils/math/euler.ts';
 import { Quaternion } from '@/utils/math/quaternion.ts';
-export interface BottleGeometryProps {}
-export type BottleGeometrySerialized = BufferGeometrySerialized & BottleGeometryProps;
 
-export class BottleGeometry extends BufferGeometry<BufferGeometrySerialized> {
+export interface TubeGeometryProps {}
+export type TubeGeometrySerialized = BufferGeometrySerialized & TubeGeometryProps;
+
+export class TubeGeometry extends BufferGeometry<TubeGeometrySerialized> {
     public constructor() {
         const ringRadius = 0.5;
         const ringHeight = 0.1;
         const ringThickness = 0.05;
         const wallThickness = 0.05;
-    
-        const xzRingCenter = -0.25;
-        const xyRingCenter = 0.25;
     
         const nSegment = 36;
     
@@ -123,66 +121,71 @@ export class BottleGeometry extends BufferGeometry<BufferGeometrySerialized> {
             const bF = new Vector3(...[nextInnerInner[0], nextInnerInner[1] - ringHeight / 2, nextInnerInner[2]]).applyQuaternion(rotationQuat).toArray();
             const bG = new Vector3(...[baseInnerInner[0], baseInnerInner[1] - ringHeight / 2, baseInnerInner[2]]).applyQuaternion(rotationQuat).toArray();
             const bH = new Vector3(...[baseOuterOuter[0], baseOuterOuter[1] - ringHeight / 2, baseOuterOuter[2]]).applyQuaternion(rotationQuat).toArray();
-    
+
             const tTopLeft = [0, 0];
-            const tBottomLeft = [0, 1];
-            const tTopRight = [1, 0];
-            const tBottomRight = [1, 1];
-    
-            const faceTexCoord = quadFromCoord(
-              tTopLeft,
-              tBottomLeft,
-              tBottomRight,
-              tTopRight
-            );
-    
-            positions.push(
-              ...quadFromPoints(tA, tB, tC, tD), 
-              ...quadFromPoints(bA, bD, bC, bB), 
-              ...quadFromPoints(tB, bB, bC, tC), 
-              ...quadFromPoints(tA, tD, bD, bA), 
-    
-              ...quadFromPoints(tE, tF, tG, tH), 
-              ...quadFromPoints(bE, bH, bG, bF),
-              ...quadFromPoints(tF, bF, bG, tG), 
-              ...quadFromPoints(tE, tH, bH, bE), 
-    
-              ...quadFromPoints(tA, tE, bE, bA),
-              ...quadFromPoints(tB, tF, bF, bB), 
-              ...quadFromPoints(tC, tG, bG, bC), 
-              ...quadFromPoints(tD, tH, bH, bD)  
-            );
-            uvs.push(
-              ...faceTexCoord,
-              ...faceTexCoord,
-              ...faceTexCoord,
-              ...faceTexCoord,
-    
-              ...faceTexCoord,
-              ...faceTexCoord,
-              ...faceTexCoord,
-              ...faceTexCoord,
-    
-              ...faceTexCoord,
-              ...faceTexCoord,
-              ...faceTexCoord,
-              ...faceTexCoord
-            );
-          }
-        };
-    
-        createHollowRing(xzRingCenter, 0, 0);
-        createHollowRing(xyRingCenter, 0, 90);
-        createHollowRing(0, 0, 90); 
+        const tBottomLeft = [0, 1];
+        const tTopRight = [1, 0];
+        const tBottomRight = [1, 1];
+
+        const faceTexCoord = quadFromCoord(
+          tTopLeft,
+          tBottomLeft,
+          tBottomRight,
+          tTopRight
+        );
+
+        positions.push(
+          ...quadFromPoints(tA, tB, tC, tD), 
+          ...quadFromPoints(bA, bD, bC, bB), 
+          ...quadFromPoints(tB, bB, bC, tC), 
+          ...quadFromPoints(tA, tD, bD, bA), 
+
+          ...quadFromPoints(tE, tF, tG, tH), 
+          ...quadFromPoints(bE, bH, bG, bF),
+          ...quadFromPoints(tF, bF, bG, tG), 
+          ...quadFromPoints(tE, tH, bH, bE), 
+
+          ...quadFromPoints(tA, tE, bE, bA),
+          ...quadFromPoints(tB, tF, bF, bB), 
+          ...quadFromPoints(tC, tG, bG, bC), 
+          ...quadFromPoints(tD, tH, bH, bD)  
+        );
+        uvs.push(
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord,
+
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord,
+
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord,
+          ...faceTexCoord
+        );
+      }
+    };
+
+    createHollowRing(-0.25, 0, 0);
+    createHollowRing(0.25, 0, 90);
+    createHollowRing(0, -0.25, 0); 
+    createHollowRing(0, 0.25, 90);
+    createHollowRing(-0.25, -0.25, 0); 
+    createHollowRing(-0.25, 0.25, 90);
+    createHollowRing(0.25, -0.25, 90); 
+    createHollowRing(0.25, 0.25, 0);
 
         super({
           position: new BufferAttribute(new Float32Array(positions), 3),
-          texcoord: new BufferAttribute(new Float32Array(uvs), 2)
+          texcoord: new BufferAttribute(new Float32Array(), 2)
         });
-      }
+  }
 
-  public toJSON(withNodeAttributes: boolean = true): BottleGeometrySerialized {
-    const data: BottleGeometrySerialized = {} as BottleGeometrySerialized;
+  public toJSON(withNodeAttributes: boolean = true): TubeGeometrySerialized {
+    const data: TubeGeometrySerialized = {} as TubeGeometrySerialized;
 
     if (withNodeAttributes) {
       // @ts-ignore
@@ -205,7 +208,7 @@ export class BottleGeometry extends BufferGeometry<BufferGeometrySerialized> {
     return data;
   }
 
-  public static fromJSON(data: BottleGeometryProps): BottleGeometry {
-    return new BottleGeometry();
+  public static fromJSON(data: TubeGeometryProps): TubeGeometry {
+    return new TubeGeometry();
   }
 }

@@ -36,6 +36,7 @@ import {
   GlassGeometryProps
 } from '@/objects/geometry/glass-geometry'
 import { BottleGeometry, BottleGeometryProps } from '@/objects/geometry/bottle-geometry';
+import { TubeGeometryProps } from '@/objects/geometry/tube-geometry';
 import { BufferGeometrySerialized } from '@/objects/base/buffer-geometry.ts';
 
 export interface PNode {
@@ -107,7 +108,9 @@ export interface PMesh {
     | 'DoubleRingGeometry'
     | 'SphereGeometry'
     | 'HypercubeGeometry'
-    | 'BottleGeometry';
+    | 'BottleGeometry'
+    | 'TubeGeometry';
+
   primitives:
     | PlaneGeometryProps
     | BoxGeometryProps
@@ -117,7 +120,8 @@ export interface PMesh {
     | BufferGeometrySerialized
     | SphereGeometryProps
     | GlassGeometryProps
-    | BottleGeometryProps;
+    | BottleGeometryProps
+    | TubeGeometryProps;
 }
 
 export interface PModel {

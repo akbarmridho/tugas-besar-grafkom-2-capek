@@ -43,6 +43,7 @@ import { DirectionalLight } from '../light/directional-light';
 import { PointLight } from '../light/point-light';
 import { GlassGeometry, GlassGeometryProps } from '../geometry/glass-geometry'
 import { BottleGeometry } from '../geometry/bottle-geometry';
+import { TubeGeometry } from '../geometry/tube-geometry';
 import { DoubleRingGeometry } from '@/objects/geometry/double-ring-geometry.ts';
 
 export function parseModel(data: PModel): ParseModelResult {
@@ -125,7 +126,13 @@ export function parseModel(data: PModel): ParseModelResult {
       baseMesh.push({
         geometry: new BottleGeometry()
       });
-    } else {
+    } else if (rawMesh.type === 'TubeGeometry') {
+        
+        baseMesh.push({
+          geometry: new TubeGeometry()
+        });
+      } 
+    else {
       throw new Error('Invalid raw mesh type');
     }
   }
