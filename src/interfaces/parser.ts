@@ -35,6 +35,7 @@ import {
   GlassGeometry,
   GlassGeometryProps
 } from '@/objects/geometry/glass-geometry';
+import { BufferGeometrySerialized } from '@/objects/base/buffer-geometry.ts';
 
 export interface PNode {
   name: string;
@@ -102,6 +103,7 @@ export interface PMesh {
     | 'PyramidGeometry'
     | 'PrismGeometry'
     | 'CylinderGeometry'
+    | 'DoubleRingGeometry'
     | 'SphereGeometry'
     | 'HypercubeGeometry';
   primitives:
@@ -110,6 +112,7 @@ export interface PMesh {
     | PyramidGeometryProps
     | PrismGeometryProps
     | CylinderGeometryProps
+    | BufferGeometrySerialized
     | SphereGeometryProps
     | GlassGeometryProps;
 }

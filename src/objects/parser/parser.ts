@@ -42,6 +42,7 @@ import { Divide } from 'lucide-react';
 import { DirectionalLight } from '../light/directional-light';
 import { PointLight } from '../light/point-light';
 import { GlassGeometry, GlassGeometryProps } from '../geometry/glass-geometry';
+import { DoubleRingGeometry } from '@/objects/geometry/double-ring-geometry.ts';
 
 export function parseModel(data: PModel): ParseModelResult {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
@@ -91,6 +92,10 @@ export function parseModel(data: PModel): ParseModelResult {
 
       baseMesh.push({
         geometry
+      });
+    } else if (rawMesh.type === 'DoubleRingGeometry') {
+      baseMesh.push({
+        geometry: new DoubleRingGeometry()
       });
     } else if (rawMesh.type === 'CylinderGeometry') {
       const primitives = rawMesh.primitives as CylinderGeometryProps;
