@@ -23,6 +23,14 @@ Pada tugas besar ini, mahasiswa ditugaskan menggunakan WebGL murni, tanpa framew
 
 5) Untuk menampilkan model, tekan tombol _folder_ yang terletak pada sisi tengah bagian "Project". Web akan menampilkan daftar model yang dapat dipilih oleh pengguna. Pilih salah satu model untuk ditampilkan pada layar.
 
+## Panduan
+
+File panduan terletak pada file `panduan.pdf`
+
+## Data Model
+
+Data model terdapat pada folder `model`
+
 ## Screenshot Tampilan Program <a name="ss-program"></a>
 ![alt text](image.png)
 <br>
@@ -32,32 +40,47 @@ Pada tugas besar ini, mahasiswa ditugaskan menggunakan WebGL murni, tanpa framew
 ## Anggota Kelompok <a name="member"></a>
 <table>
   <tr>
-    <td align="center" colspan="3">No. Kelompok : 4</td>
+    <td align="center" colspan="5">No. Kelompok : 4</td>
   </tr>
   <tr>
-    <td align="center" colspan="3">Nama Kelompok : capek</td>
+    <td align="center" colspan="5">Nama Kelompok : capek</td>
   </tr>
   <tr>
-    <td align="center" colspan="3">Kelas : 01</td>
-  </tr>   
+    <td align="center" colspan="5">Kelas : 01</td>
+  </tr>
+  <tr>
     <td align="center">NIM</td>
     <td align="center">Nama</td>
     <td align="center">Username</td>
+    <td align="center">Pembagian Tugas</td>
+    <td align="center">Spek Pribadi</td>
   </tr>
+  <tr>
     <td align="center">13521062</td>
     <td align="center">Go Dillon Audris</td>
     <td align="center"><a href=https://github.com/GoDillonAudris512>GoDillonAudris512</a></td>
+    <td align="center">Node, Vector3, Scene, ShaderMaterial, PhongMaterial, BasicMaterial, GlassGeometry, AmbientLight, DirectionalLight, PointLight, displacement map, normal map, multiple light, point light</td>
+    <td align="center">Glass (Hollow Object), Sheep (Articulated)</td>
   </tr>
+  <tr>
     <td align="center">13521067</td>
     <td align="center">Yobel Dean Christopher</td>
     <td align="center"><a href=https://github.com/yobeldc>yobeldc</a></td>
+    <td align="center">Quaternion, Camera (Oblique, Perspective), BottleGeometry, CylinderGeometry, SphereGeometry</td>
+    <td align="center">Tube (Hollow Object), Piano (Articulated)</td>
   </tr>
+  <tr>
     <td align="center">13521076</td>
     <td align="center">Moh. Aghna Maysan Abyan</td>
     <td align="center"><a href=https://github.com/AghnaAbyan>AghnaAbyan</a></td>
+    <td align="center">Euler, PyramidGeometry, PrismGeometry</td>
+    <td align="center">Bottle (Hollow Object), Spongebob (Articulated)</td>
   </tr>
+  <tr>
     <td align="center">13521093</td>
     <td align="center">Akbar Maulana Ridho</td>
     <td align="center"><a href=https://github.com/akbarmridho>akbarmridho</a></td>
+    <td align="center">Matrix4, Orbit Control, BufferAttribute, BufferGeometry, WebGL Utils, Renderer, Camera, Mesh, Website, ShaderMaterial, Texture, BoxGeometry, PlaneGeometry, DoubleRingGeometry, Parser Serializer, Mesh, Renderer, Tweening, Component Editor, Diffuse and specular map</td> 
+    <td align="center">Double Ring (Hollow Object), Tank (Articulated)</td>
   </tr>
 </table>

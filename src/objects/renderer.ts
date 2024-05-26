@@ -296,7 +296,7 @@ export class WebGLRenderer {
 
     let nextFrame: AnimationPath | undefined = undefined;
     let nextCount = 0;
-    frameNum = this.getFrameNumberDelta(this.isBackward ? -1 : 1);
+    frameNum = this.currentFrame + (this.isBackward ? -1 : 1);
 
     while (
       !nextFrame?.keyframe &&
@@ -315,24 +315,12 @@ export class WebGLRenderer {
         frameNum++;
       }
     }
-
-    console.log('prev frame', prevFrame, 'nexxt frame', nextFrame);
-
     if (nextFrame?.keyframe && prevFrame?.keyframe) {
       const result = Tweener.tweenFrame(
         prevFrame.keyframe,
         nextFrame.keyframe,
         (prevCount - 1 + delta) / (prevCount + nextCount - 1),
         this._tweenFn!
-      );
-
-      console.log(
-        'prev frame',
-        prevFrame.keyframe,
-        'next frame',
-        nextFrame.keyframe,
-        'result',
-        result
       );
 
       this.updateNode(node, result);
@@ -378,14 +366,6 @@ export class WebGLRenderer {
         )
       );
     }
-  }
-
-  getFrameNumberDelta(delta: number) {
-    return (
-      (((this.currentFrame + delta) % this.animationLength) +
-        this.animationLength) %
-      this.animationLength
-    );
   }
 
   private updateSceneGraph() {
