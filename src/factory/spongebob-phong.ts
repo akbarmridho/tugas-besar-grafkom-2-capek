@@ -12,6 +12,7 @@ import { CylinderGeometry } from '@/objects/geometry/cylinder-geometry';
 import { BasicMaterial } from '@/objects/material/basic-material';
 import { Vector3 } from '@/utils/math/vector3';
 import { Euler } from '@/utils/math/euler';
+import { PointLight } from '@/objects/light/point-light.ts';
 
 export function spongebobWithTexture(): PModel {
   /**
@@ -356,6 +357,49 @@ export function spongebobWithTexture(): PModel {
   rightLegPants.addChildren(rightShoe);
 
   cubeMesh.addChildren(hat);
+
+    // setup point lights
+    const p1Material = new BasicMaterial(Color.fromHex(0xf23542));
+    const p1Geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const p1Mesh = new Mesh('p1', p1Geometry, p1Material, new Vector3(2, 2, 2));
+    const p1Light = new PointLight(
+      'p1',
+      Color.fromHex(0xf23542),
+      1,
+      0,
+      new Vector3(2, 2, 2)
+    );
+  
+    scene.addChildren(p1Mesh);
+    scene.addChildren(p1Light);
+  
+    const p2Material = new BasicMaterial(Color.fromHex(0x7b47f5));
+    const p2Geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const p2Mesh = new Mesh('p2', p2Geometry, p2Material, new Vector3(-2, 2, -2));
+    const p2Light = new PointLight(
+      'p2',
+      Color.fromHex(0x7b47f5),
+      1,
+      0,
+      new Vector3(-2, 2, -2)
+    );
+  
+    scene.addChildren(p2Mesh);
+    scene.addChildren(p2Light);
+  
+    const p3Material = new BasicMaterial(Color.fromHex(0xffffff));
+    const p3Geometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const p3Mesh = new Mesh('p3', p3Geometry, p3Material, new Vector3(0, 2, 0));
+    const p3Light = new PointLight(
+      'p3',
+      Color.fromHex(0xffffff),
+      1,
+      0,
+      new Vector3(0, 2, 0)
+    );
+  
+    scene.addChildren(p3Mesh);
+    scene.addChildren(p3Light);
 
   return serializeScene(scene);
 }
