@@ -34,7 +34,8 @@ import {
 import {
   GlassGeometry,
   GlassGeometryProps
-} from '@/objects/geometry/glass-geometry';
+} from '@/objects/geometry/glass-geometry'
+import { BottleGeometry, BottleGeometryProps } from '@/objects/geometry/bottle-geometry';
 
 export interface PNode {
   name: string;
@@ -103,7 +104,8 @@ export interface PMesh {
     | 'PrismGeometry'
     | 'CylinderGeometry'
     | 'SphereGeometry'
-    | 'HypercubeGeometry';
+    | 'HypercubeGeometry'
+    | 'BottleGeometry';
   primitives:
     | PlaneGeometryProps
     | BoxGeometryProps
@@ -111,7 +113,8 @@ export interface PMesh {
     | PrismGeometryProps
     | CylinderGeometryProps
     | SphereGeometryProps
-    | GlassGeometryProps;
+    | GlassGeometryProps
+    | BottleGeometryProps;
 }
 
 export interface PModel {

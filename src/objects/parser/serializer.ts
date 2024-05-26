@@ -29,6 +29,7 @@ import { PointLight } from '../light/point-light';
 import { CylinderGeometry } from '../geometry/cylinder-geometry';
 import { SphereGeometry } from '../geometry/sphere-geometry';
 import { GlassGeometry } from '../geometry/glass-geometry';
+import { BottleGeometry } from '../geometry/bottle-geometry';
 
 export function serializeScene(
   scene: Scene,
@@ -123,7 +124,13 @@ export function serializeScene(
             type: 'HypercubeGeometry',
             primitives: node.geometry.toJSON(false)
           });
-        } else {
+        } else if (node.geometry instanceof BottleGeometry) {
+          rawGeometries.push({
+            type: 'BottleGeometry',
+            primitives: node.geometry.toJSON(false)
+          });
+        }
+        else {
           throw new Error('Invalid geometry type');
         }
       }

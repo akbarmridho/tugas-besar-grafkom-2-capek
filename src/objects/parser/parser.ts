@@ -41,7 +41,8 @@ import { AmbientLight } from '../light/ambient-light';
 import { Divide } from 'lucide-react';
 import { DirectionalLight } from '../light/directional-light';
 import { PointLight } from '../light/point-light';
-import { GlassGeometry, GlassGeometryProps } from '../geometry/glass-geometry';
+import { GlassGeometry, GlassGeometryProps } from '../geometry/glass-geometry'
+import { BottleGeometry } from '../geometry/bottle-geometry';
 
 export function parseModel(data: PModel): ParseModelResult {
   const scene = new Scene(data.scene.name, Color.fromJSON(data.scene.color));
@@ -113,10 +114,17 @@ export function parseModel(data: PModel): ParseModelResult {
       baseMesh.push({
         geometry
       });
+      
+    } else if (rawMesh.type === 'BottleGeometry') {
+
+      baseMesh.push({
+        geometry: new BottleGeometry()
+      });
     } else {
       throw new Error('Invalid raw mesh type');
     }
   }
+  
 
   // initialize nodes
   const nodes: Node[] = [];
