@@ -39,25 +39,35 @@ Pada tugas besar ini, mahasiswa ditugaskan menggunakan WebGL murni, tanpa framew
   </tr>
   <tr>
     <td align="center" colspan="3">Kelas : 01</td>
-  </tr>   
+  </tr>
+  <tr>
     <td align="center">NIM</td>
     <td align="center">Nama</td>
     <td align="center">Username</td>
+    <td align="center">Pembagian Tugas</td>
   </tr>
+  <tr>
     <td align="center">13521062</td>
     <td align="center">Go Dillon Audris</td>
     <td align="center"><a href=https://github.com/GoDillonAudris512>GoDillonAudris512</a></td>
+    <td align="center">Node, Vector3, Scene, ShaderMaterial, PhongMaterial, BasicMaterial, GlassGeometry, AmbientLight, DirectionalLight, PointLight, displacement map, normal map, multiple light, point light</td>
   </tr>
+  <tr>
     <td align="center">13521067</td>
     <td align="center">Yobel Dean Christopher</td>
     <td align="center"><a href=https://github.com/yobeldc>yobeldc</a></td>
+    <td align="center">Quaternion, Camera (Oblique, Perspective), BottleGeometry, CylinderGeometry, SphereGeometry</td>
   </tr>
+  <tr>
     <td align="center">13521076</td>
     <td align="center">Moh. Aghna Maysan Abyan</td>
     <td align="center"><a href=https://github.com/AghnaAbyan>AghnaAbyan</a></td>
+    <td align="center">Euler, PyramidGeometry, PrismGeometry</td>
   </tr>
+  <tr>
     <td align="center">13521093</td>
     <td align="center">Akbar Maulana Ridho</td>
     <td align="center"><a href=https://github.com/akbarmridho>akbarmridho</a></td>
+    <td align="center">Matrix4, Orbit Control, BufferAttribute, BufferGeometry, WebGL Utils, Renderer, Camera, Mesh, Website, ShaderMaterial, Texture, BoxGeometry, PlaneGeometry, DoubleRingGeometry, Parser Serializer, Mesh, Renderer, Tweening, Component Editor, Diffuse and specular map</td> 
   </tr>
 </table>
