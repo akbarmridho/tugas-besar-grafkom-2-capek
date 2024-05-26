@@ -23,6 +23,14 @@ Pada tugas besar ini, mahasiswa ditugaskan menggunakan WebGL murni, tanpa framew
 
 5) Untuk menampilkan model, tekan tombol _folder_ yang terletak pada sisi tengah bagian "Project". Web akan menampilkan daftar model yang dapat dipilih oleh pengguna. Pilih salah satu model untuk ditampilkan pada layar.
 
+## Panduan
+
+File panduan terletak pada file `panduan.pdf`
+
+## Data Model
+
+Data model terdapat pada folder `model`
+
 ## Screenshot Tampilan Program <a name="ss-program"></a>
 ![alt text](image.png)
 <br>
